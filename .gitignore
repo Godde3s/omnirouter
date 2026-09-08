@@ -1,0 +1,10 @@
+omnirouter
+omnirouter.exe
+qwen-api.exe
+*.exe
+data/
+.env
+tokens.sqlite
+qwen-bx.json
+server*.log
+*.log
