@@ -1,0 +1,26 @@
+services:
+  omnirouter:
+    build: .
+    container_name: omnirouter
+    ports:
+      - "8080:8080"
+    environment:
+      # Paste at least one provider credential here (comma separated), or
+      # leave empty and use a bind-mounted .env instead.
+      DEEPSEEK_TOKENS: ""
+      QWEN_TOKENS: ""
+      ZAI_TOKENS: ""
+      ADMIN_PASSWORD: "admin"
+      AGENT_MODE: "true"
+    volumes:
+      - ./.env:/app/.env:ro
+      - omnirouter-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  omnirouter-data:
