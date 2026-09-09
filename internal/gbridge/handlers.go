@@ -79,7 +79,7 @@ func chatCompletionsHandler(w http.ResponseWriter, r *http.Request) {
         }
     }
 
-    stream := true
+    stream := false
     if body.Stream != nil {
         stream = *body.Stream
     }
