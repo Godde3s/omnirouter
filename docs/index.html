@@ -4,376 +4,592 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>OmniRouter — یک روتر برای همه‌ی مدل‌ها</title>
-<meta name="description" content="روتر یکپارچه‌ی مدل‌های هوش مصنوعی: Qwen، GLM 5.3، DeepSeek، Gemini و OpenCode بدون کلید — با failover خودکار، RTK Token Saver و داشبورد فارسی. OpenAI + Anthropic سازگار.">
+<meta name="description" content="روتر یکپارچه‌ی مدل‌های هوش مصنوعی: Qwen، GLM 5.3، DeepSeek، Gemini و OpenCode بدون کلید — با failover خودکار، RTK Token Saver و داشبورد فارسی. سازگار با OpenAI و Anthropic.">
+<meta name="theme-color" content="#070b1a">
+<meta property="og:title" content="OmniRouter — یک روتر برای همه‌ی مدل‌ها">
+<meta property="og:description" content="کدنویسی ایجنتی رایگان و بدون کلید با OpenCode Zen — GLM 5.3، Qwen3.8-max، DeepSeek، Gemini. یک فایل، هر پلتفرمی.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b7cff'/%3E%3Cstop offset='1' stop-color='%233ee0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M12 2l8 4.6v8.8L12 20l-8-4.6V6.6L12 2z' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%233ee0ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ============ tokens ============ */
+/* ═══════════════════════════════════════════════════════════════
+   OmniRouter — Nebula Edition · 2026
+   sophisticated dark · chromatic aurora · 3D depth · kinetic type
+   ═══════════════════════════════════════════════════════════════ */
 :root{
-  --bg:#07070c; --bg2:#0b0b13; --panel:rgba(19,19,30,.66); --panel2:rgba(26,26,40,.5);
-  --bord:rgba(255,255,255,.085); --bord2:rgba(255,255,255,.14);
-  --txt:#f2f1f8; --mut:#b6b3cc; --dim:#8c89a6;
-  --vio:#8b5cf6; --cy:#22d3ee; --gr:#34d399; --am:#fbbf24; --rd:#fb7185; --or:#fb923c;
-  --grad:linear-gradient(100deg,#a78bfa,#22d3ee);
-  --mono:'JetBrains Mono',ui-monospace,monospace;
-  --maxw:1140px;
-  --r:18px; --rs:12px;
-  --pad-y:clamp(64px,9vw,110px);
+  --bg0:#070b1a; --bg1:#0a1026; --bg2:#0d1430;
+  --panel:rgba(17,25,56,.6); --panel2:rgba(24,33,70,.5);
+  --bord:rgba(160,180,255,.1); --bord2:rgba(160,180,255,.2);
+  --ink:#eef2ff; --mut:#a6b0d4; --dim:#707ca6;
+  --vio:#8b7cff; --vio2:#b4a8ff; --cyan:#3ee0ff; --mint:#43f0c8;
+  --pink:#ff6ad5; --amber:#ffc35c; --rose:#ff7a8a;
+  --grad:linear-gradient(100deg,#8b7cff 5%,#3ee0ff 95%);
+  --grad2:linear-gradient(100deg,#ff6ad5 5%,#8b7cff 90%);
+  --mono:'JetBrains Mono','Space Grotesk',ui-monospace,monospace;
+  --disp:'Space Grotesk','Vazirmatn',sans-serif;
+  --maxw:1180px; --r:22px; --rs:14px;
+  --sec:clamp(64px,9vw,122px);
+  --shadow:0 30px 80px -20px rgba(3,6,20,.85);
+  --glow-v:0 0 0 1px rgba(139,124,255,.25),0 10px 50px -10px rgba(139,124,255,.4);
+  --glow-c:0 0 0 1px rgba(62,224,255,.25),0 10px 50px -10px rgba(62,224,255,.35);
 }
-/* ============ reset/base (MOBILE FIRST) ============ */
+/* ═══════════ base ═══════════ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:clip;-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;overflow-x:clip;-webkit-text-size-adjust:100%;scroll-padding-top:96px}
 body{
-  background:var(--bg); color:var(--txt);
+  background:var(--bg0);color:var(--ink);
   font-family:'Vazirmatn',system-ui,sans-serif;
-  font-size:clamp(15px,.4vw + 14px,16.5px);
-  font-weight:400; line-height:2; overflow-x:clip;
-  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  font-size:clamp(15.5px,.3vw + 15px,17px);
+  line-height:2.05;overflow-x:clip;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
-/* aurora — subtle, fixed */
-.bg-fx{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
-.bg-fx::before,.bg-fx::after{content:'';position:absolute;border-radius:50%;filter:blur(110px);opacity:.16}
-.bg-fx::before{width:56vw;height:56vw;min-width:340px;min-height:340px;background:#7c5cff;top:-18vw;left:-12vw}
-.bg-fx::after{width:46vw;height:46vw;min-width:280px;min-height:280px;background:#0ea5e9;top:32vh;right:-16vw;opacity:.10}
-img,svg,canvas{max-width:100%;display:block}
+img,svg{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
-ul,ol{padding-right:1.4em}
-::selection{background:rgba(139,92,246,.4)}
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:#26263a;border-radius:8px}
-:focus-visible{outline:2px solid var(--vio);outline-offset:3px;border-radius:6px}
-
-/* ============ typography ============ */
-h1,h2,h3,h4{font-weight:800;line-height:1.5;text-wrap:balance}
-h1{font-size:clamp(1.85rem,4.6vw + .9rem,3.4rem);line-height:1.45;letter-spacing:-.01em}
-h2{font-size:clamp(1.45rem,2.6vw + .7rem,2.25rem)}
-h3{font-size:clamp(1.08rem,.8vw + .9rem,1.3rem);font-weight:700}
+ul,ol{list-style:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+::selection{background:rgba(139,124,255,.9);color:#fff}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:var(--bg0)}
+::-webkit-scrollbar-thumb{background:#232c52;border-radius:8px;border:2px solid var(--bg0)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:8px}
+/* ═══════════ cinematic layers: grain · vignette · aurora ═══════════ */
+.grain{position:fixed;inset:-40%;z-index:71;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 9s steps(6) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}20%{transform:translate(-2%,1.4%)}40%{transform:translate(1.6%,-1%)}60%{transform:translate(-1%,-1.8%)}80%{transform:translate(1.8%,1.2%)}}
+.vign{position:fixed;inset:0;z-index:70;pointer-events:none;
+  background:radial-gradient(125% 95% at 50% 38%,transparent 52%,rgba(2,4,14,.5) 100%)}
+.aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
+.aurora .a1{width:56vw;height:56vw;max-width:820px;max-height:820px;top:-22vw;inset-inline-start:-12vw;
+  background:radial-gradient(circle,rgba(139,124,255,.34),transparent 66%);animation:drift1 26s ease-in-out infinite alternate}
+.aurora .a2{width:46vw;height:46vw;max-width:700px;max-height:700px;top:-8vw;inset-inline-end:-14vw;
+  background:radial-gradient(circle,rgba(62,224,255,.22),transparent 66%);animation:drift2 32s ease-in-out infinite alternate}
+.aurora .a3{width:38vw;height:38vw;max-width:560px;max-height:560px;top:52vh;inset-inline-start:32vw;
+  background:radial-gradient(circle,rgba(255,106,213,.13),transparent 66%);animation:drift3 38s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(7vw,5vh) scale(1.12)}}
+@keyframes drift2{to{transform:translate(-6vw,8vh) scale(.92)}}
+@keyframes drift3{to{transform:translate(-9vw,-6vh) scale(1.15)}}
+@media(max-width:720px){.aurora i{filter:blur(64px)}.aurora .a3{display:none}}
+/* scroll progress */
+.pbar{position:fixed;top:0;inset-inline:0;height:2px;z-index:110;background:transparent}
+.pbar i{display:block;height:100%;background:var(--grad);transform-origin:0 50%;transform:scaleX(0)}
+/* ═══════════ typography ═══════════ */
+h1,h2,h3{font-weight:800;line-height:1.5;text-wrap:balance}
+h1{font-size:clamp(2.15rem,5.6vw + .7rem,4.3rem);line-height:1.42;letter-spacing:-.01em}
+h2{font-size:clamp(1.58rem,2.7vw + .7rem,2.55rem);line-height:1.45}
+h3{font-size:clamp(1.05rem,.6vw + .95rem,1.22rem);font-weight:700;line-height:1.7}
 p{color:var(--mut);text-wrap:pretty}
-strong,b{color:var(--txt);font-weight:700}
-.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.mono{font-family:var(--mono);direction:ltr;unicode-bidi:isolate;font-size:.88em;overflow-wrap:break-word}
+strong{color:var(--ink);font-weight:700}
+.grad{background:var(--grad);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 7s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.outline{color:transparent;-webkit-text-stroke:1.5px rgba(238,242,255,.45)}
+/* Latin tokens inside Persian sentences — bidi-isolated */
+.lt{font-family:var(--mono);direction:ltr;unicode-bidi:isolate;font-size:.84em;
+  color:#c8f0ff;background:rgba(62,224,255,.08);border:1px solid rgba(62,224,255,.18);
+  padding:.05em .45em;border-radius:.42em;overflow-wrap:anywhere;white-space:normal}
+.lt.v{color:#d9d2ff;background:rgba(139,124,255,.1);border-color:rgba(139,124,255,.24)}
+.en{direction:ltr;unicode-bidi:isolate;font-style:normal}
 .kicker{
-  display:inline-block;direction:ltr;font-family:var(--mono);font-size:.78rem;font-weight:600;
-  letter-spacing:.14em;text-transform:uppercase;color:var(--cy);
-  background:rgba(34,211,238,.09);border:1px solid rgba(34,211,238,.22);
-  padding:.3em 1em;border-radius:99px;margin-bottom:1.1em;
+  display:inline-flex;align-items:center;gap:.6em;direction:ltr;unicode-bidi:isolate;
+  font-family:var(--mono);font-size:.73rem;font-weight:600;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:1.05em;
 }
-.sec-head{max-width:720px;margin:0 auto var(--pad-y);text-align:center;margin-bottom:clamp(36px,6vw,56px)}
-.sec-head p{margin-top:.7em;font-size:clamp(.95rem,.5vw + .8rem,1.08rem)}
-.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(18px,4vw,28px)}
-section{padding-block:var(--pad-y);position:relative}
-[id]{scroll-margin-top:86px}
-
-/* ============ nav (mobile-first hamburger) ============ */
-.nav{
-  position:fixed;top:0;inset-inline:0;z-index:100;
-  background:rgba(7,7,12,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--bord);
-}
-.nav-in{max-width:var(--maxw);margin-inline:auto;padding:.65rem clamp(18px,4vw,28px);
-  display:flex;align-items:center;gap:1rem}
-.logo{font-weight:900;font-size:1.15rem;letter-spacing:-.01em;display:flex;align-items:center;gap:.5rem}
-.logo .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.nav-links{display:none;align-items:center;gap:.25rem;margin-inline-start:auto}
-.nav-links a{padding:.45rem .8rem;border-radius:9px;font-size:.92rem;font-weight:500;color:var(--mut);transition:.15s}
-.nav-links a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
-.nav-cta{display:none;margin-inline-start:.4rem;padding:.5rem 1.15rem;border-radius:10px;background:var(--grad);color:#fff;font-weight:700;font-size:.9rem}
-.burger{
-  display:inline-flex;margin-inline-start:auto;align-items:center;justify-content:center;
-  width:42px;height:42px;border-radius:11px;border:1px solid var(--bord2);
-  background:rgba(255,255,255,.05);color:var(--txt);cursor:pointer;
-}
-.burger svg{width:20px;height:20px}
+.kicker::before{content:'';width:28px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.sec-head{max-width:780px;margin:0 auto clamp(38px,5.6vw,66px);text-align:center}
+.sec-head p{margin-top:.9em;font-size:clamp(.95rem,.4vw + .87rem,1.12rem)}
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(18px,4.5vw,32px)}
+section{padding-block:var(--sec);position:relative}
+/* ═══════════ nav ═══════════ */
+.nav{position:fixed;top:0;inset-inline:0;z-index:100;transition:.25s;
+  background:rgba(7,11,26,.5);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);
+  border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(7,11,26,.84);border-bottom-color:var(--bord)}
+.nav-in{max-width:var(--maxw);margin-inline:auto;padding:.72rem clamp(18px,4.5vw,32px);display:flex;align-items:center;gap:1rem}
+.logo{display:inline-flex;align-items:center;gap:.62rem;font-family:var(--disp);font-weight:700;font-size:1.14rem;direction:ltr}
+.logo .hex{width:33px;height:33px;color:var(--vio);filter:drop-shadow(0 0 12px rgba(139,124,255,.55))}
+.logo b{letter-spacing:-.01em;font-weight:700}
+.logo .grad{animation:none}
+.nav-links{display:none;align-items:center;gap:.1rem;margin-inline-start:auto}
+.nav-links a{padding:.5rem .85rem;border-radius:10px;font-size:.9rem;font-weight:500;color:var(--mut);transition:.16s}
+.nav-links a:hover{color:var(--ink);background:rgba(160,180,255,.07)}
+.nav-cta{display:none;margin-inline-start:.5rem;align-items:center;gap:.5rem;padding:.55rem 1.2rem;border-radius:11px;
+  background:var(--ink);color:#0a0f24;font-weight:800;font-size:.88rem;font-family:var(--disp);transition:.16s}
+.nav-cta:hover{background:var(--grad);color:#fff;box-shadow:var(--glow-v)}
+.burger{display:inline-flex;margin-inline-start:auto;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:12px;border:1px solid var(--bord2);
+  background:rgba(160,180,255,.05);color:var(--ink)}
+.burger svg{width:21px;height:21px}
 .burger .ic-x{display:none}
-#navtoggle{position:absolute;opacity:0;pointer-events:none}
-#navtoggle:checked ~ .nav-in .burger .ic-menu{display:none}
-#navtoggle:checked ~ .nav-in .burger .ic-x{display:block}
-.m-panel{
-  display:none;position:fixed;top:64px;inset-inline:12px;z-index:99;
-  background:rgba(15,15,25,.97);border:1px solid var(--bord2);border-radius:16px;
-  padding:.7rem;box-shadow:0 24px 70px rgba(0,0,0,.6);
-}
-#navtoggle:checked ~ .m-panel{display:block;animation:drop .22s ease}
-@keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.m-panel a{display:block;padding:.8rem 1rem;border-radius:10px;font-weight:600;color:var(--mut)}
-.m-panel a:hover{background:rgba(255,255,255,.06);color:var(--txt)}
-.m-panel .cta{margin-top:.4rem;background:var(--grad);color:#fff;text-align:center}
-@media(min-width:960px){
-  .burger{display:none}
-  .nav-links,.nav-cta{display:inline-flex}
-  .m-panel{display:none !important}
-}
-
-/* ============ buttons ============ */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
-  padding:.9rem 1.7rem;border-radius:13px;font-weight:700;font-size:1rem;
-  border:1px solid var(--bord2);background:rgba(255,255,255,.05);color:var(--txt);
-  cursor:pointer;transition:.18s;min-height:48px;
-}
-.btn:hover{transform:translateY(-2px);border-color:var(--bord2);background:rgba(255,255,255,.09)}
-.btn.pri{background:var(--grad);border:none;color:#fff;box-shadow:0 10px 34px rgba(124,92,246,.35)}
-.btn.pri:hover{filter:brightness(1.1)}
-.btn-row{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center}
-
-/* ============ chips/cards ============ */
-.chip{
-  display:inline-flex;align-items:center;gap:.5rem;padding:.45rem 1.05rem;border-radius:99px;
-  background:var(--panel2);border:1px solid var(--bord);font-size:.86rem;color:var(--mut);
-}
-.chip b{color:var(--txt)}
-.card{
-  background:var(--panel);border:1px solid var(--bord);border-radius:var(--r);
-  padding:clamp(1.15rem,2.4vw,1.6rem);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  transition:.2s;
-}
-.card:hover{border-color:var(--bord2);transform:translateY(-3px)}
-.card h3{margin:.6rem 0 .45rem}
-.card p{font-size:.93rem}
-.card .mono{white-space:nowrap}
-.ico{
-  width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;
-  font-size:1.3rem;background:rgba(139,92,246,.13);border:1px solid rgba(139,92,246,.25);flex-shrink:0;
-}
-.ico.c{background:rgba(34,211,238,.11);border-color:rgba(34,211,238,.25)}
-.ico.g{background:rgba(52,211,153,.11);border-color:rgba(52,211,153,.25)}
-.ico.a{background:rgba(251,191,36,.11);border-color:rgba(251,191,36,.28)}
-.ico.r{background:rgba(251,113,133,.11);border-color:rgba(251,113,133,.25)}
+.burger.open .ic-menu{display:none}
+.burger.open .ic-x{display:block}
+/* full-screen mobile menu */
+.mnav{position:fixed;inset:0;z-index:99;display:none;flex-direction:column;justify-content:center;
+  padding:96px clamp(24px,7vw,48px) 48px;
+  background:radial-gradient(90% 60% at 50% 0%,rgba(139,124,255,.16),transparent 60%),rgba(5,8,20,.97);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.mnav.open{display:flex;animation:mvIn .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes mvIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+.mnav a{display:flex;align-items:center;gap:.9rem;padding:.72rem .4rem;font-size:clamp(1.25rem,4.8vw,1.6rem);font-weight:800;color:var(--mut);border-bottom:1px solid var(--bord);transition:.15s}
+.mnav a:hover,.mnav a:active{color:var(--ink)}
+.mnav a .no{font-family:var(--mono);font-size:.6em;color:var(--cyan);letter-spacing:.1em}
+.mnav .cta{margin-top:1.4rem;border:none;background:var(--grad);color:#fff;border-radius:14px;justify-content:center;font-size:1.05rem}
+@media(min-width:1020px){.burger{display:none}.nav-links,.nav-cta{display:inline-flex}.mnav{display:none!important}}
+/* ═══════════ buttons / chips / tiles ═══════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;flex-wrap:wrap;
+  padding:.95rem 1.8rem;border-radius:15px;font-weight:800;font-size:.98rem;
+  border:1px solid var(--bord2);background:rgba(160,180,255,.05);color:var(--ink);
+  transition:.2s cubic-bezier(.2,.8,.2,1);min-height:52px;text-align:center}
+.btn:hover{transform:translateY(-2px);background:rgba(160,180,255,.1);border-color:rgba(139,124,255,.45)}
+.btn svg{width:18px;height:18px;flex-shrink:0}
+.btn .ben{font-family:var(--disp);font-weight:600;direction:ltr;unicode-bidi:isolate}
+.btn.pri{background:var(--grad);border:none;color:#fff;position:relative;overflow:hidden;
+  box-shadow:0 14px 44px -10px rgba(139,124,255,.55)}
+.btn.pri::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+  transform:translateX(-130%);animation:sweep 4.2s ease-in-out infinite}
+@keyframes sweep{0%,55%{transform:translateX(-130%)}85%,100%{transform:translateX(130%)}}
+.btn.pri:hover{box-shadow:0 18px 60px -10px rgba(62,224,255,.55)}
+.btn-row{display:flex;gap:.85rem;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:.55rem;padding:.5rem 1.05rem;border-radius:99px;
+  background:var(--panel2);border:1px solid var(--bord);font-size:.85rem;color:var(--mut);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.chip svg{width:15px;height:15px;color:var(--cyan);flex-shrink:0}
+.chip b{color:var(--ink);font-weight:700}
+.chip .ben{font-family:var(--disp);direction:ltr;unicode-bidi:isolate;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ico{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;flex-shrink:0;
+  background:linear-gradient(155deg,rgba(139,124,255,.16),rgba(62,224,255,.08));
+  border:1px solid rgba(139,124,255,.3);color:var(--vio2);
+  box-shadow:inset 0 0 18px rgba(139,124,255,.08)}
+.ico svg{width:24px;height:24px}
+.ico.c-cy{background:linear-gradient(155deg,rgba(62,224,255,.15),rgba(67,240,200,.07));border-color:rgba(62,224,255,.3);color:var(--cyan)}
+.ico.c-pk{background:linear-gradient(155deg,rgba(255,106,213,.15),rgba(139,124,255,.08));border-color:rgba(255,106,213,.3);color:var(--pink)}
+.ico.c-am{background:linear-gradient(155deg,rgba(255,195,92,.15),rgba(255,122,138,.07));border-color:rgba(255,195,92,.3);color:var(--amber)}
+.ico.c-mt{background:linear-gradient(155deg,rgba(67,240,200,.14),rgba(62,224,255,.08));border-color:rgba(67,240,200,.3);color:var(--mint)}
+.tag{display:inline-flex;align-items:center;gap:.35rem;padding:.2em .8em;border-radius:99px;font-size:.73rem;font-weight:700;white-space:nowrap;direction:ltr;unicode-bidi:isolate}
+.tag.g{background:rgba(62,224,255,.12);color:var(--cyan)}
+.tag.v{background:rgba(139,124,255,.16);color:var(--vio2)}
+.tag.p{background:rgba(255,106,213,.13);color:var(--pink)}
+.tag.a{background:rgba(255,195,92,.13);color:var(--amber)}
 .grid{display:grid;gap:clamp(12px,1.6vw,18px)}
-.g-auto{grid-template-columns:repeat(auto-fit,minmax(min(100%,272px),1fr))}
-.g-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
-</style>
-<style>
-/* ============ hero ============ */
-.hero{padding-top:clamp(112px,16vw,170px);text-align:center}
-.hero .badges{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.6rem}
-.hero h1{max-width:820px;margin-inline:auto}
-.hero .sub{max-width:640px;margin:1.2rem auto 2rem;font-size:clamp(1rem,.7vw + .85rem,1.18rem)}
-.hero .btn-row{margin-bottom:2.4rem}
-.hero .mini{display:flex;gap:.6rem 1.4rem;flex-wrap:wrap;justify-content:center;font-size:.86rem;color:var(--dim)}
-
-/* terminal */
-.term{
-  max-width:760px;margin:2.6rem auto 0;text-align:right;direction:rtl;
-  background:rgba(13,13,22,.85);border:1px solid var(--bord2);border-radius:var(--r);
-  box-shadow:0 30px 90px rgba(0,0,0,.5);overflow:hidden;
-}
-.term-bar{display:flex;align-items:center;gap:.45rem;padding:.7rem 1.05rem;border-bottom:1px solid var(--bord);background:rgba(255,255,255,.03)}
-.term-bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
-.term-bar i:nth-child(1){background:#ff5f57}.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.g-auto{grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
+/* ═══════════ hero + 3D scene ═══════════ */
+.hero{padding-top:clamp(112px,15vw,178px);padding-bottom:clamp(40px,6vw,84px);position:relative;overflow:clip}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(52% 40% at 50% -8%,rgba(139,124,255,.22),transparent 70%),
+    radial-gradient(36% 28% at 80% 14%,rgba(62,224,255,.08),transparent 70%)}
+.hero::after{content:'';position:absolute;left:50%;top:-2px;transform:translateX(-50%);
+  width:min(760px,90vw);height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(139,124,255,.8),rgba(62,224,255,.8),transparent)}
+.hero-in{text-align:center;position:relative}
+.hero .badges{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.7rem}
+.hero h1{max-width:920px;margin-inline:auto}
+.hero h1 .line{display:block}
+.hero .sub{max-width:680px;margin:1.4rem auto 1.15rem;font-size:clamp(1rem,.55vw + .9rem,1.19rem);line-height:2.15}
+.hero .btn-row{justify-content:center;margin-bottom:1.7rem}
+.hero .mini{display:flex;gap:.5rem 1.4rem;flex-wrap:wrap;justify-content:center;font-size:.86rem;color:var(--dim)}
+.hero .mini span{display:inline-flex;align-items:center;gap:.45rem}
+.hero .mini svg{width:15px;height:15px;color:var(--mint)}
+/* model-name pill row — fully isolated, never breaks across lines */
+.mrow{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
+.mpill{display:inline-flex;align-items:center;gap:.5rem;direction:ltr;unicode-bidi:isolate;
+  padding:.42rem 1rem;border-radius:99px;font-family:var(--mono);font-size:.78rem;font-weight:500;
+  color:var(--ink);background:rgba(13,20,48,.72);border:1px solid var(--bord2);
+  box-shadow:0 6px 22px -8px rgba(3,6,20,.7);white-space:nowrap}
+.mpill .dot{width:7px;height:7px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin:clamp(2.6rem,5vw,4rem) auto 0;
+  max-width:880px;background:var(--bord);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden}
+.stats>div{background:rgba(10,16,38,.82);padding:clamp(1.1rem,2.4vw,1.5rem) 1rem;
+  display:flex;flex-direction:column;gap:.1rem;align-items:center;text-align:center}
+.stats .n{font-family:var(--mono);font-weight:700;font-size:clamp(1.5rem,3vw,2.1rem);color:var(--cyan);direction:ltr;line-height:1.2}
+.stats .l{font-size:.82rem;color:var(--dim)}
+@media(min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
+/* ═══════════ 3D holographic stage ═══════════ */
+.scene{perspective:1400px;perspective-origin:50% 20%;margin-top:clamp(3rem,6vw,4.8rem)}
+.stage{position:relative;max-width:800px;margin-inline:auto;transform-style:preserve-3d;
+  transform:rotateX(var(--rx,8deg)) rotateY(var(--ry,-12deg));transition:transform .18s ease-out}
+.stage .panel{position:relative;
+  background:linear-gradient(165deg,rgba(22,31,66,.94),rgba(9,14,34,.97));
+  border:1px solid var(--bord2);border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--shadow),0 0 0 1px rgba(139,124,255,.06),0 70px 130px -45px rgba(139,124,255,.3)}
+/* glow deck under the panel — cinematic floor light */
+.stage::before{content:'';position:absolute;left:6%;right:6%;bottom:-9%;height:26%;
+  background:radial-gradient(50% 100% at 50% 0%,rgba(139,124,255,.4),rgba(62,224,255,.14) 55%,transparent 78%);
+  filter:blur(26px);transform:translateZ(-40px);pointer-events:none}
+/* light beam behind the deck */
+.stage::after{content:'';position:absolute;left:14%;right:14%;top:-24%;height:52%;
+  background:conic-gradient(from 200deg at 50% 100%,transparent 0deg,rgba(139,124,255,.14) 40deg,rgba(62,224,255,.1) 80deg,transparent 120deg);
+  filter:blur(18px);transform:translateZ(-60px);pointer-events:none}
+.term-bar{display:flex;align-items:center;gap:.45rem;padding:.75rem 1.1rem;
+  border-bottom:1px solid var(--bord);background:rgba(160,180,255,.03)}
+.term-bar i{width:11px;height:11px;border-radius:50%}
+.term-bar i:nth-child(1){background:#ff5f96}.term-bar i:nth-child(2){background:#ffc35c}.term-bar i:nth-child(3){background:#43f0c8}
 .term-bar span{margin-inline-start:auto;font-family:var(--mono);font-size:.72rem;color:var(--dim);direction:ltr}
-.term-body{padding:1.15rem 1.3rem;font-family:var(--mono);font-size:clamp(.72rem,.5vw + .62rem,.85rem);line-height:2.05;text-align:left;direction:ltr;color:#c9d4e8;overflow-x:auto;white-space:pre;min-height:12.2em}
-.term-body .cm{color:#5b6478}.term-body .ok{color:#34d399}.term-body .vi{color:#a78bfa}.term-body .cy{color:#22d3ee}.term-body .am{color:#fbbf24}
-.cursor{display:inline-block;width:.55em;height:1.05em;background:var(--cy);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+.term-body{padding:1.15rem 1.3rem;font-family:var(--mono);font-size:clamp(.68rem,.9vw + .5rem,.84rem);
+  line-height:2.1;text-align:left;direction:ltr;color:#c6d2f2;overflow-x:auto;white-space:pre;min-height:13.5em}
+.term-body .cm{color:#5f6c99}.term-body .ok{color:var(--mint)}.term-body .vi{color:var(--vio2)}
+.term-body .cy{color:var(--cyan)}.term-body .am{color:var(--amber)}.term-body .lm{color:var(--pink)}
+.cursor{display:inline-block;width:.55em;height:1.05em;background:var(--cyan);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-@media(min-width:720px){.term-body{min-height:10.8em}}
-
-/* ticker */
-.ticker{border-block:1px solid var(--bord);padding-block:1rem;overflow:hidden;position:relative;background:rgba(255,255,255,.015)}
-.ticker-track{display:flex;gap:2.6rem;width:max-content;animation:tick 34s linear infinite;direction:ltr}
+/* orbiting provider chips — each at its own Z depth, clear of the panel */
+.pchip{position:absolute;display:inline-flex;align-items:center;gap:.5rem;direction:ltr;unicode-bidi:isolate;
+  padding:.5rem .95rem;border-radius:99px;font-family:var(--mono);font-size:.74rem;font-weight:500;color:var(--ink);
+  background:rgba(12,18,44,.9);border:1px solid var(--bord2);white-space:nowrap;
+  box-shadow:0 18px 40px -12px rgba(3,6,20,.75),0 0 24px -6px rgba(139,124,255,.25);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  animation:float var(--fd,7s) ease-in-out var(--fdel,0s) infinite alternate}
+.pchip .dot{width:7px;height:7px}
+@keyframes float{from{transform:translateZ(var(--z,60px)) translateY(0)}to{transform:translateZ(var(--z,60px)) translateY(-11px)}}
+.pc1{top:-6%;inset-inline-start:-7.5%;--z:95px;--fd:6.5s}
+.pc2{top:9%;inset-inline-end:-7%;--z:70px;--fd:8s;--fdel:.9s}
+.pc3{bottom:-7%;inset-inline-start:-5.5%;--z:80px;--fd:7.2s;--fdel:1.6s}
+.pc4{bottom:-6%;inset-inline-end:7%;--z:55px;--fd:6.8s;--fdel:.4s}
+.pc5{top:-12%;inset-inline-end:16%;--z:110px;--fd:7.6s;--fdel:1.1s}
+@media(min-width:761px) and (max-width:1024px){
+  .pc1{inset-inline-start:-2%}.pc2{inset-inline-end:-2%}.pc3{inset-inline-start:-2.5%}
+}
+@media(max-width:760px){
+  .pc1{inset-inline-start:2%;top:-8%}.pc2{display:none}.pc3{display:none}
+  .pc5{display:none}.pchip{font-size:.64rem;padding:.38rem .7rem}
+  .stage{transform:rotateX(var(--rx,5deg)) rotateY(var(--ry,-7deg))}
+  .pc4{bottom:-8%;inset-inline-end:0}
+}
+/* ═══════════ ticker ═══════════ */
+.ticker{border-block:1px solid var(--bord);padding-block:1.05rem;overflow:hidden;position:relative;direction:ltr;
+  background:linear-gradient(180deg,rgba(160,180,255,.025),transparent)}
+.ticker::before,.ticker::after{content:'';position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none}
+.ticker::before{inset-inline-start:0;background:linear-gradient(90deg,var(--bg0),transparent)}
+.ticker::after{inset-inline-end:0;background:linear-gradient(-90deg,var(--bg0),transparent)}
+.ticker-track{display:flex;gap:2.8rem;width:max-content;animation:tick 38s linear infinite;direction:ltr}
 .ticker:hover .ticker-track{animation-play-state:paused}
 @keyframes tick{to{transform:translateX(-50%)}}
-.tk{font-family:var(--mono);font-size:.86rem;color:var(--dim);display:flex;align-items:center;gap:.55rem;white-space:nowrap}
-.tk b{color:var(--txt);font-weight:600}
-
-/* feature highlight band (OpenCode free) */
-.band{
-  border-block:1px solid var(--bord);
-  background:
-    radial-gradient(680px 340px at 12% 50%, rgba(52,211,153,.10), transparent 60%),
-    radial-gradient(560px 300px at 88% 50%, rgba(34,211,238,.08), transparent 60%);
-}
-.split{display:grid;gap:clamp(22px,4vw,48px);align-items:center}
-@media(min-width:880px){.split{grid-template-columns:1.05fr .95fr}}
-.check-list{display:flex;flex-direction:column;gap:.65rem;margin-top:1.3rem;list-style:none;padding:0}
-.check-list li{display:flex;gap:.7rem;align-items:flex-start;color:var(--mut);font-size:.95rem}
-.check-list .mono{white-space:nowrap}
-.check-list li::before{content:'✓';color:var(--gr);font-weight:800;flex-shrink:0;margin-top:.08em}
-.codebox{
-  position:relative;background:#0a0a12;border:1px solid var(--bord2);border-radius:var(--rs);
-  padding:1.05rem 1.15rem;font-family:var(--mono);font-size:clamp(.72rem,.45vw + .65rem,.82rem);
-  line-height:1.95;text-align:left;direction:ltr;overflow-x:auto;white-space:pre;color:#c9d4e8;
-}
-.codebox .c1{color:#5b6478}.codebox .k{color:#a78bfa}.codebox .s{color:#34d399}.codebox .n{color:#fbbf24}.codebox .fn{color:#22d3ee}
-.nobadge{
-  position:absolute;top:.6rem;right:.85rem;background:linear-gradient(100deg,#34d399,#22d3ee);
-  color:#04281c;font-size:.7rem;font-weight:800;padding:.22em .9em;border-radius:99px;direction:ltr;
-}
-.codebox.has-badge{padding-top:2.5rem}
-
+.tk{font-family:var(--mono);font-size:.84rem;color:var(--dim);display:inline-flex;align-items:center;gap:.6rem;white-space:nowrap;flex:none}
+.tk b{color:var(--ink);font-weight:600;unicode-bidi:isolate}
+.tk .fa{font-family:'Vazirmatn',sans-serif}
+/* ═══════════ band + split + checklist ═══════════ */
+.band{border-block:1px solid var(--bord);position:relative}
+.band::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(700px 380px at 12% 50%,rgba(139,124,255,.07),transparent 65%),
+             radial-gradient(620px 340px at 88% 50%,rgba(62,224,255,.06),transparent 65%)}
+.band>.wrap{position:relative}
+.split{display:grid;gap:clamp(26px,4vw,54px);align-items:center}
+@media(min-width:920px){.split{grid-template-columns:1.04fr .96fr}}
+.check-list{display:flex;flex-direction:column;gap:.85rem;margin-top:1.4rem}
+.check-list li{display:grid;grid-template-columns:auto 1fr;gap:.75rem;align-items:start;
+  color:var(--mut);font-size:.95rem;overflow-wrap:anywhere}
+.check-list li svg{width:19px;height:19px;color:var(--mint);flex-shrink:0;margin-top:.42em}
+.check-list li b{display:inline}
+/* ═══════════ codebox ═══════════ */
+.codebox{position:relative;background:#060a1c;border:1px solid var(--bord2);border-radius:var(--rs);
+  padding:1.1rem 1.2rem;font-family:var(--mono);font-size:clamp(.7rem,.4vw + .62rem,.82rem);
+  line-height:2;text-align:left;direction:ltr;overflow-x:auto;white-space:pre;color:#c6d2f2;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.codebox .c1{color:#5f6c99}.codebox .k{color:var(--vio2)}.codebox .s{color:var(--mint)}
+.codebox .n{color:var(--amber)}.codebox .fn{color:var(--cyan)}.codebox .lm{color:var(--pink)}
+.nobadge{position:absolute;top:.65rem;inset-inline-start:.9rem;display:inline-flex;align-items:center;gap:.4rem;
+  background:var(--grad);color:#fff;font-size:.68rem;font-weight:800;padding:.24em .9em;border-radius:99px;direction:ltr;
+  letter-spacing:.06em}
+.codebox.has-badge{padding-top:2.6rem}
+.cap{margin-top:.85rem;color:var(--dim);font-size:.83rem;line-height:1.9}
+/* ═══════════ cards + 3D tilt ═══════════ */
+.card{position:relative;background:var(--panel);border:1px solid var(--bord);border-radius:var(--r);
+  padding:clamp(1.2rem,2.4vw,1.6rem);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s;
+  transform-style:preserve-3d;will-change:transform;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;
+  background:radial-gradient(340px 200px at var(--gx,50%) var(--gy,0%),rgba(139,124,255,.12),transparent 65%)}
+.card::after{content:'';position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity .3s;pointer-events:none;
+  background:linear-gradient(120deg,rgba(139,124,255,.4),transparent 30%,transparent 70%,rgba(62,224,255,.35)) border-box;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.card:hover{border-color:rgba(139,124,255,.3);box-shadow:var(--shadow)}
+.card:hover::before,.card:hover::after{opacity:1}
+.card h3{margin:.95rem 0 .4rem}
+.card p{font-size:.92rem;line-height:2}
+.card .ico{margin-bottom:.2rem}
 /* steps */
 .steps{counter-reset:st;display:grid;gap:clamp(12px,1.6vw,18px)}
-@media(min-width:880px){.steps{grid-template-columns:repeat(3,1fr)}}
-.step{counter-increment:st;position:relative;padding-top:1rem}
-.step::before{
-  content:counter(st,decimal-leading-zero);position:absolute;top:-.35rem;inset-inline-end:.4rem;
-  font-family:var(--mono);font-size:2.6rem;font-weight:700;color:transparent;
-  -webkit-text-stroke:1.4px rgba(167,139,250,.4);line-height:1;
+@media(min-width:940px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{counter-increment:st;position:relative;padding-top:1.15rem}
+.step::before{content:counter(st,decimal-leading-zero);position:absolute;top:-.4rem;inset-inline-end:.55rem;
+  font-family:var(--mono);font-size:2.7rem;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.4px rgba(139,124,255,.45);line-height:1;direction:ltr;unicode-bidi:isolate}
+/* ═══════════ combo flow ═══════════ */
+.flow{display:flex;flex-direction:column;gap:.55rem;max-width:520px;margin-top:1.5rem}
+.fnode{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.1rem;border-radius:14px;
+  background:var(--panel);border:1px solid var(--bord);font-size:.92rem}
+.fnode .fx{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
+  font-family:var(--mono);font-weight:700;font-size:.8rem;direction:ltr}
+.fnode b{font-family:var(--mono);font-size:.86em;direction:ltr;unicode-bidi:isolate}
+.fnode .ft{margin-inline-start:auto;font-size:.76rem;color:var(--dim)}
+.farrow{display:flex;align-items:center;gap:.6rem;color:var(--dim);font-size:.76rem;padding-inline-start:2.2rem}
+.farrow svg{width:14px;height:14px;transform:rotate(90deg);color:var(--cyan)}
+.fx.f1{background:rgba(139,124,255,.16);color:var(--vio2)}
+.fx.f2{background:rgba(62,224,255,.14);color:var(--cyan)}
+.fx.f3{background:rgba(67,240,200,.14);color:var(--mint)}
+/* ═══════════ tabs ═══════════ */
+.tab-list{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.15rem}
+.tab{padding:.68rem 1.3rem;border-radius:12px;border:1px solid var(--bord);
+  background:rgba(160,180,255,.04);color:var(--mut);font-weight:600;
+  font-size:.9rem;transition:.15s;min-height:46px}
+.tab:hover{color:var(--ink);border-color:var(--bord2)}
+.tab.on{background:rgba(139,124,255,.16);border-color:rgba(139,124,255,.5);color:var(--vio2)}
+.tabpane{display:none}
+.tabpane.on{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* ═══════════ parity rows ═══════════ */
+.prows{border:1px solid var(--bord);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.prow{display:grid;grid-template-columns:1fr;gap:.3rem .9rem;padding:1rem clamp(1rem,2.5vw,1.5rem);
+  border-bottom:1px solid var(--bord);transition:background .15s;align-items:center}
+.prow:last-child{border-bottom:none}
+.prow:hover{background:rgba(160,180,255,.03)}
+.prow .pn{font-family:var(--mono);font-size:.86rem;font-weight:600;color:var(--ink);direction:ltr;unicode-bidi:isolate;text-align:start}
+.prow .pt{justify-self:start}
+.prow .pd{color:var(--mut);font-size:.9rem;line-height:1.95}
+@media(min-width:880px){
+  .prow{grid-template-columns:1.05fr auto 1.55fr;gap:1.2rem}
+  .prow .pt{justify-self:center}
 }
-
-/* tables */
-.table-scroll{overflow-x:auto;border:1px solid var(--bord);border-radius:var(--r);background:var(--panel);-webkit-overflow-scrolling:touch}
-.tbl{width:100%;border-collapse:collapse;font-size:clamp(.82rem,.4vw + .74rem,.92rem);min-width:560px}
-.tbl th{background:rgba(255,255,255,.045);padding:.85rem 1.1rem;text-align:right;font-weight:700;color:var(--txt);white-space:nowrap;border-bottom:1px solid var(--bord2)}
-.tbl td{padding:.8rem 1.1rem;border-bottom:1px solid var(--bord);color:var(--mut);vertical-align:top}
-.tbl tr:last-child td{border-bottom:none}
-.tbl .yes{color:var(--gr);font-weight:700}.tbl .no{color:var(--dim)}
-.tag{display:inline-flex;align-items:center;gap:.3rem;padding:.18em .8em;border-radius:99px;font-size:.74rem;font-weight:700;white-space:nowrap}
-.tag.g{background:rgba(52,211,153,.13);color:var(--gr)}
-.tag.v{background:rgba(167,139,250,.15);color:#c4b5fd}
-.tag.c{background:rgba(34,211,238,.13);color:var(--cy)}
-.tag.a{background:rgba(251,191,36,.14);color:var(--am)}
-
-/* meters (models) */
-.meter{margin-top:.9rem}
-.meter .bar{height:9px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
-.meter .fill{height:100%;border-radius:99px;background:var(--grad);width:0;transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
-.meter .lbl{display:flex;justify-content:space-between;font-size:.78rem;color:var(--dim);margin-bottom:.3rem}
-
-/* version cards */
-.ver .num{font-family:var(--mono);font-size:.78rem;color:var(--dim);direction:ltr;display:inline-block}
-.ver ul{margin-top:.6rem;display:flex;flex-direction:column;gap:.35rem;padding-right:1.15em}
-.ver li{font-size:.9rem;color:var(--mut)}
-.ver li::marker{color:var(--vio)}
-
-/* FAQ */
-.faq{max-width:780px;margin-inline:auto;display:flex;flex-direction:column;gap:.8rem}
-details{background:var(--panel);border:1px solid var(--bord);border-radius:var(--rs);overflow:hidden}
-details[open]{border-color:var(--bord2)}
-summary{
-  cursor:pointer;list-style:none;padding:1.05rem 1.25rem;font-weight:700;font-size:.98rem;
-  display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:52px;
-}
+/* ═══════════ models + meters ═══════════ */
+.meter{margin-top:1rem}
+.meter .lbl{display:flex;justify-content:space-between;font-size:.78rem;color:var(--dim);margin-bottom:.35rem}
+.meter .bar{height:8px;border-radius:99px;background:rgba(160,180,255,.08);overflow:hidden}
+.meter .fill{height:100%;border-radius:99px;background:var(--grad);width:0;
+  transition:width 1.2s cubic-bezier(.2,.7,.2,1);box-shadow:0 0 12px rgba(139,124,255,.5)}
+.rank{display:flex;align-items:center;justify-content:space-between;gap:.8rem}
+.rank .ico{width:48px;height:48px}
+.rank .pos{font-family:var(--mono);font-size:1.9rem;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.3px rgba(180,168,255,.5);direction:ltr;line-height:1}
+/* ═══════════ changelog timeline ═══════════ */
+.tline{position:relative;max-width:860px;margin-inline:auto;padding-inline-start:clamp(1.4rem,4vw,2.6rem)}
+.tline::before{content:'';position:absolute;inset-inline-start:7px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(180deg,var(--cyan),var(--vio),transparent)}
+.titem{position:relative;padding-bottom:clamp(1.6rem,3vw,2.4rem)}
+.titem:last-child{padding-bottom:0}
+.titem::before{content:'';position:absolute;inset-inline-start:calc(-1*clamp(1.4rem,4vw,2.6rem) + 1px);top:14px;
+  width:14px;height:14px;border-radius:50%;background:var(--bg0);border:3px solid var(--cyan);
+  box-shadow:0 0 16px rgba(62,224,255,.55)}
+.titem.alt::before{border-color:var(--vio);box-shadow:0 0 16px rgba(139,124,255,.55)}
+.titem .vhead{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:.55rem}
+.titem .vnum{font-family:var(--mono);font-weight:700;font-size:1.1rem;direction:ltr;unicode-bidi:isolate}
+.titem .vdate{font-family:var(--mono);font-size:.74rem;color:var(--dim);direction:ltr}
+.titem ul{display:flex;flex-direction:column;gap:.4rem}
+.titem li{position:relative;padding-inline-start:1.15em;color:var(--mut);font-size:.92rem;overflow-wrap:anywhere}
+.titem li::before{content:'';position:absolute;inset-inline-start:0;top:.95em;width:5px;height:5px;border-radius:50%;background:var(--cyan)}
+/* ═══════════ FAQ ═══════════ */
+.faq{max-width:800px;margin-inline:auto;display:flex;flex-direction:column;gap:.75rem}
+details{background:var(--panel);border:1px solid var(--bord);border-radius:var(--rs);overflow:hidden;transition:border-color .2s}
+details[open]{border-color:rgba(139,124,255,.35)}
+summary{cursor:pointer;list-style:none;padding:1.1rem 1.3rem;font-weight:700;font-size:.98rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:54px;line-height:1.8}
 summary::-webkit-details-marker{display:none}
-summary::after{content:'+';font-size:1.35rem;color:var(--dim);font-weight:400;transition:.2s;flex-shrink:0}
-details[open] summary::after{transform:rotate(45deg)}
-details .a{padding:0 1.25rem 1.15rem;color:var(--mut);font-size:.93rem}
-details .a .mono{font-size:.8em}
-
-/* footer */
-footer{border-top:1px solid var(--bord);padding:clamp(36px,6vw,64px) 0 40px;background:rgba(255,255,255,.015)}
-.foot-grid{display:grid;gap:2rem}
-@media(min-width:760px){.foot-grid{grid-template-columns:1.4fr 1fr 1fr}}
-footer h4{font-size:.95rem;margin-bottom:.8rem}
-footer a{display:block;color:var(--dim);padding-block:.22rem;font-size:.9rem;transition:.15s}
-footer a:hover{color:var(--txt)}
-.copy{margin-top:2.4rem;padding-top:1.4rem;border-top:1px solid var(--bord);display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:center;justify-content:space-between;color:var(--dim);font-size:.83rem}
-
-/* reveal */
-.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+summary .pl{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;
+  border:1px solid var(--bord2);color:var(--cyan);transition:.25s}
+summary .pl svg{width:13px;height:13px}
+details[open] summary .pl{transform:rotate(45deg);background:rgba(139,124,255,.14)}
+details .a{padding:0 1.3rem 1.2rem;color:var(--mut);font-size:.93rem;overflow-wrap:anywhere}
+/* ═══════════ big CTA ═══════════ */
+.cta-box{position:relative;border:1px solid var(--bord2);border-radius:calc(var(--r) + 8px);overflow:hidden;
+  padding:clamp(2.4rem,6vw,4.5rem) clamp(1.2rem,4vw,3rem);text-align:center;
+  background:
+    radial-gradient(60% 90% at 50% 115%,rgba(62,224,255,.14),transparent 65%),
+    radial-gradient(50% 70% at 50% -20%,rgba(139,124,255,.18),transparent 65%),
+    var(--panel)}
+.cta-box::before{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(140deg,rgba(139,124,255,.5),transparent 35%,transparent 65%,rgba(255,106,213,.4)) border-box;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.cta-box h2{margin-bottom:.8rem}
+.cta-box p{max-width:560px;margin:0 auto 1.9rem}
+/* ═══════════ footer ═══════════ */
+footer{border-top:1px solid var(--bord);padding:clamp(40px,6vw,70px) 0 44px;position:relative;overflow:clip}
+footer::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  width:min(560px,80vw);height:1px;background:linear-gradient(90deg,transparent,rgba(139,124,255,.7),rgba(62,224,255,.7),transparent)}
+.foot-grid{display:grid;gap:2.2rem}
+@media(min-width:800px){.foot-grid{grid-template-columns:1.5fr 1fr 1fr}}
+footer h4{font-size:.92rem;margin-bottom:.85rem;color:var(--ink)}
+footer .fl a{display:block;color:var(--dim);padding-block:.24rem;font-size:.9rem;transition:.15s;width:fit-content}
+footer .fl a:hover{color:var(--cyan)}
+.copy{margin-top:2.6rem;padding-top:1.5rem;border-top:1px solid var(--bord);display:flex;flex-wrap:wrap;
+  gap:.6rem 1.5rem;align-items:center;justify-content:space-between;color:var(--dim);font-size:.83rem}
+/* ═══════════ reveal ═══════════ */
+.rv{opacity:0;transform:translateY(26px);
+  transition:opacity .75s ease var(--d,0s),transform .75s cubic-bezier(.2,.7,.2,1) var(--d,0s)}
 .rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .rv{opacity:1;transform:none}
   html{scroll-behavior:auto}
+  .grain{display:none}
 }
-
-/* tabs */
-.tab-list{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.1rem}
-.tab{
-  padding:.65rem 1.25rem;border-radius:11px;border:1px solid var(--bord);
-  background:rgba(255,255,255,.04);color:var(--mut);font:inherit;font-weight:600;
-  font-size:.9rem;cursor:pointer;transition:.15s;min-height:44px;
-}
-.tab:hover{color:var(--txt);border-color:var(--bord2)}
-.tab.on{background:rgba(139,92,246,.16);border-color:rgba(139,92,246,.5);color:#d6c9ff}
-.tabpane{display:none}
-.tabpane.on{display:block;animation:fade .25s ease}
 </style>
 <noscript><style>.rv{opacity:1;transform:none}.term-body{white-space:pre-wrap}</style></noscript>
 </head>
 <body>
-<div class="bg-fx" aria-hidden="true"></div>
+<div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="vign" aria-hidden="true"></div>
+<div class="pbar" aria-hidden="true"><i id="pbar"></i></div>
 
-<input type="checkbox" id="navtoggle" aria-hidden="true">
-<nav class="nav" aria-label="ناوبری اصلی">
+<!-- ═══════ custom icon set — hand-drawn, 24px grid, 1.7 stroke ═══════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <g id="i-hex"><path d="M12 2.5l8 4.6v9.8l-8 4.6-8-4.6V7.1l8-4.6z"/><circle cx="12" cy="12" r="3.1"/></g>
+    <g id="i-menu"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+    <g id="i-x"><path d="M6 6l12 12M18 6L6 18"/></g>
+    <g id="i-bolt"><path d="M13 2.5 4.5 14h6L9 21.5 17.5 10h-6L13 2.5z"/></g>
+    <g id="i-keyoff"><circle cx="8" cy="16" r="4.2"/><path d="M11 12.9 20.8 3.1M17.4 6.5l2.7 2.7M14.2 9.7l1.9 1.9M3.5 3.5l17 17"/></g>
+    <g id="i-key"><circle cx="8" cy="15.5" r="4.2"/><path d="M11.2 12.3 21 2.5M17.3 6.2l2.7 2.7"/></g>
+    <g id="i-layers"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3.5 13.6 12 18.2l8.5-4.6"/></g>
+    <g id="i-gauge"><path d="M4.5 15.5a8 8 0 1 1 15 0"/><path d="M12 15.5 16.2 10"/><circle cx="12" cy="15.5" r="1.4"/></g>
+    <g id="i-terminal"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 9.5l3 3-3 3M12.5 15.5H17"/></g>
+    <g id="i-compress"><path d="M9 4v3a2 2 0 0 1-2 2H4M15 4v3a2 2 0 0 0 2 2h3M9 20v-3a2 2 0 0 0-2-2H4M15 20v-3a2 2 0 0 1 2-2h3"/></g>
+    <g id="i-diff"><path d="M12 3.5v17M6.5 10.5v6M3.5 13.5h6M17.5 7.5v6M14.5 10.5h6"/></g>
+    <g id="i-shield"><path d="M12 3l7.5 2.8v5.4c0 4.6-3.2 7.6-7.5 9.3-4.3-1.7-7.5-4.7-7.5-9.3V5.8L12 3z"/><path d="M9 11.8l2.2 2.2 4-4.2"/></g>
+    <g id="i-spark"><path d="M12 3l1.9 5.6 5.6 1.9-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9L12 3z"/></g>
+    <g id="i-cpu"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/><rect x="10.2" y="10.2" width="3.6" height="3.6"/><path d="M9 3.5v3M15 3.5v3M9 17.5v3M15 17.5v3M3.5 9h3M3.5 15h3M17.5 9h3M17.5 15h3"/></g>
+    <g id="i-plug"><path d="M9 3.5V8M15 3.5V8"/><path d="M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0V8z"/><path d="M12 17v3.5"/></g>
+    <g id="i-medal"><circle cx="12" cy="9.5" r="5.5"/><path d="M8.8 14 7 21l5-2.7L17 21l-1.8-7"/></g>
+    <g id="i-copy"><rect x="8.5" y="8.5" width="13" height="13" rx="2.2"/><path d="M5.5 15.5h-1a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></g>
+    <g id="i-arrow"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></g>
+    <g id="i-check"><path d="M4.5 12.8l4.8 4.7L19.5 7"/></g>
+    <g id="i-plus"><path d="M12 5.5v13M5.5 12h13"/></g>
+    <g id="i-down"><path d="M6 9.5l6 6 6-6"/></g>
+    <g id="i-route"><circle cx="5" cy="12" r="2.3"/><circle cx="19" cy="6.5" r="2.3"/><circle cx="19" cy="17.5" r="2.3"/><path d="M7.2 11.1l9.6-3.8M7.2 12.9l9.6 3.8"/></g>
+    <g id="i-chart"><path d="M4 4v16.5h16.5"/><path d="M8.5 16.5v-5M13 16.5V8M17.5 16.5v-7"/></g>
+    <g id="i-box"><path d="M12 2.8l8 4.5v9.4l-8 4.5-8-4.5V7.3l8-4.5z"/><path d="M12 12l8-4.7M12 12 4 7.3M12 12v9"/></g>
+    <g id="i-gh" fill="currentColor" stroke="none"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.68.8.56A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></g>
+  </defs>
+</svg>
+
+<!-- ═══════ nav ═══════ -->
+<nav class="nav" id="nav" aria-label="ناوبری اصلی">
   <div class="nav-in">
-    <a class="logo" href="#top">🌐 <span class="g">OmniRouter</span></a>
+    <a class="logo" href="#top" aria-label="OmniRouter — بالای صفحه">
+      <svg class="hex" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-hex"/></svg>
+      <b>Omni<span class="grad">Router</span></b>
+    </a>
     <div class="nav-links">
       <a href="#opencode">OpenCode Free</a>
       <a href="#saver">Token Saver</a>
       <a href="#features">قابلیت‌ها</a>
       <a href="#start">شروع سریع</a>
       <a href="#models">مدل‌ها</a>
-      <a href="#changelog">تغییرات</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a class="nav-cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub ↗</a>
-    <label class="burger" for="navtoggle" aria-label="باز و بسته کردن منو">
-      <svg class="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      <svg class="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </label>
+    <a class="nav-cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gh"/></svg>
+      GitHub
+    </a>
+    <button class="burger" id="burger" aria-label="باز کردن منو" aria-expanded="false">
+      <svg class="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><use href="#i-menu"/></svg>
+      <svg class="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><use href="#i-x"/></svg>
+    </button>
   </div>
 </nav>
-<div class="m-panel">
-  <a href="#opencode">OpenCode Free — بدون کلید</a>
-  <a href="#saver">Token Saver</a>
-  <a href="#features">قابلیت‌ها</a>
-  <a href="#start">شروع سریع</a>
-  <a href="#connect">اتصال کلاینت‌ها</a>
-  <a href="#models">مدل‌ها</a>
-  <a href="#changelog">تغییرات</a>
-  <a href="#faq">FAQ</a>
-  <a class="cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub ↗</a>
+<div class="mnav" id="mnav">
+  <a href="#opencode"><span class="no">01</span> OpenCode Free — بدون کلید</a>
+  <a href="#saver"><span class="no">02</span> Token Saver</a>
+  <a href="#features"><span class="no">03</span> قابلیت‌ها</a>
+  <a href="#start"><span class="no">04</span> شروع سریع</a>
+  <a href="#connect"><span class="no">05</span> اتصال کلاینت‌ها</a>
+  <a href="#models"><span class="no">06</span> مدل‌ها</a>
+  <a href="#changelog"><span class="no">07</span> تغییرات نسخه‌ها</a>
+  <a href="#faq"><span class="no">08</span> سؤال‌های پرتکرار</a>
+  <a class="cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub — omnirouter</a>
 </div>
-
+<!-- ═══════ hero ═══════ -->
 <header class="hero" id="top">
-  <div class="wrap">
-    <div class="badges">
-      <span class="chip">🆓 OpenCode Zen — <b>بدون کلید</b></span>
-      <span class="chip">🚀 RTK Token Saver</span>
-      <span class="chip">🧩 OpenAI + Anthropic</span>
+  <div class="wrap hero-in">
+    <div class="badges rv in">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-keyoff"/></svg><span class="ben">OpenCode Zen</span><b>بدون کلید</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-compress"/></svg><span class="ben">RTK</span> Token Saver</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-layers"/></svg><span class="ben">OpenAI + Anthropic</span></span>
     </div>
-    <h1>یک روتر، <span class="grad">همه‌ی مدل‌ها.</span><br>کدنویسی رایگان، بی‌وقفه.</h1>
-    <p class="sub">OmniRouter بریج‌های وب <strong>Qwen</strong>، <strong>GLM 5.3</strong>، <strong>DeepSeek</strong>، <strong>Gemini</strong> و <strong>OpenCode Zen</strong> را با پروایدرهای سفارشی ترکیب می‌کند — با failover خودکار، فشرده‌سازی توکن RTK و داشبورد فارسی. یک فایل، بدون وابستگی.</p>
-    <div class="btn-row">
-      <a class="btn pri" href="#start">شروع در ۶۰ ثانیه</a>
-      <a class="btn" href="#opencode">بدون کلید → OpenCode Free</a>
+    <h1 class="rv in">
+      <span class="line">یک روتر، <span class="grad">همه‌ی مدل‌ها.</span></span>
+      <span class="line">کدنویسی رایگان، بدون توقف.</span>
+    </h1>
+    <p class="sub rv in" style="--d:.08s">بریج‌های واقعی وب — <bdi>Qwen</bdi>، <bdi>GLM 5.3</bdi>، <bdi>DeepSeek</bdi> و <bdi>Gemini</bdi> — کنار پروایدر رایگان <bdi>OpenCode Zen</bdi>، همه پشت یک endpoint واحد. با failover خودکار و فشرده‌سازی توکن؛ یک فایل، بدون وابستگی.</p>
+    <div class="mrow rv in" style="--d:.11s" aria-label="مدل‌های شاخص">
+      <span class="mpill"><span class="dot" style="background:var(--vio)"></span>qwen3.8-max</span>
+      <span class="mpill"><span class="dot" style="background:var(--cyan)"></span>GLM 5.3</span>
+      <span class="mpill"><span class="dot" style="background:var(--rose)"></span>deepseek-chat</span>
+      <span class="mpill"><span class="dot" style="background:var(--mint)"></span>gemini-3.6-flash</span>
+      <span class="mpill"><span class="dot" style="background:var(--amber)"></span>oc/big-pickle · free</span>
     </div>
-    <div class="mini">
-      <span>🪟 ویندوز</span><span>🐧 لینوکس</span><span>🍎 مک</span><span>🐳 داکر</span><span>🔑 کلیدهای sk- با سهمیه</span><span>📊 آمار زنده</span>
+    <div class="btn-row rv in" style="--d:.14s">
+      <a class="btn pri" href="#start">شروع در ۶۰ ثانیه
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></a>
+      <a class="btn" href="#opencode"><span class="ben">OpenCode Free</span> — بدون کلید</a>
+    </div>
+    <div class="mini rv in" style="--d:.2s">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>ویندوز</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>لینوکس</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>مک</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>داکر</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>کلیدهای <bdi class="lt v">sk-</bdi></span>
     </div>
 
-    <div class="term" dir="ltr">
-      <div class="term-bar"><i></i><i></i><i></i><span>omnirouter — zsh</span></div>
-      <div class="term-body" id="term"></div>
+    <div class="stats rv">
+      <div><span class="n" data-count="77">۰</span><span class="l">مدل زنده در کاتالوگ</span></div>
+      <div><span class="n" data-count="5">۰</span><span class="l">پروایدر داخلی</span></div>
+      <div><span class="n" data-usd="1">$0</span><span class="l">هزینه‌ی شروع</span></div>
+      <div><span class="n" data-count="1">۰</span><span class="l">فایل اجرایی</span></div>
+    </div>
+
+    <!-- 3D holographic stage -->
+    <div class="scene rv">
+      <div class="stage" id="stage">
+        <div class="pchip pc1"><span class="dot" style="background:var(--vio)"></span>qwen3.8-max</div>
+        <div class="pchip pc2"><span class="dot" style="background:var(--cyan)"></span>glm-5.3</div>
+        <div class="pchip pc3"><span class="dot" style="background:var(--rose)"></span>deepseek-chat</div>
+        <div class="pchip pc4"><span class="dot" style="background:var(--mint)"></span>gemini-3.6-flash</div>
+        <div class="pchip pc5"><span class="dot" style="background:var(--amber)"></span>oc/big-pickle · free</div>
+        <div class="panel" dir="ltr">
+          <div class="term-bar"><i></i><i></i><i></i><span>omnirouter — zsh</span></div>
+          <div class="term-body" id="term"></div>
+        </div>
+      </div>
     </div>
   </div>
 </header>
-
+<!-- ═══════ ticker ═══════ -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track" id="ticker-track">
-    <span class="tk">◆ <b>qwen3.8-max</b> tool-calling</span>
-    <span class="tk">◆ <b>glm-5.3</b> جدید</span>
-    <span class="tk">◆ <b>glm-5.3-flash</b> سریع</span>
-    <span class="tk">◆ <b>gemini-3.6-flash</b> مهمان</span>
-    <span class="tk">◆ <b>deepseek-chat</b> PoW</span>
-    <span class="tk">◆ <b>oc/big-pickle</b> بدون کلید</span>
-    <span class="tk">◆ <b>combo:free-stack</b> زنجیره</span>
-    <span class="tk">◆ <b>/v1/messages</b> Anthropic</span>
+    <span class="tk"><span class="dot" style="background:var(--vio)"></span><b>qwen3.8-max</b><span class="fa">tool-calling</span></span>
+    <span class="tk"><span class="dot" style="background:var(--cyan)"></span><b>GLM 5.3</b><span class="fa">پرچم‌دار</span></span>
+    <span class="tk"><span class="dot" style="background:var(--cyan)"></span><b>GLM 5.3-flash</b><span class="fa">سریع</span></span>
+    <span class="tk"><span class="dot" style="background:var(--mint)"></span><b>gemini-3.6-flash</b><span class="fa">مهمان</span></span>
+    <span class="tk"><span class="dot" style="background:var(--rose)"></span><b>deepseek-chat</b><span class="fa">PoW</span></span>
+    <span class="tk"><span class="dot" style="background:var(--amber)"></span><b>oc/big-pickle</b><span class="fa">بدون کلید</span></span>
+    <span class="tk"><span class="dot" style="background:var(--pink)"></span><b>combo:free-stack</b><span class="fa">زنجیره</span></span>
+    <span class="tk"><span class="dot" style="background:var(--vio2)"></span><b>/v1/messages</b><span class="fa">anthropic</span></span>
   </div>
 </div>
-<!-- ═══════════ OPENCODE FREE (بخش ویژه) ═══════════ -->
+
+<!-- ═══════ opencode free ═══════ -->
 <section class="band" id="opencode">
   <div class="wrap">
     <div class="split">
       <div class="rv">
         <span class="kicker">OpenCode Free · No API Key</span>
-        <h2>مثل 9router: مدل‌های رایگان<br><span class="grad">بدون هیچ کلیدی</span></h2>
-        <p style="margin-top:1rem">پروایدر داخلی <strong class="mono">oc</strong> به دروازه‌ی Zen سایت OpenCode وصل می‌شود — همان کاری که 9router می‌کند. مدل‌های رایگانش فقط یک شناسه‌ی نشست می‌خواهند که OmniRouter خودش می‌سازد. <strong>هیچ ثبت‌نامی، هیچ کلیدی.</strong></p>
+        <h2>مثل 9router: مدل‌های رایگان،<br><span class="grad">بدون هیچ کلیدی</span></h2>
+        <p style="margin-top:1.1rem">پروایدر داخلی <bdi class="lt">oc</bdi> به دروازه‌ی Zen سایت OpenCode وصل می‌شود — همان کاری که 9router می‌کند. مدل‌های رایگانش فقط یک شناسه‌ی نشست می‌خواهند که OmniRouter خودش می‌سازد. <strong>هیچ ثبت‌نامی، هیچ کلیدی.</strong></p>
         <ul class="check-list">
-          <li><strong>بدون کلید و ثبت‌نام</strong> — نصب کن و همان لحظه مدل‌های رایگان را صدا بزن</li>
-          <li><strong>fetch خودکار مدل‌ها</strong> — لیست مدل‌ها زنده از منبع رسمی zen می‌آید و هر ۶۰ ثانیه تازه می‌شود.</li>
-          <li><strong>استریم SSE و tool-calling</strong> — پاس‌ترو شفاف است و فرمت OpenAI دست‌نخورده می‌ماند.</li>
-          <li><strong>پشتیبانی Anthropic</strong> — مسیر <span class="mono">/v1/messages</span> روی oc ترجمه‌ی کامل می‌شود؛ حتی بلوک‌های thinking.</li>
-          <li><strong>مدل‌های پولی؟</strong> کافی است <span class="mono">OPENCODE_API_KEY</span> را در env بگذاری؛ همان مسیر با کلید می‌رود: glm-5.3، claude، gpt.</li>
-          <li><strong>سشن سفارشی</strong> — با هدر <span class="mono">x-session-id</span> خودت کنترلش کن.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>بدون کلید و ثبت‌نام</strong> — نصب کن و همان لحظه مدل‌های رایگان را صدا بزن.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>فهرست مدل زنده</strong> — مدل‌ها هر ۶۰ ثانیه از منبع رسمی zen تازه می‌شوند؛ هیچ هاردکدی در کار نیست.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>استریم SSE و tool-calling</strong> — پاس‌ترو شفاف است و فرمت OpenAI دست‌نخورده می‌ماند.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>پشتیبانی Anthropic</strong> — مسیر <bdi class="lt">/v1/messages</bdi> روی <bdi class="lt">oc</bdi> ترجمه‌ی کامل می‌شود؛ حتی بلوک‌های thinking.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>مدل‌های پولی zen؟</strong> فقط <bdi class="lt v">OPENCODE_API_KEY</bdi> را در env بگذار؛ همان مسیر با کلید باز می‌شود: <bdi class="lt v">glm-5.3</bdi>، <bdi class="lt v">claude</bdi>، <bdi class="lt v">gpt</bdi>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>سشن سفارشی</strong> — با هدر <bdi class="lt">x-session-id</bdi> خودت کنترلش کن.</span></li>
         </ul>
       </div>
-      <div class="rv">
-        <div class="codebox has-badge"><span class="nobadge">NO KEY NEEDED</span><span class="c1"># مدل‌های رایگان — بدون هیچ کلیدی</span>
+      <div class="rv" style="--d:.1s">
+        <div class="codebox has-badge"><span class="nobadge">NO KEY NEEDED</span><span class="c1"># free zen models — zero keys</span>
 curl http://localhost:8080/v1/chat/completions \
   <span class="k">-H</span> <span class="s">"Authorization: Bearer sk-omni"</span> \
   <span class="k">-H</span> <span class="s">"Content-Type: application/json"</span> \
@@ -382,100 +598,106 @@ curl http://localhost:8080/v1/chat/completions \
     "messages": [{"role":"user","content":"hi"}]
   }'</span>
 
-<span class="c1"># یا کدنویسی ایجنتی با مدل‌های free</span>
+<span class="c1"># more free ids for agentic coding</span>
 <span class="s">"model": <span class="n">"oc/nemotron-3-ultra-free"</span></span>
 <span class="s">"model": <span class="n">"oc/mimo-v2.5-free"</span></span>
 
-<span class="c1"># مدل‌های پولی zen؟ فقط کلید بگذار:</span>
-<span class="c1"># OPENCODE_API_KEY=...  →  oc/glm-5.3 کار می‌کند</span></div>
-        <p class="small" style="margin-top:.9rem;color:var(--dim);font-size:.83rem">فهرست مدل‌های رایگان رایگانِ zen به‌مرور تغییر می‌کند — OmniRouter هر ۶۰ ثانیه خودش تازه می‌کند؛ هیچ هاردکدی در کار نیست.</p>
+<span class="c1"># paid zen? just add a key:</span>
+<span class="c1"># OPENCODE_API_KEY=...  ->  oc/glm-5.3</span></div>
+        <p class="cap">شناسه‌های رایگان zen به‌مرور تغییر می‌کنند — OmniRouter هر ۶۰ ثانیه خودش لیست را تازه می‌کند و هرچه بیاید، همان لحظه در کاتالوگ و داشبورد می‌بینی.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ TOKEN SAVER ═══════════ -->
+<!-- ═══════ token saver ═══════ -->
 <section id="saver">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">RTK Token Saver</span>
       <h2>هر درخواست، <span class="grad">۲۰ تا ۴۰٪</span> ارزان‌تر</h2>
-      <p>خروجی ابزارهایی مثل git diff و grep و ls و لاگ‌های طولانی، معمولاً ۳۰ تا ۵۰٪ بودجه‌ی پرامپت ایجنتی را می‌سوزانند. Token Saver داخلی OmniRouter — بر اساس ایده‌ی RTK در 9router — آن‌ها را قبل از رسیدن به مدل فشرده می‌کند: تشخیص خودکار، بدون تنظیمات و safe-by-design.</p>
+      <p>خروجی ابزارهایی مثل <bdi class="lt">git diff</bdi> و <bdi class="lt">grep</bdi> و لاگ‌های طولانی معمولاً ۳۰ تا ۵۰٪ بودجه‌ی پرامپت ایجنتی را می‌سوزانند. Token Saver داخلی OmniRouter — بر اساس ایده‌ی RTK در 9router — آن‌ها را قبل از رسیدن به مدل فشرده می‌کند: تشخیص خودکار، بدون تنظیمات و safe-by-design.</p>
     </div>
     <div class="grid g-auto rv">
-      <div class="card"><div class="ico">📄</div><h3>git-diff</h3><p>هانک‌ها حذف می‌شوند؛ فهرست فایل‌ها و آمار +/− برای هر فایل می‌ماند. یک دیف ۵۰هزار کاراکتری به چند صد بایت خلاصه می‌شود.</p></div>
-      <div class="card"><div class="ico c">🔍</div><h3>grep و لاگ‌ها</h3><p>خطوط تکراری دی‌دوپ می‌شوند، سقف پاسخ برای هر فایل اعمال می‌شود و تکرارها به شکل ×N جمع می‌شوند؛ خروجی ده‌ها برابر کوچک‌تر می‌شود.</p></div>
-      <div class="card"><div class="ico g">📁</div><h3>find و ls و tree</h3><p>فهرست‌های طولانی مسیرها به شمارش فایل و پوشه به‌علاوه‌ی نمونه‌ی مسیرهای اول فشرده می‌شوند؛ مدل تصویر درستی از ساختار می‌گیرد.</p></div>
-      <div class="card"><div class="ico a">✂️</div><h3>smart-truncate</h3><p>متن عمومی بزرگ؟ سر و دم محتوای مهم نگه داشته می‌شود و بخش میانی با نشانگر حذف علامت‌گذاری می‌شود.</p></div>
-      <div class="card"><div class="ico r">🛡️</div><h3>امنیت تضمینی</h3><p>اگر فیلتری خطا بدهد یا خروجی بزرگ‌تر شود، بی‌سروصدا متن اصلی می‌رود — خطای فشرده‌سازی هیچ‌وقت درخواست را نمی‌شکند.</p></div>
-      <div class="card"><div class="ico">🐴</div><h3>Caveman و Ponytail</h3><p>حالت‌های خروجی: پاسخ کوتاه و فنی با Caveman؛ کدنویسی YAGNI در سه سطح Lite و Full و Ultra با Ponytail. روی RTK سوار می‌شوند.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-diff"/></svg></div><h3>git-diff</h3><p>هانک‌های حجیم حذف می‌شوند؛ فهرست فایل‌ها و آمار <bdi class="lt">+/−</bdi> برای هر فایل می‌ماند. یک دیف ۵۰هزار کاراکتری به چند صد بایت خلاصه می‌شود.</p></div>
+      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-compress"/></svg></div><h3>grep و لاگ‌ها</h3><p>خطوط تکراری دی‌دوپ می‌شوند، سقف پاسخ برای هر فایل اعمال می‌شود و تکرارها به شکل <bdi class="lt">×N</bdi> جمع می‌شوند؛ خروجی ده‌ها برابر کوچک‌تر می‌شود.</p></div>
+      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div><h3>find و ls و tree</h3><p>فهرست‌های طولانی مسیرها به شمارش فایل و پوشه به‌علاوه‌ی نمونه‌ی مسیرهای اول فشرده می‌شوند؛ مدل تصویر درستی از ساختار پروژه می‌گیرد.</p></div>
+      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></div><h3>smart-truncate</h3><p>متن عمومی بزرگ؟ سر و دمِ محتوای مهم نگه داشته می‌شود و بخش میانی با نشانگر حذف علامت‌گذاری می‌شود.</p></div>
+      <div class="card tlt"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></div><h3>امنیت تضمینی</h3><p>اگر فیلتری خطا بدهد یا خروجی بزرگ‌تر شود، بی‌سروصدا متن اصلی می‌رود — خطای فشرده‌سازی هیچ‌وقت درخواست را نمی‌شکند.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt"/></svg></div><h3>Caveman و Ponytail</h3><p>حالت‌های خروجی: پاسخ کوتاه و فنی با Caveman؛ کدنویسی YAGNI در سه سطح Lite و Full و Ultra با Ponytail — روی RTK سوارند.</p></div>
     </div>
-    <div class="rv" style="margin-top:1.6rem">
-      <div class="codebox" style="max-width:760px;margin-inline:auto"><span class="c1"># دورزدن برای یک درخواستِ خاص (مثل 9router)</span>
+    <div class="rv" style="margin-top:1.7rem">
+      <div class="codebox" style="max-width:760px;margin-inline:auto"><span class="c1"># bypass for one single request (like 9router)</span>
 <span class="fn">X-Omni-Token-Saver</span>: <span class="n">off</span>
 
-<span class="c1"># حالت خروجی لحظه‌ای</span>
+<span class="c1"># output mode on the fly</span>
 <span class="fn">X-Omni-Prompt-Mode</span>: <span class="n">caveman</span>   <span class="c1"># | ponytail-full | off</span>
 
-<span class="c1"># تنظیم کلی در داشبورد → Token Saver، یا env:</span>
-<span class="fn">RTK</span>=on <span class="fn">PROMPT_MODE</span>=off</div>
+<span class="c1"># global default — dashboard or env</span>
+<span class="fn">RTK</span>=<span class="n">on</span>  <span class="fn">PROMPT_MODE</span>=<span class="n">off</span></div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ COMBOS ═══════════ -->
+<!-- ═══════ combos ═══════ -->
 <section class="band" id="combos">
   <div class="wrap">
     <div class="split">
       <div class="rv">
         <span class="kicker">Custom Combos</span>
         <h2>زنجیره‌ی fallback<br>به <span class="grad">نام خودت</span></h2>
-        <p style="margin-top:1rem">مثل 9router، کمبوهای نام‌دار بساز: اشتراک گران → ارزان → رایگان. هر گام که شکست یا سهمیه‌اش تمام شد، بعدی همین‌طور بی‌سروصدا جواب می‌دهد. مدل‌های <span class="mono">auto</span> هم خودشان همین زنجیره‌ی هوشمند را دارند.</p>
-        <ul class="check-list">
-          <li>تعریف از داشبورد یا مستقیم از env با <span class="mono">COMBOS</span></li>
-          <li>مصرف مثل یک مدل معمولی: <span class="mono">"model": "combo:my-stack"</span></li>
-          <li>کمبوی آماده‌ی <span class="mono">free-stack</span> در نصب تازه: qwen → gemini → OpenCode free</li>
-          <li>اجتماع با سهمیه‌ی کلید و allowlist هر مدل</li>
-        </ul>
+        <p style="margin-top:1.1rem">مثل 9router، کمبوهای نام‌دار بساز: اشتراک گران، بعد ارزان، بعد رایگان. هر گام که شکست یا سهمیه‌اش تمام شد، بعدی همین‌طور بی‌سروصدا جواب می‌دهد. مدل‌های <bdi class="lt v">auto</bdi> هم خودشان همین زنجیره‌ی هوشمند را دارند.</p>
+        <div class="flow" aria-hidden="true">
+          <div class="fnode"><span class="fx f1">1</span><b>qwen/qwen3.8-max</b><span class="ft">قوی‌ترین برای ایجنت</span></div>
+          <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"/></svg>شکست یا ۴۲۹؟ گام بعد</div>
+          <div class="fnode"><span class="fx f2">2</span><b>gemini/gemini-3.6-flash</b><span class="ft">مهمان، بی‌توکن</span></div>
+          <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"/></svg>سهمیه تمام؟ گام بعد</div>
+          <div class="fnode"><span class="fx f3">3</span><b>oc/big-pickle</b><span class="ft">رایگان، بی‌کلید</span></div>
+        </div>
       </div>
-      <div class="rv">
-        <div class="codebox"><span class="c1"># داشبورد → کمبوها → «free-stack»</span>
-<span class="fn">1.</span> qwen/qwen3.8-max        <span class="c1"># قوی‌ترین برای ایجنت</span>
-<span class="fn">2.</span> gemini/gemini-3.6-flash <span class="c1"># مهمان، بی‌توکن</span>
-<span class="fn">3.</span> oc/big-pickle            <span class="c1"># رایگان، بی‌کلید</span>
+      <div class="rv" style="--d:.1s">
+        <div class="codebox"><span class="c1"># dashboard -> combos -> "free-stack"</span>
+<span class="fn">1.</span> qwen/qwen3.8-max        <span class="c1"># strongest agent</span>
+<span class="fn">2.</span> gemini/gemini-3.6-flash <span class="c1"># guest, no cookie</span>
+<span class="fn">3.</span> oc/big-pickle            <span class="c1"># free, no key</span>
 
-<span class="c1"># بعد در هر کلاینتی:</span>
+<span class="c1"># then from any client:</span>
 { <span class="s">"model"</span>: <span class="n">"combo:free-stack"</span> }
 
-<span class="c1"># نتیجه: کدنویسی که هیچ‌وقت نمی‌ایستد — $0</span></div>
+<span class="c1"># result: coding that never stops -- $0</span></div>
+        <ul class="check-list" style="margin-top:1.3rem">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>تعریف از داشبورد یا مستقیم از env با <bdi class="lt">COMBOS</bdi></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>مصرف مثل یک مدل معمولی: <bdi class="lt">"model": "combo:my-stack"</bdi></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>کمبوی آماده‌ی <bdi class="lt">free-stack</bdi> در نصب تازه</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>سازگار با سهمیه‌ی کلید و allowlist هر مدل</span></li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
-
-<!-- ═══════════ FEATURES BENTO ═══════════ -->
+<!-- ═══════ features bento ═══════ -->
 <section id="features">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Everything Included</span>
       <h2>هر چیزی که از یک روتر <span class="grad">انتظار داری</span></h2>
-      <p>همه‌ی قابلیت‌های 9router که روی بریج‌های وب معنا دارند، به‌علاوه‌ی چیزهایی که فقط OmniRouter دارد: بریج‌های واقعی وب با PoW دیپ‌سیک، کشف زنده‌ی مدل گوگل و تشخیص ابزار خودکار.</p>
+      <p>همه‌ی قابلیت‌های 9router که روی معماری بریج-وب معنا دارند — به‌علاوه‌ی چیزهایی که فقط OmniRouter دارد: PoW واقعی دیپ‌سیک، کشف زنده‌ی مدل گوگل و تشخیص خودکار ابزار.</p>
     </div>
     <div class="grid g-auto rv">
-      <div class="card"><div class="ico">⇄</div><h3>Failover بین پروایدرها</h3><p>خطای ۴۲۹ یا ۴۰۱ یا ۵xx؟ کاندیدای بعدی قبل از اولین بایت استریم وارد می‌شود. پروایدرِ تازه‌خطاکار کوتاه به نیمکت می‌نشیند (cooldown) تا ترجیح سلامت حفظ شود.</p></div>
-      <div class="card"><div class="ico c">🔁</div><h3>دو پروتکل، یک روتر</h3><p><span class="mono">/v1/chat/completions</span> و <span class="mono">/v1/messages</span> — ترجمه‌ی کامل OpenAI ⇄ Anthropic با بلوک‌های thinking و tool-calling در هر دو سو.</p></div>
-      <div class="card"><div class="ico g">📊</div><h3>آمار و لاگ زنده</h3><p>توکن واقعی هر درخواست (استخراج usage از JSON و دم SSE)، باکت ساعتی ۴۸گانه، per-provider/model/key، لاگ حلقه‌ای ۵۰۰تایی.</p></div>
-      <div class="card"><div class="ico a">🔑</div><h3>کلیدهای مجازی</h3><p>کلیدهای <span class="mono">sk-</span> با سهمیه‌ی درخواست، allowlist مدل (<span class="mono">qwen/*</span>) و مدیریت کامل از داشبورد — توکن‌های وب هیچ‌وقت به کلاینت نمی‌رسند.</p></div>
-      <div class="card"><div class="ico">🏷️</div><h3>Alias مدل</h3><p>هر نامی → هر مدل آپستریم. <span class="mono">"glm"</span> را به <span class="mono">glm-5.3</span> مپ کن؛ کلاینت‌ها بی‌تغییر می‌مانند و جابه‌جایی مدل یک کلیک است.</p></div>
-      <div class="card"><div class="ico c">🧩</div><h3>پروایدر سفارشی</h3><p>هر API سازگار OpenAI را وصل کن: از Gemini AI Studio و OpenRouter و Groq گرفته تا Ollama و LM Studio — با پری‌ست آماده و fetch خودکار مدل‌ها.</p></div>
-      <div class="card"><div class="ico g">🧮</div><h3>count_tokens محلی</h3><p><span class="mono">/v1/messages/count_tokens</span> بدون رفت‌وبرگشت به آپستریم جواب می‌دهد — برای بودجه‌بندی کانتکست کلاینت‌ها.</p></div>
-      <div class="card"><div class="ico a">🖥️</div><h3>داشبورد فارسی</h3><p>نمای کلی با نمودار ۴۸ساعته، پروایدرها، Token Saver، کمبوها، کلیدها، پلی‌گراند استریم با نمایش thinking و لاگ زنده — همه RTL.</p></div>
-      <div class="card"><div class="ico r">📦</div><h3>یک فایل، هرجا</h3><p>تک‌باینری Go بدون وابستگی برای ویندوز/لینوکس/مک (amd64+arm64)، <span class="mono">start.sh</span> و <span class="mono">start.bat</span>، docker-compose آماده.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-route"/></svg></div><h3>Failover بین پروایدرها</h3><p>خطای ۴۲۹ یا ۴۰۱ یا 5xx؟ کاندیدای بعدی قبل از اولین بایت استریم وارد می‌شود و پروایدر خطاکار کوتاه به نیمکت می‌نشیند تا ترجیح سلامت حفظ بماند.</p></div>
+      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-layers"/></svg></div><h3>دو پروتکل، یک روتر</h3><p><bdi class="lt">/v1/chat/completions</bdi> و <bdi class="lt">/v1/messages</bdi> — ترجمه‌ی کامل OpenAI و Anthropic با بلوک‌های thinking و tool-calling در هر دو سو.</p></div>
+      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"/></svg></div><h3>آمار و لاگ زنده</h3><p>توکن واقعی هر درخواست (استخراج usage از JSON و دم SSE)، باکت ساعتی ۴۸گانه به تفکیک پروایدر و مدل و کلید، لاگ حلقه‌ای ۵۰۰تایی.</p></div>
+      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-key"/></svg></div><h3>کلیدهای مجازی</h3><p>کلیدهای <bdi class="lt v">sk-</bdi> با سهمیه‌ی درخواست، allowlist مدل مثل <bdi class="lt v">qwen/*</bdi> و مدیریت کامل از داشبورد — توکن‌های وب هیچ‌وقت به کلاینت نمی‌رسند.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></div><h3>Alias مدل</h3><p>هر نامی به هر مدل آپستریم. <bdi class="lt v">"glm"</bdi> را به <bdi class="lt v">glm-5.3</bdi> مپ کن؛ کلاینت‌ها بی‌تغییر می‌مانند و جابه‌جایی مدل یک کلیک است.</p></div>
+      <div class="card tlt"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg></div><h3>پروایدر سفارشی</h3><p>هر API سازگار OpenAI را وصل کن: از Gemini AI Studio و OpenRouter و Groq گرفته تا Ollama و LM Studio — با پری‌ست آماده و fetch خودکار مدل‌ها.</p></div>
+      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cpu"/></svg></div><h3>count_tokens محلی</h3><p><bdi class="lt">/v1/messages/count_tokens</bdi> بدون رفت‌وبرگشت به آپستریم جواب می‌دهد — برای بودجه‌بندی کانتکست کلاینت‌ها.</p></div>
+      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gauge"/></svg></div><h3>داشبورد فارسی ۲.۰</h3><p>نمای کلی با نمودار ۴۸ساعته، پروایدرها، Token Saver، کمبوها، کلیدها، پلی‌گراند استریم با نمایش thinking و لاگ زنده — همه RTL.</p></div>
+      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div><h3>یک فایل، هرجا</h3><p>تک‌باینری Go بدون وابستگی برای ویندوز، لینوکس و مک (amd64 + arm64)، اسکریپت‌های <bdi class="lt">start.sh</bdi> و <bdi class="lt">start.bat</bdi> و docker-compose آماده.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ START ═══════════ -->
+<!-- ═══════ start ═══════ -->
 <section class="band" id="start">
   <div class="wrap">
     <div class="sec-head rv">
@@ -484,33 +706,33 @@ curl http://localhost:8080/v1/chat/completions \
       <p>بدون Node، بدون Python، بدون Docker. باینری را بگیر، اجرا کن، از داشبورد کلید بگیر — تمام.</p>
     </div>
     <div class="steps rv">
-      <div class="step card">
+      <div class="step card tlt">
         <h3>دانلود و اجرا</h3>
-        <p style="margin-bottom:.7rem">از Releases بگیر یا بساز:</p>
+        <p style="margin-bottom:.7rem">از Releases بگیر یا خودت بساز:</p>
         <div class="codebox">git clone https://github.com/Godde3s/omnirouter
-cd omnirouter && go build -o omnirouter .
-./omnirouter        <span class="c1"># یا start.bat در ویندوز</span></div>
+cd omnirouter &amp;&amp; go build -o omnirouter .
+./omnirouter      <span class="c1"># or start.bat on windows</span></div>
       </div>
-      <div class="step card">
+      <div class="step card tlt">
         <h3>داشبورد و کلید</h3>
-        <p style="margin-bottom:.7rem"><span class="mono">localhost:8080</span> را باز کن (رمز: <span class="mono">ADMIN_PASSWORD</span>). کلید <span class="mono">sk-</span> آماده است؛ توکن‌های وب را در <span class="mono">.env</span> بگذار.</p>
-        <div class="codebox"><span class="c1"># .env — همه اختیاری</span>
-QWEN_TOKEN=…
-DEEPSEEK_TOKENS=…
-GEMINI_COOKIES=…   <span class="c1"># خالی = مهمان</span>
-OPENCODE_API_KEY=… <span class="c1"># فقط برای مدل‌های پولی zen</span></div>
+        <p style="margin-bottom:.7rem"><bdi class="lt">localhost:8080</bdi> را باز کن (رمز: <bdi class="lt">ADMIN_PASSWORD</bdi>). کلید <bdi class="lt v">sk-</bdi> آماده است؛ توکن‌های وب را در <bdi class="lt">.env</bdi> بگذار.</p>
+        <div class="codebox"><span class="c1"># .env -- all optional</span>
+QWEN_TOKEN=...
+DEEPSEEK_TOKENS=...
+GEMINI_COOKIES=...   <span class="c1"># empty = guest</span>
+OPENCODE_API_KEY=... <span class="c1"># paid zen only</span></div>
       </div>
-      <div class="step card">
+      <div class="step card tlt">
         <h3>به هر کلاینتی وصل کن</h3>
-        <p style="margin-bottom:.7rem">Endpoint را بده، مدل بگو — یا <span class="mono">auto</span> بگذار:</p>
+        <p style="margin-bottom:.7rem">Endpoint را بده، مدل بگو — یا <bdi class="lt v">auto</bdi> بگذار:</p>
         <div class="codebox">Base URL: http://localhost:8080/v1
-API Key:  sk-… (از داشبورد)
-Model:    auto  <span class="c1"># یا combo:free-stack</span></div>
+API Key:  sk-...  <span class="c1"># from dashboard</span>
+Model:    auto    <span class="c1"># or combo:free-stack</span></div>
       </div>
     </div>
   </div>
 </section>
-<!-- ═══════════ CONNECT (tabs) ═══════════ -->
+<!-- ═══════ connect tabs ═══════ -->
 <section id="connect">
   <div class="wrap">
     <div class="sec-head rv">
@@ -519,18 +741,17 @@ Model:    auto  <span class="c1"># یا combo:free-stack</span></div>
       <p>هر ابزاری که OpenAI یا Anthropic حرف می‌زند، با OmniRouter حرف می‌زند. اسنیپت را کپی کن، endpoint و کلید را بگذار، تمام.</p>
     </div>
     <div class="rv">
-      <div class="tabs" role="tablist">
-        <div class="tab-list">
-          <button class="tab on" data-t="t-openc">OpenCode</button>
-          <button class="tab" data-t="t-cline">Cline</button>
-          <button class="tab" data-t="t-cc">Claude Code</button>
-          <button class="tab" data-t="t-codex">Codex CLI</button>
-          <button class="tab" data-t="t-cursor">Cursor</button>
-          <button class="tab" data-t="t-hermes">Hermes</button>
-        </div>
-        <div class="tabpane on" id="t-openc">
-          <p style="margin-bottom:.9rem">در <span class="mono">~/.config/opencode/opencode.json</span> — مدل‌های <span class="mono">oc/*</span> هیچ کلید بیرونی نمی‌خواهند:</p>
-          <div class="codebox">{
+      <div class="tab-list" role="tablist" aria-label="کلاینت‌ها">
+        <button class="tab on" data-t="t-openc">OpenCode</button>
+        <button class="tab" data-t="t-cline">Cline</button>
+        <button class="tab" data-t="t-cc">Claude Code</button>
+        <button class="tab" data-t="t-codex">Codex CLI</button>
+        <button class="tab" data-t="t-cursor">Cursor</button>
+        <button class="tab" data-t="t-hermes">Hermes</button>
+      </div>
+      <div class="tabpane on" id="t-openc">
+        <p style="margin-bottom:.9rem">در <bdi class="lt">~/.config/opencode/opencode.json</bdi> — مدل‌های <bdi class="lt v">oc/*</bdi> هیچ کلید بیرونی نمی‌خواهند:</p>
+        <div class="codebox">{
   <span class="s">"provider"</span>: {
     <span class="s">"omni"</span>: {
       <span class="s">"npm"</span>: <span class="n">"@ai-sdk/openai-compatible"</span>,
@@ -540,51 +761,50 @@ Model:    auto  <span class="c1"># یا combo:free-stack</span></div>
     }
   }
 }</div>
-        </div>
-        <div class="tabpane" id="t-cline">
-          <p style="margin-bottom:.9rem">تنظیمات Cline → API Provider:</p>
-          <div class="codebox">Provider:   <span class="n">OpenAI Compatible</span>
+      </div>
+      <div class="tabpane" id="t-cline">
+        <p style="margin-bottom:.9rem">تنظیمات Cline ← API Provider:</p>
+        <div class="codebox">Provider:   <span class="n">OpenAI Compatible</span>
 Base URL:   <span class="n">http://localhost:8080/v1</span>
-API Key:    <span class="n">sk-omni</span>   <span class="c1">(از داشبورد)</span>
-Model:      <span class="n">qwen/qwen3.8-max</span>  <span class="c1"># یا combo:free-stack</span></div>
-          <p class="small" style="color:var(--dim);font-size:.83rem">برای حالت Anthropic در Cline، همان Base URL با <span class="mono">/v1/messages</span> و کلید sk- کار می‌کند.</p>
-        </div>
-        <div class="tabpane" id="t-cc">
-          <p style="margin-bottom:.9rem">Claude Code با پروتکل Anthropic وصل می‌شود:</p>
-          <div class="codebox"><span class="fn">export</span> ANTHROPIC_BASE_URL=<span class="n">http://localhost:8080</span>
+API Key:    <span class="n">sk-omni</span>   <span class="c1"># from dashboard</span>
+Model:      <span class="n">qwen/qwen3.8-max</span>  <span class="c1"># or combo:free-stack</span></div>
+        <p class="cap">برای حالت Anthropic در Cline، همان Base URL با مسیر <bdi class="lt">/v1/messages</bdi> و کلید <bdi class="lt v">sk-</bdi> کار می‌کند.</p>
+      </div>
+      <div class="tabpane" id="t-cc">
+        <p style="margin-bottom:.9rem">Claude Code با پروتکل Anthropic وصل می‌شود:</p>
+        <div class="codebox"><span class="fn">export</span> ANTHROPIC_BASE_URL=<span class="n">http://localhost:8080</span>
 <span class="fn">export</span> ANTHROPIC_API_KEY=<span class="n">sk-omni</span>
 <span class="fn">export</span> ANTHROPIC_MODEL=<span class="n">qwen/qwen3.8-max</span>
-claude <span class="s">"سلام!"</span></div>
-        </div>
-        <div class="tabpane" id="t-codex">
-          <p style="margin-bottom:.9rem">در <span class="mono">~/.codex/config.toml</span>:</p>
-          <div class="codebox">[model_providers.omni]
+claude <span class="s">"hello!"</span></div>
+      </div>
+      <div class="tabpane" id="t-codex">
+        <p style="margin-bottom:.9rem">در <bdi class="lt">~/.codex/config.toml</b>:</p>
+        <div class="codebox">model_providers.omni]
 name = <span class="s">"OmniRouter"</span>
 base_url = <span class="s">"http://localhost:8080/v1"</span>
 env_key = <span class="s">"OMNI_API_KEY"</span>
 
 model = <span class="n">"auto"</span>
 model_provider = <span class="s">"omni"</span></div>
-        </div>
-        <div class="tabpane" id="t-cursor">
-          <p style="margin-bottom:.9rem">Cursor Settings → Models → OpenAI API Key → Override Base URL:</p>
-          <div class="codebox">Base URL:  <span class="n">http://localhost:8080/v1</span>
+      </div>
+      <div class="tabpane" id="t-cursor">
+        <p style="margin-bottom:.9rem">Cursor ← Settings ← Models ← OpenAI API Key ← Override Base URL:</p>
+        <div class="codebox">Base URL:  <span class="n">http://localhost:8080/v1</span>
 API Key:   <span class="n">sk-omni</span>
-Model:     <span class="n">oc/big-pickle</span>  <span class="c1"># یا هر مدل کاتالوگ</span></div>
-        </div>
-        <div class="tabpane" id="t-hermes">
-          <p style="margin-bottom:.9rem">Hermes با فرمت OpenAI و tool-calling کامل (تست‌شده زنده با R1→R2):</p>
-          <div class="codebox">endpoint: <span class="n">http://localhost:8080/v1</span>
+Model:     <span class="n">oc/big-pickle</span>  <span class="c1"># or any catalog id</span></div>
+      </div>
+      <div class="tabpane" id="t-hermes">
+        <p style="margin-bottom:.9rem">Hermes با فرمت OpenAI و tool-calling کامل — تست‌شده‌ی زنده با چرخه‌ی R1 به R2:</p>
+        <div class="codebox">endpoint: <span class="n">http://localhost:8080/v1</span>
 api_key:  <span class="n">sk-omni</span>
 model:    <span class="n">qwen/qwen3.8-max</span>
-tools:    <span class="n">true</span>   <span class="c1"># فراخوانی ابزار اثبات‌شده</span></div>
-        </div>
+tools:    <span class="n">true</span>   <span class="c1"># proven live</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ PARITY ═══════════ -->
+<!-- ═══════ parity ═══════ -->
 <section class="band" id="parity">
   <div class="wrap">
     <div class="sec-head rv">
@@ -592,117 +812,117 @@ tools:    <span class="n">true</span>   <span class="c1"># فراخوانی اب
       <h2>قابلیت‌های 9router، <span class="grad">تک‌به‌تک</span></h2>
       <p>OmniRouter الگوی 9router را جدی می‌گیرد — هر قابلیتی که روی معماری بریج-وبِ ما معنا داشته، پیاده شده است.</p>
     </div>
-    <div class="table-scroll rv">
-      <table class="tbl">
-        <thead><tr><th>قابلیت 9router</th><th>در OmniRouter</th><th>توضیح</th></tr></thead>
-        <tbody>
-          <tr><td><b>OpenCode Free (no auth)</b></td><td><span class="tag g">✓ پروایدر oc</span></td><td>همان مسیر zen: بدون کلید + fetch خودکار مدل‌ها + کلید اختیاری برای مدل‌های پولی</td></tr>
-          <tr><td><b>RTK Token Saver</b></td><td><span class="tag g">✓ داخلی</span></td><td>فشرده‌سازی tool_result با فیلترهای auto-detect؛ پیش‌فرض روشن + هدر bypass</td></tr>
-          <tr><td><b>Headroom Token Saver</b></td><td><span class="tag a">ساده‌شده</span></td><td>حالت‌های خروجی Caveman/Ponytail داخلی‌اند؛ کامپرسور خارجی لازم نیست</td></tr>
-          <tr><td><b>Caveman / Ponytail</b></td><td><span class="tag g">✓</span></td><td>پرامپت‌مودها از داشبورد یا هدر <span class="mono">X-Omni-Prompt-Mode</span></td></tr>
-          <tr><td><b>Custom Combos</b></td><td><span class="tag g">✓</span></td><td>زنجیره‌های نام‌دار <span class="mono">combo:*</span> با fallback ترتیبی</td></tr>
-          <tr><td><b>Smart Fallback</b></td><td><span class="tag g">✓</span></td><td>زنجیره‌ی auto + retry هر پروایدر + cooldown سلامت‌محور</td></tr>
-          <tr><td><b>Format Translation</b></td><td><span class="tag g">✓</span></td><td>OpenAI ⇄ Anthropic ⇄ فرمت‌های وب هر بریج (Goole/PoW/…)</td></tr>
-          <tr><td><b>Quota Tracking</b></td><td><span class="tag g">✓</span></td><td>آمار توکن واقعی per key/provider/model + باکت ساعتی + سهمیه کلید</td></tr>
-          <tr><td><b>Multi-Account</b></td><td><span class="tag g">✓</span></td><td>پول اکانت/توکن در هر بریج با چرخش و cooldown ۴۲۹</td></tr>
-          <tr><td><b>Auto Token Refresh</b></td><td><span class="tag g">✓</span></td><td>هارت‌بیت PSIDTS گوگل، PoW خودکار دیپ‌سیک، bx کوان</td></tr>
-          <tr><td><b>Request Logging</b></td><td><span class="tag g">✓</span></td><td>لاگ زنده با تأخیر/توکن/بایت‌های صرفه‌جویی‌شده RTK</td></tr>
-          <tr><td><b>Usage Analytics</b></td><td><span class="tag g">✓</span></td><td>نمودار ۴۸ساعته و جدول مدل‌های پرکاربرد در داشبورد</td></tr>
-          <tr><td><b>Virtual API Keys</b></td><td><span class="tag g">✓</span></td><td>کلیدهای sk- با سهمیه و allowlist — توکن وب هرگز به کلاینت نمی‌رسد</td></tr>
-          <tr><td><b>Deploy Anywhere</b></td><td><span class="tag g">✓</span></td><td>تک‌باینری Win/Linux/Mac + Docker؛ صفحه‌ی وب روتر هم روی GitHub Pages است</td></tr>
-          <tr><td><b>Count Tokens</b></td><td><span class="tag g">✓</span></td><td><span class="mono">/v1/messages/count_tokens</span> محلی</td></tr>
-          <tr><td><b>Cloud Sync</b></td><td><span class="no">—</span></td><td>فایل <span class="mono">omnirouter.json</span> را خودت سینک کن؛ سرویس ابری نمی‌خواهیم</td></tr>
-        </tbody>
-      </table>
+    <div class="prows rv">
+      <div class="prow"><span class="pn">OpenCode Free (no auth)</span><span class="pt tag g">پروایدر oc</span><span class="pd">همان مسیر zen: بدون کلید، fetch خودکار مدل‌ها و کلید اختیاری برای مدل‌های پولی.</span></div>
+      <div class="prow"><span class="pn">RTK Token Saver</span><span class="pt tag g">داخلی</span><span class="pd">فشرده‌سازی tool_result با فیلترهای تشخیص خودکار؛ پیش‌فرض روشن به‌علاوه‌ی هدر bypass.</span></div>
+      <div class="prow"><span class="pn">Headroom Token Saver</span><span class="pt tag a">ساده‌شده</span><span class="pd">حالت‌های خروجی Caveman و Ponytail داخلی‌اند؛ کامپرسور خارجی لازم نیست.</span></div>
+      <div class="prow"><span class="pn">Caveman / Ponytail</span><span class="pt tag g">✓</span><span class="pd">پرامپت‌مودها از داشبورد یا هدر <bdi class="lt">X-Omni-Prompt-Mode</bdi>.</span></div>
+      <div class="prow"><span class="pn">Custom Combos</span><span class="pt tag g">✓</span><span class="pd">زنجیره‌های نام‌دار <bdi class="lt v">combo:*</bdi> با fallback ترتیبی.</span></div>
+      <div class="prow"><span class="pn">Smart Fallback</span><span class="pt tag g">✓</span><span class="pd">زنجیره‌ی auto به‌علاوه‌ی retry هر پروایدر و cooldown سلامت‌محور.</span></div>
+      <div class="prow"><span class="pn">Format Translation</span><span class="pt tag g">✓</span><span class="pd">OpenAI و Anthropic و فرمت‌های وب هر بریج — گوگل، PoW دیپ‌سیک و بقیه.</span></div>
+      <div class="prow"><span class="pn">Quota Tracking</span><span class="pt tag g">✓</span><span class="pd">آمار توکن واقعی به تفکیک کلید و پروایدر و مدل، با باکت ساعتی و سهمیه‌ی کلید.</span></div>
+      <div class="prow"><span class="pn">Multi-Account</span><span class="pt tag g">✓</span><span class="pd">پول اکانت و توکن در هر بریج با چرخش و cooldown هنگام ۴۲۹.</span></div>
+      <div class="prow"><span class="pn">Auto Token Refresh</span><span class="pt tag g">✓</span><span class="pd">هارت‌بیت PSIDTS گوگل، PoW خودکار دیپ‌سیک و bx کوان — همه خودکار.</span></div>
+      <div class="prow"><span class="pn">Request Logging</span><span class="pt tag g">✓</span><span class="pd">لاگ زنده با تأخیر، توکن و بایت‌های صرفه‌جویی‌شده‌ی RTK.</span></div>
+      <div class="prow"><span class="pn">Usage Analytics</span><span class="pt tag g">✓</span><span class="pd">نمودار ۴۸ساعته و جدول مدل‌های پرکاربرد در داشبورد.</span></div>
+      <div class="prow"><span class="pn">Virtual API Keys</span><span class="pt tag g">✓</span><span class="pd">کلیدهای <bdi class="lt v">sk-</bdi> با سهمیه و allowlist — توکن وب هرگز به کلاینت نمی‌رسد.</span></div>
+      <div class="prow"><span class="pn">Deploy Anywhere</span><span class="pt tag g">✓</span><span class="pd">تک‌باینری ویندوز، لینوکس و مک به‌علاوه‌ی داکر؛ همین صفحه هم روی GitHub Pages است.</span></div>
+      <div class="prow"><span class="pn">Count Tokens</span><span class="pt tag g">✓</span><span class="pd"><bdi class="lt">/v1/messages/count_tokens</bdi> به‌صورت کاملاً محلی.</span></div>
+      <div class="prow"><span class="pn">Cloud Sync</span><span class="pt tag a">—</span><span class="pd">فایل <bdi class="lt">omnirouter.json</bdi> را خودت سینک کن؛ سرویس ابری نمی‌خواهیم.</span></div>
     </div>
   </div>
 </section>
-
-<!-- ═══════════ MODELS ═══════════ -->
+<!-- ═══════ models ═══════ -->
 <section id="models">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Model Rankings</span>
       <h2>کدام مدل برای <span class="grad">ایجنت</span>؟</h2>
-      <p>جمع‌بندی تست‌های زنده‌ی خودمان روی همین روتر — کدنویسی، tool-calling و پایداری مهمان.</p>
+      <p>جمع‌بندی تست‌های زنده‌ی خودمان روی همین روتر — کدنویسی، tool-calling و پایداری حالت مهمان.</p>
     </div>
     <div class="grid g-auto rv">
-      <div class="card">
-        <div class="ico">🥇</div><h3>qwen3.8-max <span class="tag v">ایجنت</span></h3>
-        <p>قوی‌ترین برای کدنویسی و tool-calling — R1→R2 کامل زنده اثبات شده. <span class="tag a">توکن می‌خواهد</span></p>
+      <div class="card tlt">
+        <div class="rank"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-medal"/></svg></div><span class="pos">01</span></div>
+        <h3><span class="en">qwen3.8-max</span> <span class="tag v">ایجنت</span></h3>
+        <p>قوی‌ترین برای کدنویسی و tool-calling — چرخه‌ی کامل R1 به R2 زنده اثبات شده است. <span class="tag a">توکن می‌خواهد</span></p>
         <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۹۶٪</span></div><div class="bar"><div class="fill" data-w="96"></div></div></div>
       </div>
-      <div class="card">
-        <div class="ico">🥈</div><h3>glm-5.3 <span class="tag c">جدید</span></h3>
-        <p>پرچم‌دار تازه‌ی Z.AI — زنده در کاتالوگ. نسخه‌ی سریع <strong><span class="mono">glm-5.3-flash</span></strong> هم برای چت و ایجنت‌های سبک.</p>
+      <div class="card tlt">
+        <div class="rank"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-medal"/></svg></div><span class="pos">02</span></div>
+        <h3><span class="en">GLM 5.3</span> <span class="tag g">جدید</span></h3>
+        <p>پرچم‌دار تازه‌ی Z.AI — زنده در کاتالوگ. نسخه‌ی سریع <bdi class="lt">GLM 5.3-flash</bdi> هم برای چت و ایجنت‌های سبک.</p>
         <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۹۲٪</span></div><div class="bar"><div class="fill" data-w="92"></div></div></div>
       </div>
-      <div class="card">
-        <div class="ico">🥉</div><h3>gemini-3.6-flash <span class="tag g">مهمان</span></h3>
-        <p>پایدارترین حالت بی‌توکن (guest از گوگل) — fallback اولِ هر کمبو؛ vision واقعی هم دارد.</p>
+      <div class="card tlt">
+        <div class="rank"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-medal"/></svg></div><span class="pos">03</span></div>
+        <h3><span class="en">gemini-3.6-flash</span> <span class="tag g">مهمان</span></h3>
+        <p>پایدارترین حالت بی‌توکن — مهمانِ گوگل و fallback اولِ هر کمبو؛ ویژن واقعی هم دارد.</p>
         <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۸۶٪</span></div><div class="bar"><div class="fill" data-w="86"></div></div></div>
       </div>
-      <div class="card">
-        <div class="ico">🛡️</div><h3>deepseek-chat <span class="tag v">PoW</span></h3>
-        <p>استدلال قوی با PoW خودکار (wasm رسمی داخل باینری) — بدون سرویس بیرونی.</p>
+      <div class="card tlt">
+        <div class="rank"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></div><span class="pos">04</span></div>
+        <h3><span class="en">deepseek-chat</span> <span class="tag v">PoW</span></h3>
+        <p>استدلال قوی با PoW خودکار — wasm رسمی دیپ‌سیک داخل باینری، بدون سرویس بیرونی.</p>
         <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۸۸٪</span></div><div class="bar"><div class="fill" data-w="88"></div></div></div>
       </div>
-      <div class="card">
-        <div class="ico">🆓</div><h3>oc/big-pickle <span class="tag g">بدون کلید</span></h3>
-        <p>رایگانِ zen برای شروع صفر تا صد؛ همراه <span class="mono">nemotron-3-ultra-free</span> و <span class="mono">mimo-v2.5-free</span>.</p>
+      <div class="card tlt">
+        <div class="rank"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-keyoff"/></svg></div><span class="pos">05</span></div>
+        <h3><span class="en">oc/big-pickle</span> <span class="tag g">بدون کلید</span></h3>
+        <p>رایگانِ zen برای شروع صفر تا صد؛ همراه <bdi class="lt">nemotron-3-ultra-free</bdi> و <bdi class="lt">mimo-v2.5-free</bdi>.</p>
         <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۷۴٪</span></div><div class="bar"><div class="fill" data-w="74"></div></div></div>
       </div>
-      <div class="card">
-        <div class="ico">➕</div><h3>هر مدل دیگری</h3>
-        <p>پروایدر سفارشی اضافه کن (AI Studio، OpenRouter، Groq، Ollama) — بقیه‌ی مسیر یکی است.</p>
+      <div class="card tlt">
+        <div class="rank"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg></div><span class="pos">∞</span></div>
+        <h3>هر مدل دیگری</h3>
+        <p>پروایدر سفارشی اضافه کن — AI Studio، OpenRouter، Groq، Ollama — بقیه‌ی مسیر یکی است.</p>
         <div class="meter"><div class="lbl"><span>انعطاف</span><span>∞</span></div><div class="bar"><div class="fill" data-w="100"></div></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ CHANGELOG ═══════════ -->
+<!-- ═══════ changelog ═══════ -->
 <section class="band" id="changelog">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Changelog</span>
       <h2>از v1.0 تا <span class="grad">v1.2.0</span></h2>
     </div>
-    <div class="grid g-2 rv">
-      <div class="card ver">
-        <h3>v1.2.0 <span class="num">— 2026-09</span> <span class="tag g">فعلی</span></h3>
+    <div class="tline rv">
+      <div class="titem">
+        <div class="vhead"><span class="vnum grad">v1.2.0</span><span class="vdate">2026-09</span><span class="tag g">فعلی</span></div>
         <ul>
-          <li><strong>پروایدر OpenCode Zen (oc)</strong> — مدل‌های رایگان بدون کلید، fetch خودکار، Anthropic ترجمه‌شده، کلید اختیاری برای zen پولی</li>
-          <li><strong>RTK Token Saver</strong> — فشرده‌سازی خودکار tool_result (git-diff/grep/file-list/dedup/smart-truncate) + آمار بایت صرفه‌جویی‌شده</li>
-          <li><strong>کمبوهای نام‌دار</strong> — combo:* با fallback ترتیبی + کمبوی آماده‌ی free-stack</li>
-          <li><strong>حالت‌های پرامپت</strong> — Caveman و Ponytail Lite/Full/Ultra + هدرهای X-Omni-Token-Saver / X-Omni-Prompt-Mode</li>
-          <li><strong>GLM 5.3</strong> — نام‌گذاری جدید پرچم‌دار Z.AI در کاتالوگ و fallback‌ها</li>
+          <li><strong>پروایدر OpenCode Zen</strong> (<bdi class="lt">oc</bdi>) — مدل‌های رایگان بدون کلید، fetch خودکار، Anthropic ترجمه‌شده و کلید اختیاری برای zen پولی</li>
+          <li><strong>RTK Token Saver</strong> — فشرده‌سازی خودکار tool_result شامل git-diff، grep، file-list، dedup و smart-truncate به‌همراه آمار بایت صرفه‌جویی‌شده</li>
+          <li><strong>کمبوهای نام‌دار</strong> — <bdi class="lt v">combo:*</bdi> با fallback ترتیبی و کمبوی آماده‌ی <bdi class="lt v">free-stack</bdi></li>
+          <li><strong>حالت‌های پرامپت</strong> — Caveman و Ponytail در سه سطح، با هدرهای <bdi class="lt">X-Omni-Token-Saver</bdi> و <bdi class="lt">X-Omni-Prompt-Mode</bdi></li>
+          <li><strong>GLM 5.3</strong> — نام‌گذاری جدید پرچم‌دار Z.AI در کاتالوگ و زنجیره‌های fallback</li>
           <li><strong>داشبورد ۲.۰</strong> — چیدمان حرفه‌ای با سایدبار، Token Saver، کمبوها و پلی‌گراند جدید</li>
-          <li>فیکس health-check بریج‌ها (احراز هویت fetch مدل‌ها)</li>
+          <li>رفع باگ health-check بریج‌ها (احراز هویت fetch مدل‌ها)</li>
         </ul>
       </div>
-      <div class="card ver">
-        <h3>v1.1.0 → v1.1.1 <span class="num">— 2026-09</span></h3>
+      <div class="titem alt">
+        <div class="vhead"><span class="vnum">v1.1.0 → v1.1.1</span><span class="vdate">2026-09</span></div>
         <ul>
-          <li>بریج Gemini مهمان (بدون کوکی، اثبات زنده PONG) + هارت‌بیت PSIDTS</li>
+          <li>بریج Gemini مهمان — بدون کوکی، با اثبات زنده‌ی PONG — به‌همراه هارت‌بیت PSIDTS</li>
           <li>آمار مصرف واقعی، alias هر پروایدر، سهمیه و allowlist کلید</li>
-          <li><strong>فیکس مهم:</strong> stream پیش‌فرض false طبق مشخصات OpenAI (کلاینت‌هایی مثل OpenCode که stream نمی‌فرستند JSON می‌گرفتند نه SSE)</li>
-          <li>پلی‌گراند استریم با thinking + ویرایشگر alias</li>
+          <li><strong>رفع باگ مهم:</strong> stream پیش‌فرض false طبق مشخصات OpenAI — کلاینت‌هایی مثل OpenCode که فیلد را نمی‌فرستند حالا JSON می‌گیرند نه خطا</li>
+          <li>پلی‌گراند استریم با thinking و ویرایشگر alias</li>
         </ul>
       </div>
-      <div class="card ver">
-        <h3>v1.0.0 <span class="num">— 2026-08</span></h3>
+      <div class="titem">
+        <div class="vhead"><span class="vnum">v1.0.0</span><span class="vdate">2026-08</span></div>
         <ul>
-          <li>هسته‌ی روتر: کاتالوگ زنده، resolve سه‌فرمی، failover بین ۴ بریج وب</li>
-          <li>برنج DeepSeek با PoW واقعی (wasm رسمی داخل wazero — بدون CGO)</li>
-          <li>داشبورد فارسی RTL + کلیدهای sk- + start.sh/.bat</li>
+          <li>هسته‌ی روتر: کاتالوگ زنده، resolve سه‌فرمی و failover بین ۴ بریج وب</li>
+          <li>PoW واقعی دیپ‌سیک — wasm رسمی داخل wazero، بدون CGO</li>
+          <li>داشبورد فارسی RTL، کلیدهای <bdi class="lt v">sk-</bdi> و اسکریپت‌های start</li>
         </ul>
       </div>
-      <div class="card ver">
-        <h3>نقشه‌ی راه</h3>
+      <div class="titem alt">
+        <div class="vhead"><span class="vnum">نقشه‌ی راه</span></div>
         <ul>
-          <li>ذخیره‌سازی تنظیمات saver/combos از داشبورد به فایل (الان runtime)</li>
-          <li>پشتیبانی صدا (STT/TTS) برای پروایدرهای self-hosted</li>
+          <li>ذخیره‌سازی تنظیمات saver و کمبوها از داشبورد به فایل</li>
+          <li>پشتیبانی صدا (STT و TTS) برای پروایدرهای self-hosted</li>
           <li>سینک تنظیمات بین دستگاه‌ها</li>
         </ul>
       </div>
@@ -710,7 +930,7 @@ tools:    <span class="n">true</span>   <span class="c1"># فراخوانی اب
   </div>
 </section>
 
-<!-- ═══════════ FAQ ═══════════ -->
+<!-- ═══════ FAQ ═══════ -->
 <section id="faq">
   <div class="wrap">
     <div class="sec-head rv">
@@ -719,52 +939,77 @@ tools:    <span class="n">true</span>   <span class="c1"># فراخوانی اب
     </div>
     <div class="faq rv">
       <details>
-        <summary>واقعاً بدون هیچ کلیدی می‌شود کدنویسی کرد؟</summary>
-        <div class="a">بله — دو مسیر بدون کلید داریم: <strong>Gemini مهمان</strong> (برای بریج gemini هیچ کوکی‌ای لازم نیست؛ در تست‌های ما از IP دیتاسنتر هم جواب داد) و <strong>مدل‌های رایگان OpenCode Zen</strong> از طریق پروایدر <span class="mono">oc</span> که فقط یک شناسه‌ی نشست تصادفی می‌خواهد که روتر خودش می‌سازد. کمبوی آماده‌ی <span class="mono">combo:free-stack</span> همین‌ها را پشت هم می‌چیند.</div>
+        <summary>واقعاً بدون هیچ کلیدی می‌شود کدنویسی کرد؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">بله — دو مسیر بدون کلید داریم. اول <strong>Gemini مهمان</strong>: برای بریج gemini هیچ کوکی‌ای لازم نیست و در تست‌های ما از IP دیتاسنتر هم جواب داد. دوم <strong>مدل‌های رایگان OpenCode Zen</strong> از طریق پروایدر <bdi class="lt">oc</bdi> که فقط یک شناسه‌ی نشست تصادفی می‌خواهد که روتر خودش می‌سازد. کمبوی آماده‌ی <bdi class="lt v">combo:free-stack</bdi> همین‌ها را پشت هم می‌چیند.</div>
       </details>
       <details>
-        <summary>سهمیه‌ی رایگان zen تمام می‌شود چه؟</summary>
-        <div class="a">اگر در زنجیره‌ی auto یا کمبو، بعد از <span class="mono">oc/*</span> یک گام دیگر باشد، روتر خودش می‌رود بعدی. خطای <span class="mono">FreeUsageLimitError</span> مثل هر ۴۲۹ دیگری retryable است و failover را فعال می‌کند. برای سهمیه‌ی بیشتر zen می‌توانی <span class="mono">OPENCODE_API_KEY</span> بگذاری تا مدل‌های پولی (مثل <span class="mono">oc/glm-5.3</span>) هم باز شوند.</div>
+        <summary>سهمیه‌ی رایگان zen تمام می‌شود چه؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">اگر در زنجیره‌ی auto یا کمبو، بعد از <bdi class="lt v">oc/*</bdi> یک گام دیگر باشد، روتر خودش می‌رود سراغ بعدی. خطای <bdi class="lt">FreeUsageLimitError</bdi> مثل هر ۴۲۹ دیگری قابل retry است و failover را فعال می‌کند. برای سهمیه‌ی بیشتر هم می‌توانی <bdi class="lt v">OPENCODE_API_KEY</bdi> بگذاری تا مدل‌های پولی مثل <bdi class="lt v">oc/glm-5.3</bdi> باز شوند.</div>
       </details>
       <details>
-        <summary>RTK چطور مطمئن می‌شود چیزی مهم از دست نمی‌رود؟</summary>
-        <div class="a">فیلترها ساختار محتوای ابزار را می‌شناسند: دیف، وضعیت گیت، grep و فهرست مسیرها. فقط بخش‌های تکراری و حجمی خلاصه می‌شوند — آمار مثبت و منفی، مسیرها و خطوط یکتا سر جایشان می‌مانند. اگر فیلتر مطمئن نباشد یا خروجی بزرگ‌تر از ورودی شود، متن اصلی دست‌نخورده می‌رود. با هدر <span class="mono">X-Omni-Token-Saver: off</span> هم برای هر درخواست می‌توانی کلاً خاموشش کنی.</div>
+        <summary>RTK چطور مطمئن می‌شود چیزی مهم از دست نمی‌رود؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">فیلترها ساختار محتوای ابزار را می‌شناسند: دیف، وضعیت گیت، grep و فهرست مسیرها. فقط بخش‌های تکراری و حجیم خلاصه می‌شوند — آمار مثبت و منفی، مسیرها و خطوط یکتا سر جایشان می‌مانند. اگر فیلتر مطمئن نباشد یا خروجی بزرگ‌تر از ورودی شود، متن اصلی دست‌نخورده می‌رود. با هدر <bdi class="lt">X-Omni-Token-Saver: off</bdi> هم برای هر درخواست می‌توانی کلاً خاموشش کنی.</div>
       </details>
       <details>
-        <summary>توکن‌های وبم کجا می‌روند؟ امن است؟</summary>
-        <div class="a">توکن‌ها فقط در <span class="mono">.env</span> یا استور محلی خودت می‌مانند و بین روتر و سایت ارائه‌دهنده رد و بدل می‌شوند. کلاینت‌ها فقط کلیدهای <span class="mono">sk-</span> مجازیِ خود روتر را می‌بینند. هیچ چیزی به هیچ سروری غیر از خود ارائه‌دهنده‌ها ارسال نمی‌شود — همه‌چیز تک‌باینری محلی است.</div>
+        <summary>توکن‌های وبم کجا می‌روند؟ امن است؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">توکن‌ها فقط در <bdi class="lt">.env</bdi> یا استور محلی خودت می‌مانند و بین روتر و سایت ارائه‌دهنده رد و بدل می‌شوند. کلاینت‌ها فقط کلیدهای مجازی <bdi class="lt v">sk-</bdi> خود روتر را می‌بینند. هیچ چیزی به هیچ سروری غیر از خود ارائه‌دهنده‌ها ارسال نمی‌شود — همه‌چیز تک‌باینری محلی است.</div>
       </details>
       <details>
-        <summary>فرق OmniRouter با گذاشتن مستقیم بریج‌ها کنار هم؟</summary>
-        <div class="a">بریج‌های تکی هرکدام یک پورت، یک فرمت و یک توکن دارند. OmniRouter همه را پشت یک endpoint استاندارد می‌گذارد: یک کلید برای همه، resolve خودکار مدل، failover بین سرویس‌ها، سهمیه و آمار یکپارچه، و Token Saver که روی همه اعمال می‌شود — چیزی که با N بریج مجزا عملاً ممکن نیست.</div>
+        <summary>فرق OmniRouter با گذاشتن بریج‌ها کنار هم چیست؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">بریج‌های تکی هرکدام یک پورت، یک فرمت و یک توکن دارند. OmniRouter همه را پشت یک endpoint استاندارد می‌گذارد: یک کلید برای همه، resolve خودکار مدل، failover بین سرویس‌ها، سهمیه و آمار یکپارچه، و Token Saver که روی همه اعمال می‌شود — چیزی که با چند بریج مجزا عملاً ممکن نیست.</div>
       </details>
       <details>
-        <summary>روی ویندوز چطور اجرا کنم؟</summary>
-        <div class="a">از Releases پکیج <span class="mono">windows-amd64.zip</span> را بگیر، extract کن و <span class="mono">start.bat</span> را بزن — اولین اجرا <span class="mono">.env</span> می‌سازد و راهنما نشان می‌دهد. باینری‌های macOS (اینتل/ARM) و لینوکس (amd64/ARM64) هم در همان ریلیز هستند.</div>
+        <summary>روی ویندوز چطور اجرا کنم؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">از Releases پکیج <bdi class="lt">windows-amd64.zip</bdi> را بگیر، extract کن و <bdi class="lt">start.bat</bdi> را اجرا کن — اولین اجرا فایل <bdi class="lt">.env</bdi> می‌سازد و راهنما نشان می‌دهد. باینری‌های macOS (اینتل و ARM) و لینوکس (amd64 و ARM64) هم در همان ریلیز هستند.</div>
       </details>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ CTA + FOOTER ═══════════ -->
+<!-- ═══════ big CTA ═══════ -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-box rv">
+      <span class="kicker" style="justify-content:center">Ready in 60 seconds</span>
+      <h2>امشب شروع کن، <span class="grad">صفر تومان</span> بساز.</h2>
+      <p>یک باینری، پنج پروایدر، مدل‌های رایگان بدون کلید — و زنجیره‌ای که هیچ‌وقت نمی‌ایستد.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn pri" href="https://github.com/Godde3s/omnirouter/releases" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg>
+          دانلود از Releases</a>
+        <a class="btn" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><use href="#i-gh"/></svg>
+          سورس روی GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ footer ═══════ -->
 <footer>
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="logo" href="#top" style="font-size:1.25rem">🌐 <span class="g">OmniRouter</span></a>
-        <p style="margin-top:.7rem;max-width:340px;font-size:.9rem">یک روتر برای همه‌ی مدل‌ها. بریج‌های واقعی وب + هر API سازگار OpenAI، با failover و Token Saver — تک‌باینری، متن‌باز.</p>
-        <div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap">
-          <span class="chip">v1.2.0</span><span class="chip">Go 1.25</span><span class="chip">MIT</span>
+        <a class="logo" href="#top">
+          <svg class="hex" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-hex"/></svg>
+          <b>Omni<span class="grad">Router</span></b>
+        </a>
+        <p style="margin-top:.9rem;max-width:360px;font-size:.9rem">یک روتر برای همه‌ی مدل‌ها. بریج‌های واقعی وب به‌علاوه‌ی هر API سازگار OpenAI، با failover و Token Saver — تک‌باینری و متن‌باز.</p>
+        <div style="margin-top:1.1rem;display:flex;gap:.5rem;flex-wrap:wrap">
+          <span class="chip"><span class="dot" style="background:var(--cyan)"></span><b class="en">v1.2.0</b></span>
+          <span class="chip"><span class="dot" style="background:var(--mint)"></span><b class="en">Go 1.25</b></span>
+          <span class="chip"><span class="dot" style="background:var(--vio)"></span><b class="en">MIT</b></span>
         </div>
       </div>
-      <div>
+      <div class="fl">
         <h4>سند</h4>
+        <a href="#opencode">OpenCode Free</a>
         <a href="#start">شروع سریع</a>
         <a href="#connect">اتصال کلاینت‌ها</a>
         <a href="#parity">برابری با 9router</a>
         <a href="#changelog">تغییرات نسخه‌ها</a>
       </div>
-      <div>
+      <div class="fl">
         <h4>لینک‌ها</h4>
         <a href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub — omnirouter ↗</a>
         <a href="https://github.com/Godde3s/omnirouter/releases" target="_blank" rel="noopener">Releases ↗</a>
@@ -773,102 +1018,156 @@ tools:    <span class="n">true</span>   <span class="c1"># فراخوانی اب
       </div>
     </div>
     <div class="copy">
-      <span>ساخته‌شده با ❤ برای کدنویسیِ رایگان — ۲۰۲۶</span>
-      <span class="mono" style="direction:ltr">godde3s.github.io/omnirouter</span>
+      <span>برای کدنویسیِ رایگان — ۲۰۲۶</span>
+      <span class="en" style="font-family:var(--mono);font-size:.85em">godde3s.github.io/omnirouter</span>
     </div>
   </div>
 </footer>
 
 <script>
-/* RTL pages anchor overflow boxes at the right edge — force LTR start */
 (function(){
-  var fix=function(){document.querySelectorAll('.codebox,.table-scroll,.term-body').forEach(function(b){b.scrollLeft=0})};
-  fix();setTimeout(fix,400);window.addEventListener('load',fix);
-})();
+'use strict';
+var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ticker duplicate for seamless loop */
-(function(){
-  var t=document.getElementById('ticker-track');
-  t.innerHTML+=t.innerHTML;
-})();
+/* LTR scroll containers in an RTL page start at the left edge */
+function fixScroll(){document.querySelectorAll('.codebox,.term-body').forEach(function(b){b.scrollLeft=0})}
+fixScroll();setTimeout(fixScroll,400);addEventListener('load',fixScroll);
+
+/* nav scrolled state + scroll progress */
+var nav=document.getElementById('nav'),pbar=document.getElementById('pbar');
+function onScroll(){
+  nav.classList.toggle('scrolled',scrollY>10);
+  var h=document.documentElement,max=h.scrollHeight-h.clientHeight;
+  pbar.style.transform='scaleX('+(max>0?scrollY/max:0)+')';
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* mobile menu */
+var burger=document.getElementById('burger'),mnav=document.getElementById('mnav');
+function closeMenu(){mnav.classList.remove('open');burger.classList.remove('open');burger.setAttribute('aria-expanded','false');
+  document.body.style.overflow=''}
+burger.addEventListener('click',function(){
+  var open=mnav.classList.toggle('open');
+  burger.classList.toggle('open',open);
+  burger.setAttribute('aria-expanded',open);
+  document.body.style.overflow=open?'hidden':'';
+});
+mnav.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu)});
+addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+
+/* ticker: duplicate track for a seamless loop */
+var tk=document.getElementById('ticker-track');if(tk)tk.innerHTML+=tk.innerHTML;
 
 /* typing terminal */
 (function(){
-  var el=document.getElementById('term');
-  if(!el)return;
+  var el=document.getElementById('term');if(!el)return;
   var lines=[
-    ['cm','# شروع روتر — همه‌ی بریج‌ها داخلی'],
-    ['','# ./omnirouter'],
-    ['vi','🌐 OmniRouter v1.2.0 — یک روتر برای همه‌ی مدل‌ها'],
-    ['ok','✓ qwen ✓ glm-5.3 ✓ deepseek ✓ gemini ✓ opencore(oc) — 77 مدل'],
-    ['am','🔑 Client API Key: sk-omni-****  ·  Dashboard: :8080'],
-    ['cm','# بدون کلید — مدل رایگان OpenCode Zen'],
-    ['','$ curl localhost:8080/v1/chat/completions \\'],
-    ['','    -d \'{"model":"oc/big-pickle","messages":[…]}\''],
-    ['ok','{"content":"COMBO-OK","usage":{"total_tokens":2}}  ← $0'],
-    ['cm','# یا کمبوی آماده — fallback خودکار'],
-    ['','"model": "combo:free-stack"  →  qwen → gemini → oc'],
+    ['cm','# one binary -- every model, one endpoint'],
+    ['','$ ./omnirouter'],
+    ['vi','OmniRouter v1.2.0 - bridges online'],
+    ['ok','\u2713 qwen \u2713 glm-5.3 \u2713 deepseek \u2713 gemini \u2713 oc'],
+    ['cy','77 models live - dashboard : localhost:8080'],
+    ['cm','# keyless -- OpenCode Zen free tier'],
+    ['','$ curl :8080/v1/chat/completions \\'],
+    ['','    -d \'{"model":"oc/big-pickle",...}\''],
+    ['lm','\u2713 200 OK - "content":"hi" - cost $0'],
+    ['cm','# named combo -- auto failover'],
+    ['am','"model":"combo:free-stack" -> qwen>gemini>oc']
   ];
-  var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function renderAll(){
-    el.innerHTML=lines.map(function(l){return '<span class="'+l[0]+'">'+esc(l[1])+'</span>'}).join('\n');
-  }
   function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+  function renderAll(){el.innerHTML=lines.map(function(l){return '<span class="'+l[0]+'">'+esc(l[1])+'</span>'}).join('\n')}
   if(reduced){renderAll();return}
   var li=0,ci=0,out='';
   function tick(){
     if(li>=lines.length){el.innerHTML=out+'<span class="cursor"></span>';return}
     var cls=lines[li][0],txt=lines[li][1];
-    ci+=1+(txt.length>60?2:1);
-    var part=esc(txt.slice(0,ci));
-    var cur=out+'<span class="'+cls+'">'+part+'</span><span class="cursor"></span>';
-    el.innerHTML=cur;
-    if(ci>=txt.length){out+='<span class="'+cls+'">'+esc(txt)+'</span>\n';li++;ci=0;setTimeout(tick,txt===''?60:220)}
-    else setTimeout(tick,14);
+    ci+=txt.length>50?3:2;
+    el.innerHTML=out+'<span class="'+cls+'">'+esc(txt.slice(0,ci))+'</span><span class="cursor"></span>';
+    if(ci>=txt.length){out+='<span class="'+cls+'">'+esc(txt)+'</span>\n';li++;ci=0;setTimeout(tick,190)}
+    else setTimeout(tick,15);
   }
   tick();
 })();
 
-/* reveal on scroll (with safety fallbacks) */
+/* reveal on scroll (staggered) + safety fallback */
 (function(){
   var els=document.querySelectorAll('.rv');
   if(!('IntersectionObserver' in window)){els.forEach(function(n){n.classList.add('in')});return}
   var io=new IntersectionObserver(function(es){
     es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
-  },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
-  els.forEach(function(n){io.observe(n)});
-  /* belt & suspenders: anything still hidden after 6s becomes visible */
-  setTimeout(function(){els.forEach(function(n){n.classList.add('in')})},4500);
+  },{threshold:.1,rootMargin:'0px 0px -6% 0px'});
+  els.forEach(function(n,i){if(!n.style.getPropertyValue('--d'))n.style.setProperty('--d',(i%4)*0.06+'s');io.observe(n)});
+  setTimeout(function(){els.forEach(function(n){n.classList.add('in')})},5000);
 })();
 
 /* meters */
 (function(){
   var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){
-        var f=e.target;f.style.width=f.dataset.w+'%';io.unobserve(f);
-      }
-    });
+    es.forEach(function(e){if(e.isIntersecting){var f=e.target;f.style.width=f.dataset.w+'%';io.unobserve(f)}});
   },{threshold:.4});
   document.querySelectorAll('.meter .fill').forEach(function(f){io.observe(f)});
 })();
 
-/* tabs */
+/* hero stats count-up */
 (function(){
-  document.querySelectorAll('.tab').forEach(function(b){
-    b.addEventListener('click',function(){
-      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});
-      document.querySelectorAll('.tabpane').forEach(function(x){x.classList.remove('on')});
-      b.classList.add('on');
-      var p=document.getElementById(b.dataset.t);if(p)p.classList.add('on');
-    });
-  });
+  var els=document.querySelectorAll('[data-count]');if(!els.length)return;
+  function animate(n){
+    var to=+n.dataset.count,t0=null;
+    if(reduced){n.textContent=to;return}
+    function step(t){if(!t0)t0=t;var k=Math.min((t-t0)/900,1);
+      n.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(step)}
+    requestAnimationFrame(step);
+  }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){animate(e.target);io.unobserve(e.target)}});
+  },{threshold:.5});
+  els.forEach(function(n){io.observe(n)});
 })();
 
-/* close mobile menu on link click */
-document.querySelectorAll('.m-panel a').forEach(function(a){
-  a.addEventListener('click',function(){document.getElementById('navtoggle').checked=false});
+/* tabs */
+document.querySelectorAll('.tab').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});
+    document.querySelectorAll('.tabpane').forEach(function(x){x.classList.remove('on')});
+    b.classList.add('on');
+    var p=document.getElementById(b.dataset.t);if(p)p.classList.add('on');
+  });
 });
+
+/* 3D hero parallax + card tilt — pointer devices only */
+(function(){
+  if(reduced||!matchMedia('(pointer:fine)').matches)return;
+  var stage=document.getElementById('stage');
+  if(stage){
+    var sx=0,sy=0,cx=0,cy=0,raf=null;
+    var hero=document.querySelector('.hero');
+    hero.addEventListener('pointermove',function(e){
+      var r=hero.getBoundingClientRect();
+      sx=((e.clientX-r.left)/r.width-.5)*2;
+      sy=((e.clientY-r.top)/r.height-.5)*2;
+      if(!raf)raf=requestAnimationFrame(upd);
+    });
+    hero.addEventListener('pointerleave',function(){sx=0;sy=0;if(!raf)raf=requestAnimationFrame(upd)});
+    function upd(){
+      cx+=(sx-cx)*.08;cy+=(sy-cy)*.08;
+      stage.style.setProperty('--ry',(-12+cx*5).toFixed(2)+'deg');
+      stage.style.setProperty('--rx',(8-cy*4).toFixed(2)+'deg');
+      raf=(Math.abs(sx-cx)>.002||Math.abs(sy-cy)>.002)?requestAnimationFrame(upd):null;
+    }
+  }
+  /* cards: subtle tilt + glare position */
+  document.querySelectorAll('.card.tlt').forEach(function(c){
+    c.addEventListener('pointermove',function(e){
+      var r=c.getBoundingClientRect();
+      var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+      c.style.transform='perspective(900px) rotateX('+((.5-py)*4).toFixed(2)+'deg) rotateY('+((px-.5)*-4).toFixed(2)+'deg) translateY(-3px)';
+      c.style.setProperty('--gx',(px*100).toFixed(1)+'%');
+      c.style.setProperty('--gy',(py*100).toFixed(1)+'%');
+    });
+    c.addEventListener('pointerleave',function(){c.style.transform=''});
+  });
+})();
+})();
 </script>
 </body>
 </html>
