@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniRouter — یک روتر، همه‌ی مدل‌ها</title>
+<meta name="description" content="روتر یکپارچه‌ی وب‌به‌API برای Qwen، GLM، DeepSeek و Gemini + هر API دلخواه — سازگار با OpenAI و Anthropic، استریم واقعی، Tool Calling، Failover خودکار و داشبورد فارسی.">
+<meta property="og:title" content="OmniRouter — یک روتر، همه‌ی مدل‌ها">
+<meta property="og:description" content="چهار بریج وبِ رایگان پشت یک درگاه سازگار با OpenAI و Anthropic — یک کلید، یک داشبورد، صفر وابستگی.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#05060f">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060f; --bg2:#0a0c1a;
+  --panel:rgba(255,255,255,.035); --panel2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --text:#e9ebf8; --muted:#9aa3bd; --dim:#6b7390;
+  --violet:#8b5cf6; --cyan:#22d3ee; --magenta:#e879f9; --lime:#a3e635; --amber:#fbbf24;
+  --grad:linear-gradient(110deg,#8b5cf6,#22d3ee 45%,#e879f9);
+  --r:22px; --r-sm:14px;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Vazirmatn',system-ui,-apple-system,'Segoe UI',sans-serif;
+  line-height:1.9; overflow-x:hidden;
+}
+::selection{background:rgba(139,92,246,.4)}
+/* ---------- aurora background ---------- */
+.aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(110px);opacity:.5;will-change:transform}
+.b1{width:56vw;height:56vw;background:radial-gradient(circle,#6d28d9aa,transparent 65%);top:-22vw;right:-14vw;animation:drift1 26s ease-in-out infinite alternate}
+.b2{width:44vw;height:44vw;background:radial-gradient(circle,#0e7490aa,transparent 65%);top:32vh;left:-16vw;animation:drift2 31s ease-in-out infinite alternate}
+.b3{width:38vw;height:38vw;background:radial-gradient(circle,#a21caf88,transparent 65%);bottom:-14vw;right:24vw;animation:drift3 24s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(-9vw,7vh) scale(1.15)}}
+@keyframes drift2{to{transform:translate(11vw,-6vh) scale(.9)}}
+@keyframes drift3{to{transform:translate(-7vw,-9vh) scale(1.2)}}
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+/* ---------- layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+section{padding:96px 0}
+@media(max-width:720px){section{padding:64px 0}}
+/* ---------- navbar ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:.35s;
+  background:transparent;border-bottom:1px solid transparent}
+nav.scrolled{background:rgba(6,7,18,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--line)}
+.nav-in{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:26px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.12rem;text-decoration:none;color:var(--text);white-space:nowrap}
+.logo .orb{width:34px;height:34px;border-radius:11px;background:conic-gradient(from 210deg,#8b5cf6,#22d3ee,#e879f9,#8b5cf6);display:grid;place-items:center;font-size:17px;box-shadow:0 0 22px rgba(139,92,246,.55);animation:spin 9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav-links{display:flex;gap:22px;margin-inline-start:auto}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.92rem;transition:.2s}
+.nav-links a:hover{color:var(--text)}
+.gh-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;border:1px solid var(--line2);
+  background:var(--panel2);color:var(--text)!important;text-decoration:none;font-size:.9rem;transition:.25s}
+.gh-btn:hover{border-color:var(--violet);box-shadow:0 0 18px rgba(139,92,246,.35)}
+@media(max-width:880px){.nav-links{display:none}}
+/* ---------- hero ---------- */
+.hero{padding:190px 0 90px;text-align:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:999px;
+  border:1px solid var(--line2);background:var(--panel);font-size:.85rem;color:var(--muted);margin-bottom:30px}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 rgba(163,230,53,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(163,230,53,0)}100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}}
+h1.title{font-size:clamp(2.6rem,7vw,4.9rem);font-weight:900;line-height:1.25;letter-spacing:-.5px}
+.grad-text{background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s linear infinite}
+@keyframes shine{to{background-position:220% center}}
+.hero p.sub{max-width:760px;margin:26px auto 0;color:var(--muted);font-size:1.13rem}
+.hero p.sub b{color:var(--text)}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 30px;border-radius:14px;font-weight:700;font-size:1rem;text-decoration:none;transition:.25s;cursor:pointer;border:none;font-family:inherit}
+.btn-primary{background:var(--grad);background-size:180% auto;color:#fff;box-shadow:0 8px 32px rgba(139,92,246,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 42px rgba(139,92,246,.55);background-position:90% center}
+.btn-ghost{border:1px solid var(--line2);background:var(--panel);color:var(--text)}
+.btn-ghost:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(34,211,238,.25);transform:translateY(-2px)}
+.stat-chips{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:46px}
+.chip{padding:9px 20px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:.88rem;color:var(--muted)}
+.chip b{color:var(--text)}
+/* ---------- ticker ---------- */
+.ticker{border-block:1px solid var(--line);background:rgba(10,12,26,.6);overflow:hidden;padding:16px 0;
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ticker-track{display:flex;gap:44px;width:max-content;animation:ticker 30s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes ticker{to{transform:translateX(50%)}}
+.tk{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.9rem;color:var(--muted);white-space:nowrap;direction:ltr}
+.tk i{font-style:normal;font-size:.75rem;padding:2px 9px;border-radius:6px;font-family:'Vazirmatn';direction:rtl}
+.tk .p{background:rgba(139,92,246,.16);color:#c4b5fd}
+.tk .g{background:rgba(163,230,53,.13);color:#bef264}
+/* ---------- section head ---------- */
+.sec-head{text-align:center;margin-bottom:56px}
+.sec-head .kicker{font-size:.85rem;font-weight:700;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase;direction:ltr;display:inline-block}
+.sec-head h2{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:900;margin-top:10px}
+.sec-head p{color:var(--muted);max-width:640px;margin:14px auto 0}
+/* ---------- glass cards ---------- */
+.glass{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:.3s}
+.glass:hover{border-color:var(--line2);transform:translateY(-3px)}
+/* ---------- demo ---------- */
+.demo-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:22px;align-items:stretch}
+@media(max-width:900px){.demo-grid{grid-template-columns:1fr}}
+.term{background:#080a16;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.5)}
+.term-bar{display:flex;align-items:center;gap:8px;padding:13px 18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
+.dot{width:12px;height:12px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.term-title{margin-inline-start:auto;font-family:var(--mono);font-size:.78rem;color:var(--dim);direction:ltr}
+.term-body{padding:22px;font-family:var(--mono);font-size:.86rem;line-height:2;direction:ltr;text-align:left;min-height:340px;white-space:pre-wrap;word-break:break-word}
+.t-cmd{color:#7dd3fc}.t-flag{color:#c4b5fd}.t-str{color:#bef264}.t-ok{color:#6ee7b7}.t-dim{color:#5b6478}.t-evt{color:#f0abfc}
+.cursor{display:inline-block;width:9px;height:1.15em;background:var(--cyan);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.route-panel{padding:26px;display:flex;flex-direction:column;gap:16px}
+.route-title{font-weight:900;font-size:1.05rem;display:flex;align-items:center;gap:9px}
+.route-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:var(--r-sm);background:var(--panel);border:1px solid var(--line);font-size:.9rem}
+.route-item .num{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:.78rem;font-weight:900;flex-shrink:0}
+.ri1{border-inline-start:3px solid var(--lime)}.ri1 .num{background:rgba(163,230,53,.14);color:var(--lime)}
+.ri2{border-inline-start:3px solid var(--cyan);opacity:.8}.ri2 .num{background:rgba(34,211,238,.13);color:var(--cyan)}
+.ri3{border-inline-start:3px solid var(--magenta);opacity:.65}.ri3 .num{background:rgba(232,121,249,.12);color:var(--magenta)}
+.route-note{font-size:.83rem;color:var(--dim);line-height:1.9}
+/* ---------- bento ---------- */
+.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:980px){.bento{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.bento{grid-template-columns:1fr}}
+.b-card{padding:28px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.b-wide{grid-column:span 2}
+@media(max-width:600px){.b-wide{grid-column:span 1}}
+.b-ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:22px;margin-bottom:6px}
+.i1{background:rgba(139,92,246,.15)}.i2{background:rgba(34,211,238,.13)}.i3{background:rgba(232,121,249,.13)}
+.i4{background:rgba(163,230,53,.12)}.i5{background:rgba(251,191,36,.13)}.i6{background:rgba(96,165,250,.14)}
+.b-card h3{font-size:1.08rem;font-weight:800}
+.b-card p{font-size:.9rem;color:var(--muted)}
+.b-card p code{font-family:var(--mono);font-size:.8rem;color:var(--cyan);background:rgba(34,211,238,.09);padding:2px 7px;border-radius:6px;direction:ltr;display:inline-block}
+.b-glow::after{content:'';position:absolute;inset:auto -30% -55% auto;width:70%;height:80%;background:radial-gradient(circle,rgba(139,92,246,.22),transparent 70%);pointer-events:none}
+.spark{width:100%;height:56px;margin-top:8px}
+.tag-new{position:absolute;top:16px;inset-inline-end:16px;font-size:.7rem;font-weight:800;padding:3px 11px;border-radius:999px;background:rgba(163,230,53,.14);color:var(--lime);border:1px solid rgba(163,230,53,.3)}
+</style>
+<style>
+/* ---------- providers ---------- */
+.prov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:920px){.prov-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.prov-grid{grid-template-columns:1fr}}
+.prov{padding:26px;display:flex;flex-direction:column;gap:12px}
+.prov-top{display:flex;align-items:center;gap:13px}
+.prov-logo{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-weight:900;font-size:1.05rem;font-family:var(--mono)}
+.prov h3{font-size:1.02rem}
+.prov small{color:var(--dim);font-family:var(--mono);font-size:.74rem;direction:ltr;display:block}
+.prov p{font-size:.86rem;color:var(--muted)}
+.pill{align-self:flex-start;font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:999px}
+.pl-green{background:rgba(163,230,53,.13);color:var(--lime)}
+.pl-cyan{background:rgba(34,211,238,.12);color:var(--cyan)}
+.pl-amber{background:rgba(251,191,36,.12);color:var(--amber)}
+.pl-violet{background:rgba(139,92,246,.15);color:#c4b5fd}
+/* ---------- steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:step}
+@media(max-width:880px){.steps{grid-template-columns:1fr}}
+.step{padding:28px;position:relative}
+.step .n{position:absolute;top:-16px;inset-inline-start:24px;width:38px;height:38px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-weight:900;color:#fff;font-size:1.05rem;box-shadow:0 6px 20px rgba(139,92,246,.45)}
+.step h3{margin-top:14px;font-size:1.05rem}
+.step p{font-size:.87rem;color:var(--muted);margin-bottom:14px}
+.codebox{position:relative;background:#080a16;border:1px solid var(--line);border-radius:var(--r-sm);padding:16px 18px;font-family:var(--mono);font-size:.8rem;line-height:2;direction:ltr;text-align:left;overflow-x:auto;white-space:pre}
+.codebox .cm{color:#5b6478}.codebox .kw{color:#c4b5fd}.codebox .st{color:#bef264}.codebox .fn{color:#7dd3fc}
+.copy{position:absolute;top:10px;inset-inline-end:10px;background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:8px;padding:4px 10px;font-size:.72rem;cursor:pointer;font-family:'Vazirmatn';transition:.2s}
+.copy:hover{color:var(--text);border-color:var(--violet)}
+/* ---------- connect tabs ---------- */
+.tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:26px}
+.tab{padding:10px 22px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:600;transition:.25s}
+.tab.on{background:rgba(139,92,246,.16);border-color:var(--violet);color:#fff;box-shadow:0 0 18px rgba(139,92,246,.3)}
+.tab-pane{display:none}.tab-pane.on{display:block;animation:fadeUp .45s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pane-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:880px){.pane-grid{grid-template-columns:1fr}}
+.pane-info{padding:28px}
+.pane-info h3{font-size:1.15rem;margin-bottom:12px}
+.pane-info p{font-size:.9rem;color:var(--muted);margin-bottom:10px}
+.pane-info ul{list-style:none;margin-top:6px}
+.pane-info li{font-size:.88rem;color:var(--muted);padding:7px 0;display:flex;gap:9px;align-items:flex-start}
+.pane-info li::before{content:'✦';color:var(--cyan);flex-shrink:0}
+.pane-info li code{font-family:var(--mono);font-size:.78rem;color:var(--cyan);direction:ltr;display:inline-block}
+/* ---------- changelog ---------- */
+.ver-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:920px){.ver-grid{grid-template-columns:1fr}}
+.ver{padding:28px;position:relative;display:flex;flex-direction:column;gap:14px}
+.ver-hot{border-color:rgba(163,230,53,.35);box-shadow:0 0 34px rgba(163,230,53,.07)}
+.ver-head{display:flex;align-items:center;gap:12px}
+.ver-tag{font-family:var(--mono);font-weight:600;font-size:.95rem;padding:4px 14px;border-radius:9px;direction:ltr}
+.vt-lime{background:rgba(163,230,53,.13);color:var(--lime)}
+.vt-violet{background:rgba(139,92,246,.15);color:#c4b5fd}
+.vt-cyan{background:rgba(34,211,238,.12);color:var(--cyan)}
+.ver-date{font-size:.78rem;color:var(--dim)}
+.ver ul{list-style:none}
+.ver li{font-size:.87rem;color:var(--muted);padding:5px 0;display:flex;gap:9px}
+.ver li::before{content:'▸';color:var(--cyan);flex-shrink:0}
+.ver li b{color:var(--text);font-weight:700}
+/* ---------- models ---------- */
+.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:980px){.model-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.model-grid{grid-template-columns:1fr}}
+.model{padding:26px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.model .medal{font-size:2.1rem}
+.model h3{font-family:var(--mono);font-size:.95rem;direction:ltr}
+.model .score{font-size:.8rem;color:var(--dim)}
+.model p{font-size:.83rem;color:var(--muted)}
+.meter{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:99px;width:0;transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
+.m1 i{background:linear-gradient(90deg,#a3e635,#22d3ee)}
+.m2 i{background:linear-gradient(90deg,#22d3ee,#8b5cf6)}
+.m3 i{background:linear-gradient(90deg,#8b5cf6,#e879f9)}
+.m4 i{background:linear-gradient(90deg,#e879f9,#fbbf24)}
+/* ---------- faq ---------- */
+.faq{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.q{overflow:hidden}
+.q>button{all:unset;display:flex;align-items:center;gap:14px;width:100%;padding:20px 24px;cursor:pointer;font-family:inherit;font-weight:700;font-size:.98rem;color:var(--text)}
+.q>button .pm{margin-inline-start:auto;font-size:1.25rem;color:var(--cyan);transition:.3s;flex-shrink:0}
+.q.open .pm{transform:rotate(45deg)}
+.q .a{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.q .a p{padding:0 24px 22px;font-size:.9rem;color:var(--muted)}
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:54px 0 40px;margin-top:40px;background:rgba(8,10,20,.55)}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:34px}
+@media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr}}
+.foot-grid h4{font-size:.95rem;margin-bottom:14px}
+.foot-grid a{display:block;color:var(--muted);text-decoration:none;font-size:.87rem;padding:4px 0;transition:.2s}
+.foot-grid a:hover{color:var(--cyan)}
+.foot-desc{font-size:.86rem;color:var(--muted);max-width:340px}
+.disclaimer{margin-top:36px;padding:16px 22px;border-radius:var(--r-sm);background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);font-size:.8rem;color:var(--muted)}
+.copyright{text-align:center;margin-top:30px;font-size:.8rem;color:var(--dim)}
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.d1r{transition-delay:.08s}.d2r{transition-delay:.16s}.d3r{transition-delay:.24s}.d4r{transition-delay:.32s}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="grain"></div>
+
+<nav id="nav">
+  <div class="nav-in">
+    <a class="logo" href="#top"><span class="orb">🌐</span> OmniRouter</a>
+    <div class="nav-links">
+      <a href="#features">امکانات</a>
+      <a href="#demo">دمو</a>
+      <a href="#providers">پروایدرها</a>
+      <a href="#start">شروع سریع</a>
+      <a href="#connect">اتصال ایجنت‌ها</a>
+      <a href="#changelog">تغییرات</a>
+      <a href="#faq">سوالات</a>
+    </div>
+    <a class="gh-btn" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-badge"><span class="pulse"></span> نسخه‌ی v1.1.1 منتشر شد — فیکس استاندارد OpenAI + ۴ بریج کامل</div>
+    <h1 class="title">یک روتر،<br><span class="grad-text">همه‌ی مدل‌ها</span></h1>
+    <p class="sub">
+      چهار بریج اثبات‌شده‌ی <b>وب‌به‌API</b> — Qwen، GLM، DeepSeek و Gemini — کنار <b>هر API دلخواه</b>،
+      پشت یک درگاهِ سازگار با <b>OpenAI</b> و <b>Anthropic</b>.
+      یک کلید، یک داشبورد فارسی، یک باینری بدون وابستگی — با استریم واقعی، Tool Calling و Failover خودکار.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#start">⚡ شروع در ۳۰ ثانیه</a>
+      <a class="btn btn-ghost" href="#demo">▶ تماشای دمو</a>
+    </div>
+    <div class="stat-chips">
+      <span class="chip"><b>۴</b> بریج وب رایگان</span>
+      <span class="chip"><b>۲</b> پروتکل API (OpenAI + Anthropic)</span>
+      <span class="chip"><b>۵</b> پلتفرم (win/linux/mac × amd64/arm64)</span>
+      <span class="chip"><b>۱</b> باینری ~۲۳MB، صفر وابستگی</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= TICKER ================= -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack">
+    <span class="tk">qwen/qwen3.8-max <i class="p">قوی‌ترین برای ایجنت</i></span>
+    <span class="tk">gemini/gemini-3.6-flash <i class="g">مهمان بدون کوکی</i></span>
+    <span class="tk">ds/deepseek-chat <i class="p">PoW رسمی</i></span>
+    <span class="tk">glm/GLM-5.1 <i class="g">مهمان</i></span>
+    <span class="tk">auto <i class="p">زنجیره‌ی failover</i></span>
+    <span class="tk">gpt-4o <i class="g">→ alias به هر مدلی</i></span>
+    <span class="tk">claude-sonnet-4 <i class="g">→ /v1/messages</i></span>
+  </div>
+</div>
+
+<!-- ================= DEMO ================= -->
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Live Demo</div>
+      <h2>همین الان، از ترمینال خودت</h2>
+      <p>یک درخواست بزن — روتر خودش مدل را انتخاب، در صورت خطا failover و توکن‌ها را شمارش می‌کند.</p>
+    </div>
+    <div class="demo-grid">
+      <div class="term reveal">
+        <div class="term-bar"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="term-title">terminal — omnirouter</span></div>
+        <div class="term-body" id="term"></div>
+      </div>
+      <div class="glass route-panel reveal d2r">
+        <div class="route-title">🧭 تصمیم مسیریابی</div>
+        <div class="route-item ri1"><span class="num">۱</span><div><b>qwen/qwen3.8-max</b><br><small style="color:var(--dim)">سالم · p50 ≈ ۱.۲s · ابزارها ✓</small></div></div>
+        <div class="route-item ri2"><span class="num">۲</span><div><b>gemini/gemini-3.6-flash</b><br><small style="color:var(--dim)">مهمان · بدون کوکی · پشتیبان</small></div></div>
+        <div class="route-item ri3"><span class="num">۳</span><div><b>ds/deepseek-chat</b><br><small style="color:var(--dim)">استدلال قوی · نیاز به اکانت</small></div></div>
+        <p class="route-note">مدل <b style="color:var(--text)">auto</b> اولین گزینه‌ی سالم را انتخاب می‌کند؛ پروایدرِ خطاکار بعد از اتمام retryها تا COOLDOWN_SECONDS سرد می‌شود — اما «ترجیح» است، نه بلوک: اگر همه سرد بودند باز تلاش می‌شود.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURES (BENTO) ================= -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Features</div>
+      <h2>هرچیزی که از یک API واقعی انتظار داری</h2>
+      <p>نه پروکسی خام، نه اسکرپ شکننده — یک لایه‌ی روتر کامل روی چهار بریج مهندسی‌شده.</p>
+    </div>
+    <div class="bento">
+      <div class="glass b-card b-wide b-glow reveal">
+        <div class="b-ico i1">🔌</div>
+        <h3>یک درگاه، دو پروتکل کامل</h3>
+        <p><code>/v1/chat/completions</code> سازگار با OpenAI و <code>/v1/messages</code> سازگار با Anthropic — همراه <code>/v1/messages/count_tokens</code> و <code>/v1/models</code> زنده. استریم SSE واقعاً افزایشی است (نه re-parse کل بافر) و بلوک‌های <b>thinking</b> هم می‌آیند.</p>
+      </div>
+      <div class="glass b-card b-wide reveal d1r">
+        <div class="b-ico i2">🛠️</div>
+        <h3>Tool Calling برای ایجنت‌ها</h3>
+        <p>چرخه‌ی کامل <b>R1→R2</b> برای <b>Hermes، OpenCode و Cline</b>: تعریف ابزار → فراخوانی <code>tool_calls</code> با JSON معتبر → نتیجه → پاسخ نهایی. روی هر چهار بریج، با اثبات زنده.</p>
+      </div>
+      <div class="glass b-card reveal d2r">
+        <div class="b-ico i3">🚦</div>
+        <h3>Failover خودکار</h3>
+        <p>مدل <code>auto</code> روی زنجیره‌ی قابل‌تنظیم می‌چرخد؛ خطای 401/403/429/5xx قبل از اولین بایت استریم → پروایدر بعدی.</p>
+      </div>
+      <div class="glass b-card reveal d3r">
+        <div class="b-ico i4">📊</div>
+        <h3>آمار مصرف واقعی</h3>
+        <p>توکن ورودی/خروجی واقعی هر درخواست، نمودار ۴۸ ساعته، تفکیک per-provider / per-model / per-key.</p>
+        <svg class="spark" viewBox="0 0 200 56" preserveAspectRatio="none"><polyline fill="none" stroke="#22d3ee" stroke-width="2.5" points="0,44 22,40 44,46 66,30 88,34 110,18 132,26 154,12 176,20 200,8"/><polyline fill="rgba(34,211,238,.09)" stroke="none" points="0,44 22,40 44,46 66,30 88,34 110,18 132,26 154,12 176,20 200,8 200,56 0,56"/></svg>
+      </div>
+      <div class="glass b-card reveal d4r">
+        <div class="b-ico i5">🎭</div>
+        <h3>Alias مدل‌ها</h3>
+        <p><code>gpt-4o</code> را به <code>qwen3.8-max</code> وصل کن؛ کلاینت‌های یک‌دست، بی‌دردسر روی وبِ رایگان.</p>
+      </div>
+      <div class="glass b-card reveal">
+        <div class="b-ico i6">🔑</div>
+        <h3>کلیدهای مجازی</h3>
+        <p>چند کلید <code>sk-</code> با سهمیه‌ی درخواست و لیست مدلِ مجاز per-key — مناسب اشتراک با تیم.</p>
+      </div>
+      <div class="glass b-card reveal d1r">
+        <span class="tag-new">v1.1</span>
+        <div class="b-ico i1">🎛️</div>
+        <h3>داشبورد فارسی RTL</h3>
+        <p>KPI، نمودار Canvas، پلی‌گراند چت با thinking، ویرایشگر alias و لاگ زنده — همه embed داخل باینری.</p>
+      </div>
+      <div class="glass b-card reveal d2r">
+        <div class="b-ico i2">➕</div>
+        <h3>پروایدر دلخواه</h3>
+        <p>هر API سازگار با OpenAI: پری‌ستِ <b>Gemini AI Studio</b>، <b>OpenRouter</b>، <b>Groq</b>، <b>Ollama</b>، <b>LM Studio</b>…</p>
+      </div>
+      <div class="glass b-card reveal d3r">
+        <div class="b-ico i3">📦</div>
+        <h3>تک‌باینری، همه‌جا</h3>
+        <p>Go خالص، CGO صفر — ویندوز/لینوکس/مک (amd64+arm64) و داکر. <code>./start.sh</code> و تمام.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROVIDERS ================= -->
+<section id="providers">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Providers</div>
+      <h2>چهار بریج داخلی + هر API دیگری</h2>
+      <p>هر بریج، سال‌ها تجربه‌ی مهندسی معکوسِ پایدار را به ارث برده — مدل‌ها به‌صورت زنده از خود سرویس کشف می‌شوند، نه هاردکد.</p>
+    </div>
+    <div class="prov-grid">
+      <div class="glass prov reveal"><div class="prov-top"><div class="prov-logo" style="background:rgba(163,230,53,.12);color:var(--lime)">Q</div><div><h3>Qwen</h3><small>chat.qwen.ai</small></div></div><p>مهمان کار می‌کند؛ روی IP دیتاسنتر ابزار <b>qwen-bx</b> جلسه‌ی تمیز می‌گیرد. پول چند-اکانت با QWEN_TOKENS.</p><span class="pill pl-green">مهمان ✓ · Pool ✓</span></div>
+      <div class="glass prov reveal d1r"><div class="prov-top"><div class="prov-logo" style="background:rgba(139,92,246,.15);color:#c4b5fd">Z</div><div><h3>GLM</h3><small>chat.z.ai</small></div></div><p>مهمان بی‌دردسر؛ توکن دستگاه برای کپچا به‌صورت خودکار مدیریت می‌شود.</p><span class="pill pl-green">مهمان ✓</span></div>
+      <div class="glass prov reveal d2r"><div class="prov-top"><div class="prov-logo" style="background:rgba(34,211,238,.12);color:var(--cyan)">D</div><div><h3>DeepSeek</h3><small>chat.deepseek.com</small></div></div><p>اثبات کار (PoW) با اجرای wasm رسمی داخل <b>wazero</b> — بدون CGO. اکانت لازم است؛ ابزار <b>ds-login</b> توکن می‌گیرد.</p><span class="pill pl-amber">اکانت لازم</span></div>
+      <div class="glass prov reveal d3r"><div class="prov-top"><div class="prov-logo" style="background:rgba(232,121,249,.13);color:var(--magenta)">G</div><div><h3>Gemini</h3><small>gemini.google.com</small></div></div><p><b>مهمان بدون هیچ کوکی‌ای جواب می‌دهد</b> (اثبات زنده)، ویژن واقعی، چرخش خودکار PSIDTS و کشف زنده‌ی مدل‌ها.</p><span class="pill pl-green">مهمان ✓ · ویژن ✓</span></div>
+      <div class="glass prov reveal d4r"><div class="prov-top"><div class="prov-logo" style="background:rgba(251,191,36,.13);color:var(--amber)">＋</div><div><h3>هر API دلخواه</h3><small>openai-compatible</small></div></div><p>از داشبورد با پری‌ست اضافه کن؛ همان failover، آمار و alias روی آن‌ها هم فعال است.</p><span class="pill pl-violet">پری‌ست آماده</span></div>
+      <div class="glass prov reveal d4r"><div class="prov-top"><div class="prov-logo" style="background:rgba(96,165,250,.14);color:#93c5fd">auto</div><div><h3>زنجیره‌ی auto</h3><small>AUTO_CHAIN=…</small></div></div><p>ترتیب دلخواه خودت را بگذار؛ خطا → بعدی. سردشدن هوشمند، تلاش مجدد هر پروایدر.</p><span class="pill pl-cyan">قابل‌تنظیم</span></div>
+    </div>
+  </div>
+</section>
+<!-- ================= QUICK START ================= -->
+<section id="start">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Quick Start</div>
+      <h2>۳۰ ثانیه تا اولین پاسخ</h2>
+      <p>باینری آماده را از Releases بگیر، اجرا کن، کلید را از داشبورد بردار — تمام.</p>
+    </div>
+    <div class="steps">
+      <div class="glass step reveal"><span class="n">۱</span>
+        <h3>دانلود و اجرا</h3>
+        <p>از صفحه‌ی Releases آخرین بسته‌ی پلتفرم خودت را بردار و اجرا کن. اسکریپت start، اولین بار .env را هم می‌سازد.</p>
+        <div class="codebox"><button class="copy">کپی</button><span class="cm"># Linux / macOS</span>
+tar xzf omnirouter-linux-amd64.tar.gz
+./start.sh
+
+<span class="cm"># Windows — start.bat را اجرا کن</span>
+<span class="cm"># Docker — docker compose up -d</span></div>
+      </div>
+      <div class="glass step reveal d1r"><span class="n">۲</span>
+        <h3>اعتبار بگذار (اختیاری!)</h3>
+        <p>Gemini و GLM و Qwen مهمان کار می‌کنند. برای سهمیه‌ی کامل: توکن‌ها را در .env بگذار یا از ابزارهای لاگین استفاده کن.</p>
+        <div class="codebox"><button class="copy">کپی</button><span class="cm"># .env — همه اختیاری به‌جز DeepSeek</span>
+<span class="kw">QWEN_TOKENS</span>=<span class="st">token1,token2</span>
+<span class="kw">GEMINI_COOKIES</span>=<span class="st">__Secure-1PSID=…</span>
+<span class="kw">DEEPSEEK_TOKENS</span>=<span class="st">…</span>  <span class="cm"># ./ds-login</span></div>
+      </div>
+      <div class="glass step reveal d2r"><span class="n">۳</span>
+        <h3>کلید بگیر، وصل شو</h3>
+        <p>داشبورد را باز کن، کلید <b>sk-</b> را بردار و در هر کلاینتی بگذار. مدلِ <b>auto</b> خودش بهترین مسیر را انتخاب می‌کند.</p>
+        <div class="codebox"><button class="copy">کپی</button><span class="fn">curl</span> http://localhost:8080/v1/chat/completions \
+  -H <span class="st">"Authorization: Bearer sk-omni-…"</span> \
+  -d <span class="st">'{"model":"auto","messages":[…]}'</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONNECT AGENTS ================= -->
+<section id="connect">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Agent Ready</div>
+      <h2>OpenCode، Cline، Claude Code، Hermes…</h2>
+      <p>هر کلاینتی که OpenAI یا Anthropic حرف می‌زند، یک‌جا به همه‌ی مدل‌ها وصل می‌شود — با Tool Calling کامل.</p>
+    </div>
+    <div class="tabs reveal">
+      <button class="tab on" data-pane="p-opencode">OpenCode</button>
+      <button class="tab" data-pane="p-cline">Cline</button>
+      <button class="tab" data-pane="p-claude">Claude Code</button>
+      <button class="tab" data-pane="p-hermes">Hermes Agent</button>
+      <button class="tab" data-pane="p-any">هر کلاینت دیگری</button>
+    </div>
+
+    <div class="tab-pane on" id="p-opencode">
+      <div class="pane-grid">
+        <div class="glass pane-info">
+          <h3>OpenCode</h3>
+          <p>فایل <code>opencode.json</code> پروژه را بساز و پروایدر را معرفی کن. مدل <b>auto</b> یا هر مدلی از <code>/v1/models</code>.</p>
+          <ul>
+            <li>پروتکل <code>openai-compatible</code> — استریم و ابزارها پشتیبانی می‌شوند</li>
+            <li>برای حالت Anthropic، <code>baseURL</code> را روی ریشه بگذار و <code>/v1/messages</code> استفاده می‌شود</li>
+            <li>کلید را از داشبورد بگیر: <code>sk-omni-…</code></li>
+          </ul>
+        </div>
+        <div class="codebox"><button class="copy">کپی</button>{
+  <span class="st">"$schema"</span>: <span class="st">"https://opencode.ai/config.json"</span>,
+  <span class="st">"provider"</span>: {
+    <span class="st">"omnirouter"</span>: {
+      <span class="st">"npm"</span>: <span class="st">"@ai-sdk/openai-compatible"</span>,
+      <span class="st">"options"</span>: {
+        <span class="st">"baseURL"</span>: <span class="st">"http://localhost:8080/v1"</span>,
+        <span class="st">"apiKey"</span>: <span class="st">"sk-omni-…"</span>
+      },
+      <span class="st">"models"</span>: {
+        <span class="st">"auto"</span>: {},
+        <span class="st">"qwen/qwen3.8-max"</span>: {},
+        <span class="st">"gemini/gemini-3.6-flash"</span>: {}
+      }
+    }
+  }
+}</div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="p-cline">
+      <div class="pane-grid">
+        <div class="glass pane-info">
+          <h3>Cline (VS Code)</h3>
+          <p>در تنظیمات Cline یکی از دو حالت را انتخاب کن — هر دو کامل تست شده‌اند:</p>
+          <ul>
+            <li>API Provider: <code>OpenAI Compatible</code> — Base URL: <code>http://localhost:8080/v1</code></li>
+            <li>یا Provider: <code>Anthropic</code> — خودش <code>/v1/messages</code> می‌زند</li>
+            <li>Model ID: <code>auto</code> برای failover خودکار</li>
+          </ul>
+        </div>
+        <div class="codebox"><button class="copy">کپی</button><span class="cm"># OpenAI Compatible</span>
+Base URL:  http://localhost:8080/v1
+API Key:   sk-omni-…
+Model ID:  auto
+
+<span class="cm"># Anthropic Compatible</span>
+Base URL:  http://localhost:8080
+API Key:   sk-omni-…
+Model ID:  qwen/qwen3.8-max</div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="p-claude">
+      <div class="pane-grid">
+        <div class="glass pane-info">
+          <h3>Claude Code</h3>
+          <p>با دو متغیر محیطی، کل Claude Code روی وبِ رایگان می‌چرخد — بلوک‌های thinking هم واقعی پاس می‌شوند.</p>
+          <ul>
+            <li><code>ANTHROPIC_BASE_URL</code> به ریشه‌ی روتر اشاره می‌کند (بدون /v1)</li>
+            <li><code>ANTHROPIC_AUTH_TOKEN</code> = کلید sk- داشبورد</li>
+            <li><code>/v1/messages/count_tokens</code> هم پاسخ می‌دهد</li>
+          </ul>
+        </div>
+        <div class="codebox"><button class="copy">کپی</button><span class="kw">export</span> ANTHROPIC_BASE_URL=<span class="st">http://localhost:8080</span>
+<span class="kw">export</span> ANTHROPIC_AUTH_TOKEN=<span class="st">sk-omni-…</span>
+
+<span class="cm"># سپس عادی اجرا کن:</span>
+claude <span class="st">"این ریپو رو بررسی کن و تست بنویس"</span></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="p-hermes">
+      <div class="pane-grid">
+        <div class="glass pane-info">
+          <h3>Hermes Agent</h3>
+          <p>Hermes چرخه‌ی کامل tool-calling می‌زند؛ روتر هم R1→R2 را در تمام بریج‌ها پاس می‌دهد (اثبات زنده با <code>get_weather</code>).</p>
+          <ul>
+            <li>OpenAI base: <code>http://localhost:8080/v1</code> + کلید sk-</li>
+            <li>برای reasoning مدل‌ها، بلوک thinking در Anthropic جدا می‌آید</li>
+            <li>AGENT_MODE=1 در .env فعال بماند</li>
+          </ul>
+        </div>
+        <div class="codebox"><button class="copy">کپی</button><span class="kw">export</span> OPENAI_BASE_URL=<span class="st">http://localhost:8080/v1</span>
+<span class="kw">export</span> OPENAI_API_KEY=<span class="st">sk-omni-…</span>
+<span class="kw">export</span> MODEL=<span class="st">qwen/qwen3.8-max</span></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="p-any">
+      <div class="pane-grid">
+        <div class="glass pane-info">
+          <h3>هر کلاینت دیگری</h3>
+          <p>هر نرم‌افزاری که «OpenAI-compatible» یا «Anthropic-compatible» دارد — از Dify و LobeChat تا اسکریپت‌های خودت.</p>
+          <ul>
+            <li>Base URL: <code>http://localhost:8080/v1</code> (OpenAI) یا ریشه (Anthropic)</li>
+            <li>کلید از داشبورد — چند کلید با سهمیه‌ی جدا بساز</li>
+            <li>مدل‌های زنده: <code>GET /v1/models</code></li>
+          </ul>
+        </div>
+        <div class="codebox"><button class="copy">کپی</button><span class="cm"># کشف زنده‌ی مدل‌ها</span>
+<span class="fn">curl</span> http://localhost:8080/v1/models -H <span class="st">"Authorization: Bearer sk-omni-…"</span>
+
+<span class="cm"># شمارش توکن (Anthropic parity)</span>
+<span class="fn">curl</span> http://localhost:8080/v1/messages/count_tokens \
+  -d <span class="st">'{"model":"auto","messages":[…]}'</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHANGELOG ================= -->
+<section id="changelog">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Changelog</div>
+      <h2>از v1.0.0 تا امروز</h2>
+      <p>مسیر رشد روتر — هر نسخه با تست واقعی (smoke + لایو) اثبات شده.</p>
+    </div>
+    <div class="ver-grid">
+      <div class="glass ver ver-hot reveal">
+        <div class="ver-head"><span class="ver-tag vt-lime">v1.1.1</span><span class="ver-date">امروز</span></div>
+        <ul>
+          <li><b>فیکس استاندارد OpenAI:</b> حذفِ فیلد <b>stream</b> حالا JSON برمی‌گرداند، نه SSE — سازگاری کامل با کلاینت‌هایی که فیلد را نمی‌فرستند</li>
+          <li>همان فیکس به هر ۴ ریپوی بریج هم سینک شد (qwen v1.0.3، glm v1.0.3، gemini v1.0.2)</li>
+          <li>چک رگرسیون جدید در smoke (۳۴/۳۴ سبز)</li>
+        </ul>
+      </div>
+      <div class="glass ver reveal d1r">
+        <div class="ver-head"><span class="ver-tag vt-violet">v1.1.0</span><span class="ver-date">نسخه‌ی بزرگ</span></div>
+        <ul>
+          <li><b>برج Gemini</b> به‌عنوان چهارمین پروایدر داخلی — مهمان بدون کوکی، ویژن واقعی، heartbeat خودکار PSIDTS</li>
+          <li><b>آمار مصرف واقعی:</b> توکن هر درخواست، نمودار ۴۸ ساعته، تفکیک کامل</li>
+          <li><b>Alias</b> عمومی→آپستریم با نمایش در کاتالوگ</li>
+          <li><b>سهمیه + Allowlist</b> per-key (429/403 بامعنا)</li>
+          <li>Retry هر پروایدر + cooldown «ترجیحی»، <code>/v1/messages/count_tokens</code></li>
+          <li>داشبورد v2: KPI، نمودار Canvas، پلی‌گراند استریم با thinking</li>
+        </ul>
+      </div>
+      <div class="glass ver reveal d2r">
+        <div class="ver-head"><span class="ver-tag vt-cyan">v1.0.0</span><span class="ver-date">تولد روتر</span></div>
+        <ul>
+          <li>روتر یکپارچه روی ۳ بریج (Qwen / GLM / DeepSeek) با embed کامل</li>
+          <li>دو پروتکل OpenAI + Anthropic با SSE و tool calling</li>
+          <li>مدل auto با failover، پول چند-اکانت با cooldown</li>
+          <li>داشبورد فارسی RTL + مدیریت کلید + افزودن پروایدر</li>
+          <li>Release CI برای ۵ پلتفرم + ابزارهای ds-login و qwen-bx</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MODELS ================= -->
+<section id="models">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">Which Model?</div>
+      <h2>کدام مدل برای ایجنت‌ها؟</h2>
+      <p>نتیجه‌ی تست‌های زنده‌ی مکرر با چرخه‌ی کامل tool-calling روی همین روتر — برای کار کدنویسی و ایجنت.</p>
+    </div>
+    <div class="model-grid">
+      <div class="glass model reveal"><div class="medal">🥇</div><h3>qwen/qwen3.8-max</h3><span class="score">قوی‌ترین · کد و ابزار</span><div class="meter m1"><i data-w="96%"></i></div><p>بهترین کیفیت برای OpenCode و Hermes؛ چرخه‌ی کامل ابزارها با اثبات زنده در چند سشن.</p></div>
+      <div class="glass model reveal d1r"><div class="medal">🥈</div><h3>gemini/gemini-3.6-flash</h3><span class="score">پایدارترین مهمان</span><div class="meter m2"><i data-w="84%"></i></div><p>بدون هیچ اعتباری جواب می‌دهد؛ سرعت خوب؛ انتخاب اولِ زنجیره‌ی پشتیبان.</p></div>
+      <div class="glass model reveal d2r"><div class="medal">🥉</div><h3>ds/deepseek-chat</h3><span class="score">استدلال قوی</span><div class="meter m3"><i data-w="80%"></i></div><p>خیلی خوب در تحلیل و کد؛ نیازمند اکانت (ds-login) — PoW رسمی داخل روتر.</p></div>
+      <div class="glass model reveal d3r"><div class="medal">🛡️</div><h3>glm/GLM-5.1</h3><span class="score">پشتیبان مطمئن</span><div class="meter m4"><i data-w="74%"></i></div><p>مهمان و بی‌دردسر؛ عضو پایانی زنجیره‌ی auto برای پوشش خطاها.</p></div>
+    </div>
+    <p class="reveal" style="text-align:center;color:var(--dim);font-size:.85rem;margin-top:22px">نام‌ها را هاردکد نکرده‌ایم — کاتالوگ به‌صورت زنده از <code style="font-family:var(--mono);color:var(--cyan)">/v1/models</code> هر پروایدر کشف می‌شود.</p>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">FAQ</div>
+      <h2>سوالات پرتکرار</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="glass q"><button>واقعاً رایگان است؟ چه چیزی را «وب‌به‌API» می‌گویید؟<span class="pm">＋</span></button>
+        <div class="a"><p>بله. روتر به جای کلیدهای رسمی، از نسخه‌ی وبِ رایگان چت‌بات‌ها (chat.qwen.ai، chat.z.ai، chat.deepseek.com، gemini.google.com) استفاده می‌کند و آن‌ها را به API استاندارد تبدیل می‌کند. کیفیت پاسخ همان مدل وب است — با پروتکل کامل API: استریم، ابزارها، آمار.</p></div></div>
+      <div class="glass q"><button>روی VPS یا سرور هم کار می‌کند؟<span class="pm">＋</span></button>
+        <div class="a"><p>Gemini مهمان از IP دیتاسنتر هم پاسخ داد (اثبات زنده در توسعه). Qwen مهمان روی IPهای دیتاسنتر محدود است — ابزار qwen-bx یک جلسه‌ی تمیز از مرورگر headless می‌گیرد. DeepSeek همیشه نیاز به توکن اکانت دارد (ds-login).</p></div></div>
+      <div class="glass q"><button>با ۹router چه فرقی دارد؟<span class="pm">＋</span></button>
+        <div class="a"><p>۹router روی APIهای رسمی/OAuth تمرکز دارد؛ OmniRouter همان تجربه‌ی روتر (کلید، آمار، alias، failover، داشبورد) را اما روی وبِ رایگان مدل‌ها می‌آورد و هر API دلخواه را هم کنارشان می‌پذیرد. تک‌باینری است، نیازی به دیتابیس و Node ندارد و داشبورد فارسی دارد.</p></div></div>
+      <div class="glass q"><button>مدل‌ها هاردکد هستند؟<span class="pm">＋</span></button>
+        <div class="a"><p>نه. کاتالوگ مدل‌ها با TTL کوتاه از خود سرویس‌ها کشف زنده می‌شود؛ اگر سرویس مدل جدیدی اضافه کند، روتر خودش می‌بیند. نام‌های نمایشی alias هم می‌پذیرند.</p></div></div>
+      <div class="glass q"><button>امنیتش چطور است؟<span class="pm">＋</span></button>
+        <div class="a"><p>کلاینت‌ها فقط با کلیدهای sk- داشبورد وارد می‌شوند؛ هر کلید سهمیه و لیست مدل مجاز دارد. بین هسته‌ی روتر و بریج‌ها توکن داخلی (AUTH_TOKEN) رد و بدل می‌شود و داشبورد با رمز ADMIN_PASSWORD محافظت می‌شود. همه‌چیز لوکال اجرا می‌شود.</p></div></div>
+      <div class="glass q"><button>چطور از Releases شروع کنم؟<span class="pm">＋</span></button>
+        <div class="a"><p>از بخش Quick Start همین صفحه — سه مرحله: دانلود بسته‌ی پلتفرم، اجرای start.sh / start.bat (یا داکر)، برداشتن کلید از داشبورد روی پورت 8080.</p></div></div>
+      <div class="glass q"><button>ملاحظات قانونی؟<span class="pm">＋</span></button>
+        <div class="a"><p>این پروژه آموزشی است و رابط کاربری وب سرویس‌ها را طبق رفتار عمومی آن‌ها استفاده می‌کند؛ مسئولیت رعایت شرایط سرویس‌ها با کاربر است. برای کار تجاری، APIهای رسمی را به‌عنوان پروایدر سفارشی اضافه کنید.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#top" style="margin-bottom:16px"><span class="orb">🌐</span> OmniRouter</a>
+        <p class="foot-desc">یک روتر برای همه‌ی مدل‌ها — وبِ رایگانِ چت‌بات‌ها + هر API دلخواه، پشت یک درگاه استاندارد.</p>
+      </div>
+      <div><h4>پروژه</h4>
+        <a href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub اصلی</a>
+        <a href="https://github.com/Godde3s/omnirouter/releases" target="_blank" rel="noopener">Releases</a>
+        <a href="https://github.com/Godde3s/omnirouter/blob/main/README.md" target="_blank" rel="noopener">README</a>
+      </div>
+      <div><h4>بریج‌ها</h4>
+        <a href="https://github.com/Godde3s/qwen-free-api" target="_blank" rel="noopener">qwen-free-api</a>
+        <a href="https://github.com/Godde3s/glm-free-api" target="_blank" rel="noopener">glm-free-api</a>
+        <a href="https://github.com/Godde3s/deepseek-free-api" target="_blank" rel="noopener">deepseek-free-api</a>
+        <a href="https://github.com/Godde3s/gemini-free-api" target="_blank" rel="noopener">gemini-free-api</a>
+      </div>
+      <div><h4>اینجا در صفحه</h4>
+        <a href="#features">امکانات</a><a href="#start">شروع سریع</a><a href="#connect">اتصال ایجنت‌ها</a><a href="#changelog">تغییرات</a><a href="#faq">سوالات</a>
+      </div>
+    </div>
+    <div class="disclaimer">⚠️ پروژه‌ای آموزشی و غیررسمی؛ وابسته به هیچ شرکتی نیست. استفاده‌ی مسئولانه از سرویس‌ها بر عهده‌ی کاربر است. برای تولید، API رسمی را به‌عنوان پروایدر سفارشی وصل کنید.</div>
+    <div class="copyright">ساخته‌شده با ♥ و Go — الهام‌گرفته از تجربه‌ی روترهای مدرن · OmniRouter v1.1.1</div>
+  </div>
+</footer>
+<script>
+// ---------- navbar scroll ----------
+const nav = document.getElementById('nav');
+addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 30), {passive:true});
+
+// ---------- reveal on scroll ----------
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ---------- meter fill ----------
+const mio = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.style.width = e.target.dataset.w; mio.unobserve(e.target); }
+}), {threshold:.4});
+document.querySelectorAll('.meter i').forEach(el => mio.observe(el));
+
+// ---------- ticker duplication (seamless loop) ----------
+const track = document.getElementById('tickerTrack');
+track.innerHTML += track.innerHTML;
+
+// ---------- terminal typing demo ----------
+const term = document.getElementById('term');
+const script = [
+  {t:'cmd', s:'$ curl http://localhost:8080/v1/chat/completions \\\n    -H "Authorization: Bearer sk-omni-…" \\\n    -d \'{"model":"auto","stream":true,\n        "messages":[{"role":"user","content":"سلام!"}]}\'\n\n'},
+  {t:'evt', s:'◆ resolve auto → qwen/qwen3.8-max  (healthy)\n\n'},
+  {t:'ok',  s:'data: {"delta":"سَلام! "}'},
+  {t:'ok',  s:'data: {"delta":"چطور می‌تونم کمک کنم؟"}'},
+  {t:'ok',  s:'data: {"delta":"🚀"}\n\n'},
+  {t:'evt', s:'◆ usage: in=12 out=9  ·  latency=1.24s  ·  usage recorded\n'},
+  {t:'ok',  s:'data: [DONE]\n\n'},
+  {t:'dim', s:'# یک کلید · چهار پروایدر · failover خودکار\n'}
+];
+const cls = {cmd:'t-cmd', evt:'t-evt', ok:'t-ok', dim:'t-dim'};
+let li = 0;
+function typeLine() {
+  if (li >= script.length) {
+    const c = document.createElement('span'); c.className = 'cursor'; term.appendChild(c);
+    setTimeout(() => { term.innerHTML = ''; li = 0; typeLine(); }, 9000);
+    return;
+  }
+  const line = script[li];
+  const span = document.createElement('span');
+  span.className = cls[line.t]; term.appendChild(span);
+  let ci = 0;
+  const speed = line.t === 'cmd' ? 16 : 55;
+  (function tick() {
+    if (ci < line.s.length) {
+      span.textContent += line.s[ci++];
+      setTimeout(tick, speed + Math.random()*30);
+    } else { li++; setTimeout(typeLine, line.t === 'cmd' ? 350 : 220); }
+  })();
+}
+const tio = new IntersectionObserver(es => {
+  if (es[0].isIntersecting) { typeLine(); tio.disconnect(); }
+}, {threshold:.3});
+tio.observe(term);
+
+// ---------- tabs ----------
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById(b.dataset.pane).classList.add('on');
+}));
+
+// ---------- faq accordion ----------
+document.querySelectorAll('.q > button').forEach(b => b.addEventListener('click', () => {
+  const q = b.parentElement, a = q.querySelector('.a'), open = q.classList.contains('open');
+  document.querySelectorAll('.q.open').forEach(o => { o.classList.remove('open'); o.querySelector('.a').style.maxHeight = 0; });
+  if (!open) { q.classList.add('open'); a.style.maxHeight = a.scrollHeight + 'px'; }
+}));
+
+// ---------- copy buttons ----------
+document.querySelectorAll('.copy').forEach(b => b.addEventListener('click', () => {
+  const code = [...b.parentElement.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('');
+  navigator.clipboard.writeText(code).then(() => {
+    b.textContent = 'کپی شد ✓'; setTimeout(() => b.textContent = 'کپی', 1600);
+  });
+}));
+</script>
+</body>
+</html>

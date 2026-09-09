@@ -1,14 +1,35 @@
-# 🌐 OmniRouter — یک روتر برای همه‌ی مدل‌ها
+# 🌐 OmniRouter — یک روتر، همه‌ی مدل‌ها
 
 <div align="center">
 
-**Qwen · GLM · DeepSeek · Gemini · هر API دیگه — با یک کلید، یک لاگین، یک آدرس**
+[![Version](https://img.shields.io/badge/version-v1.1.1-8b5cf6?style=for-the-badge)](https://github.com/Godde3s/omnirouter/releases)
+[![Go](https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
+[![Platform](https://img.shields.io/badge/platform-win%20%7C%20linux%20%7C%20mac%20%7C%20docker-e879f9?style=for-the-badge)](https://github.com/Godde3s/omnirouter/releases)
+[![License](https://img.shields.io/badge/license-MIT-a3e635?style=for-the-badge)](LICENSE)
 
-کیفیت واقعی API روی وبِ رایگانِ چت‌بات‌ها + ارائه‌دهنده‌های سفارشی + داشبورد کامل
+### **Qwen · GLM · DeepSeek · Gemini · هر API دیگه — با یک کلید، یک لاگین، یک آدرس**
 
-`OpenAI API` · `Anthropic API` · `SSE استریم` · `Tool Calling` · `Failover خودکار` · `آمار مصرف` · `نگاشت مدل` · `سهمیه کلید`
+کیفیت واقعی API روی وبِ رایگانِ چت‌بات‌ها + ارائه‌دهنده‌های سفارشی + داشبورد کامل فارسی
+
+`OpenAI API` · `Anthropic API` · `SSE استریم` · `Tool Calling` · `Failover خودکار` · `آمار مصرف` · `Alias مدل` · `سهمیه کلید`
+
+**→ 🎨 [مستندات کامل، دموی زنده و راهنمای مصور در GitHub Pages](https://godde3s.github.io/omnirouter/) ←**
+
+<img src="docs/screenshot.png" alt="OmniRouter — وب‌سایت مستندات" width="880">
 
 </div>
+
+---
+
+## 🚀 چه خبره از v1.0.0 تا v1.1.1؟
+
+| نسخه | چه چیزهایی اضافه/عوض شد |
+|---|---|
+| **v1.1.1** (امروز) | 🐞 **فیکس استاندارد OpenAI**: وقتی کلاینت فیلد `stream` را نمی‌فرستد (OpenCode و خیلی‌ها همین‌اند)، حالا **JSON** برمی‌گردد نه SSE — سینک‌شده به هر ۵ ریپو (qwen v1.0.3، glm v1.0.3، gemini v1.0.2) + ۳ چک رگرسیون جدید (smoke 34/34) |
+| **v1.1.0** | 🧬 برج **Gemini** (مهمان بدون کوکی، ویژن، heartbeat خودکار PSIDTS) · 📊 **آمار مصرف واقعی** (توکن هر درخواست، نمودار ۴۸ ساعته) · 🎭 **Alias مدل** (`gpt-4o` → `qwen3.8-max`) · 🔑 **سهمیه + Allowlist** per-key · ⏱ Retry/Cooldown هوشمند · 🔢 `/v1/messages/count_tokens` · 🎛 داشبورد v2 با KPI و پلی‌گراند |
+| **v1.0.0** | 🌱 تولد: روتر یکپارچه روی ۳ بریج، دو پروتکل کامل، failover، داشبورد فارسی، Release CI پنج‌پلتفرمه |
+
+<img src="docs/screenshot-features.png" alt="امکانات OmniRouter — bento grid" width="880">
 
 ---
 
@@ -197,8 +218,18 @@ docker compose up -d   # http://localhost:8080
 
 ## English Summary
 
-OmniRouter embeds the proven **qwen-free-api**, **glm-free-api**, **deepseek-free-api** and **gemini-free-api** bridges as libraries behind one OpenAI/Anthropic-compatible gateway: one `sk-…` key, live model catalog, cross-provider failover (`auto`), model aliasing, per-key quotas + allowlists, real token-usage analytics (streaming-aware), retry/cooldown, custom OpenAI-compatible providers, a playground and a Persian-RTL dashboard. Anthropic parity includes `/v1/messages/count_tokens`. DeepSeek's proof-of-work is solved natively by executing DeepSeek's own WASM via wazero — pure Go, zero CGO. Gemini web bridge works **guest, cookie-less** (verified live from datacenter IPs). Single static binary for Linux / Windows / macOS / Docker. See `.env.example` and the troubleshooting table above.
+OmniRouter embeds the proven **qwen-free-api**, **glm-free-api**, **deepseek-free-api** and **gemini-free-api** bridges as libraries behind one OpenAI/Anthropic-compatible gateway: one `sk-…` key, live model catalog, cross-provider failover (`auto`), model aliasing, per-key quotas + allowlists, real token-usage analytics (streaming-aware), retry/cooldown, custom OpenAI-compatible providers, a playground and a Persian-RTL dashboard. Anthropic parity includes `/v1/messages/count_tokens`. **v1.1.1 fixes OpenAI-spec `stream` defaulting** (omitted `stream` now returns JSON, not SSE). DeepSeek's proof-of-work is solved natively by executing DeepSeek's own WASM via wazero — pure Go, zero CGO. Gemini web bridge works **guest, cookie-less** (verified live from datacenter IPs). Single static binary for Linux / Windows / macOS / Docker. **Docs site & demo: <https://godde3s.github.io/omnirouter/>** · See `.env.example` and the troubleshooting table above.
 
 ## License
 
 MIT — مصرف شخصی و آموزشی. با احترام به شرایط سرویس‌های آپستریم، مسئولیت استفاده با خود شماست.
+
+---
+
+<div align="center">
+
+**🌐 [دمو و مستندات مصور — GitHub Pages](https://godde3s.github.io/omnirouter/)** · بریج‌های مستقل: [Qwen](https://github.com/Godde3s/qwen-free-api) · [GLM](https://github.com/Godde3s/glm-free-api) · [DeepSeek](https://github.com/Godde3s/deepseek-free-api) · [Gemini](https://github.com/Godde3s/gemini-free-api)
+
+اگر این پروژه به کارت اومد، یک ⭐ به ریپو بده!
+
+</div>
