@@ -174,7 +174,7 @@ label.f{display:block;font-size:11.5px;color:var(--mut);margin:10px 0 5px;font-w
   <aside class="side" id="side">
     <div class="brand">
       <div class="t">🌐 <b>OmniRouter</b></div>
-      <div class="v" id="ver">v1.3.0</div>
+      <div class="v" id="ver">v1.3.1</div>
     </div>
     <nav class="nav" id="nav">
       <button data-v="ov" class="on"><span class="ic">◈</span>نمای کلی</button>
@@ -508,7 +508,7 @@ async function loadAll(refresh){
 function renderOverview(){
   if(!overview)return;
   const o=overview,st=o.stats||{},sv=o.saver||{};
-  $('ver').textContent='v'+(o.version||'1.3.0');
+  $('ver').textContent='v'+(o.version||'1.3.1');
   $('k-req').textContent=fmt(st.total_requests);$('k-err').textContent=fmt(st.total_errors)+' خطا';
   $('k-in').textContent=fmt(st.tokens_in);$('k-out').textContent=fmt(st.tokens_out);
   $('k-sav').textContent=fmt(sv.saved_bytes);$('k-savc').textContent=fmt(sv.saved_calls)+' درخواست فشرده‌شده';

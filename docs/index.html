@@ -94,7 +94,7 @@ strong{color:var(--ink);font-weight:700}
 .en{direction:ltr;unicode-bidi:isolate;font-style:normal}
 .kicker{
   display:inline-flex;align-items:center;gap:.6em;direction:ltr;unicode-bidi:isolate;
-  font-family:var(--mono);font-size:.73rem;font-weight:600;letter-spacing:.24em;
+  font-family:var(--mono);font-size:.75rem;font-weight:600;letter-spacing:.24em;
   text-transform:uppercase;color:var(--cyan);margin-bottom:1.05em;
 }
 .kicker::before{content:'';width:28px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
@@ -169,7 +169,7 @@ section{padding-block:var(--sec);position:relative}
 .ico.c-pk{background:linear-gradient(155deg,rgba(255,106,213,.15),rgba(139,124,255,.08));border-color:rgba(255,106,213,.3);color:var(--pink)}
 .ico.c-am{background:linear-gradient(155deg,rgba(255,195,92,.15),rgba(255,122,138,.07));border-color:rgba(255,195,92,.3);color:var(--amber)}
 .ico.c-mt{background:linear-gradient(155deg,rgba(67,240,200,.14),rgba(62,224,255,.08));border-color:rgba(67,240,200,.3);color:var(--mint)}
-.tag{display:inline-flex;align-items:center;gap:.35rem;padding:.2em .8em;border-radius:99px;font-size:.73rem;font-weight:700;white-space:nowrap;direction:ltr;unicode-bidi:isolate}
+.tag{display:inline-flex;align-items:center;gap:.35rem;padding:.2em .8em;border-radius:99px;font-size:.75rem;font-weight:700;white-space:nowrap;direction:ltr;unicode-bidi:isolate}
 .tag.g{background:rgba(62,224,255,.12);color:var(--cyan)}
 .tag.v{background:rgba(139,124,255,.16);color:var(--vio2)}
 .tag.p{background:rgba(255,106,213,.13);color:var(--pink)}
@@ -253,17 +253,15 @@ section{padding-block:var(--sec);position:relative}
 @media(min-width:761px) and (max-width:1024px){
   .pc1{inset-inline-start:-2%}.pc2{inset-inline-end:-2%}.pc3{inset-inline-start:-2.5%}
 }
+/* NOTE: mobile layout overrides live in the LAST media block of this stylesheet
+   (see “mobile-first overrides”) — rules here would lose the CSS cascade to the
+   base definitions that follow them. */
 @media(max-width:760px){
   .pc1{inset-inline-start:2%;top:-8%}.pc2{display:none}.pc3{display:none}
   .pc5{display:none}.pchip{font-size:.64rem;padding:.38rem .7rem}
   .stage{transform:rotateX(var(--rx,5deg)) rotateY(var(--ry,-7deg))}
   .pc4{bottom:-8%;inset-inline-end:0}
   .kicker{font-size:.78rem;letter-spacing:.15em}
-  .codebox{padding:.95rem .9rem;line-height:1.95}
-  .ox-grid{grid-template-columns:repeat(2,1fr)}
-  .ox-steps{grid-template-columns:1fr}
-  .ox-consent{grid-template-columns:1fr}
-  .ox-desc{font-size:.84rem}
   .prow{font-size:.9rem}
 }
 /* ═══════════ oauth / connections ═══════════ */
@@ -284,12 +282,13 @@ section{padding-block:var(--sec);position:relative}
 .ox-desc{font-size:.82rem;color:var(--dim);line-height:1.85}
 .ox-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:1.5rem}
 .ox-step{position:relative;padding:1.15rem 1.1rem;border-radius:16px;background:var(--panel);
-  border:1px solid var(--bord);font-size:.92rem;color:var(--mut);line-height:1.95}
+  border:1px solid var(--bord);font-size:.92rem;color:var(--mut);line-height:1.95;overflow-wrap:anywhere}
 .ox-step .n{position:absolute;top:-13px;inset-inline-start:1rem;width:26px;height:26px;border-radius:9px;
   background:linear-gradient(135deg,var(--vio2),var(--cyan));color:#0b0e1e;font-weight:800;font-size:.85rem;
   display:flex;align-items:center;justify-content:center;font-family:var(--mono)}
 .ox-step strong{color:var(--ink)}
-.ox-step code{font-family:var(--mono);font-size:.78em;color:var(--cyan);direction:ltr;unicode-bidi:isolate}
+.ox-step code{font-family:var(--mono);font-size:.84em;color:var(--cyan);direction:ltr;unicode-bidi:isolate;
+  overflow-wrap:anywhere;word-break:break-word}
 .ox-consent{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(1.2rem,3vw,2.4rem);align-items:center;
   margin-top:1.8rem;padding:clamp(1.1rem,2.5vw,1.8rem);border-radius:20px;
   background:linear-gradient(140deg,rgba(139,124,255,.10),rgba(62,224,255,.04)),var(--panel);
@@ -333,7 +332,7 @@ section{padding-block:var(--sec);position:relative}
 .codebox .c1{color:#5f6c99}.codebox .k{color:var(--vio2)}.codebox .s{color:var(--mint)}
 .codebox .n{color:var(--amber)}.codebox .fn{color:var(--cyan)}.codebox .lm{color:var(--pink)}
 .nobadge{position:absolute;top:.65rem;inset-inline-start:.9rem;display:inline-flex;align-items:center;gap:.4rem;
-  background:var(--grad);color:#fff;font-size:.68rem;font-weight:800;padding:.24em .9em;border-radius:99px;direction:ltr;
+  background:var(--grad);color:#fff;font-size:.72rem;font-weight:800;padding:.24em .9em;border-radius:99px;direction:ltr;
   letter-spacing:.06em}
 .codebox.has-badge{padding-top:2.6rem}
 .cap{margin-top:.85rem;color:var(--dim);font-size:.83rem;line-height:1.9}
@@ -460,6 +459,30 @@ footer .fl a:hover{color:var(--cyan)}
 .rv{opacity:0;transform:translateY(26px);
   transition:opacity .75s ease var(--d,0s),transform .75s cubic-bezier(.2,.7,.2,1) var(--d,0s)}
 .rv.in{opacity:1;transform:none}
+/* ═══════════ mobile-first overrides — declared LAST so they win the cascade.
+   Fixes: ox-grid/ox-steps/ox-consent/codebox mobile rules previously sat before
+   their base definitions and were silently overridden → 4-col desktop grids
+   rendered on phones and cards bled off-screen. ═══════════ */
+@media(max-width:760px){
+  .codebox{padding:.95rem .85rem;line-height:1.9;font-size:.8rem}
+  .codebox.has-badge{padding-top:2.5rem}
+  .ox-grid{grid-template-columns:repeat(2,1fr);gap:.65rem}
+  .ox-card{padding:.9rem .85rem;gap:.45rem}
+  .ox-ava{width:36px;height:36px;border-radius:11px;font-size:.95rem}
+  .ox-name{font-size:.9rem}
+  .ox-desc{font-size:.8rem;line-height:1.75}
+  .ox-steps{grid-template-columns:1fr;gap:1.1rem;margin-top:1.7rem}
+  .ox-consent{grid-template-columns:1fr}
+  .nobadge{font-size:.75rem}
+  .tag{font-size:.75rem}
+}
+@media(max-width:600px){
+  .ox-grid{grid-template-columns:repeat(2,1fr)}
+  .ox-steps{grid-template-columns:1fr}
+}
+@media(min-width:761px) and (max-width:1000px){
+  .ox-steps{grid-template-columns:1fr;max-width:640px;margin-inline:auto}
+}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .rv{opacity:1;transform:none}
@@ -556,7 +579,7 @@ footer .fl a:hover{color:var(--cyan)}
       <span class="line">یک روتر، <span class="grad">همه‌ی مدل‌ها.</span></span>
       <span class="line">کدنویسی رایگان، بدون توقف.</span>
     </h1>
-    <p class="sub rv in" style="--d:.08s">بریج‌های واقعی وب برای <bdi>Qwen</bdi> و <bdi>GLM 5.3</bdi> و <bdi>DeepSeek</bdi> و <bdi>Gemini</bdi>، کنار پروایدر رایگان <bdi>OpenCode Zen</bdi> — همه پشت یک endpoint واحد. اتصال OAuth بدون کپی‌پیست کلید، failover خودکار و فشرده‌سازی توکن؛ یک فایل، بدون وابستگی.</p>
+    <p class="sub rv in" style="--d:.08s">بریج واقعی وب برای <bdi>Qwen</bdi>، <bdi>GLM 5.3</bdi>، <bdi>DeepSeek</bdi> و <bdi>Gemini</bdi> — کنار پروایدر رایگان <bdi>OpenCode Zen</bdi>. همه پشت یک endpoint: اتصال OAuth بدون کپی‌پیست کلید، failover خودکار و فشرده‌سازی توکن. یک فایل، بدون وابستگی.</p>
     <div class="mrow rv in" style="--d:.11s" aria-label="مدل‌های شاخص">
       <span class="mpill"><span class="dot" style="background:var(--vio)"></span>qwen3.8-max</span>
       <span class="mpill"><span class="dot" style="background:var(--cyan)"></span>GLM 5.3</span>
@@ -987,11 +1010,29 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Changelog</span>
-      <h2>از v1.0 تا <span class="grad">v1.3.0</span></h2>
+      <h2>از v1.0 تا <span class="grad">v1.3.1</span></h2>
     </div>
     <div class="tline rv">
       <div class="titem">
-        <div class="vhead"><span class="vnum">v1.3.0</span><span class="vdate">2026-09</span></div>
+        <div class="vhead"><span class="vnum">v1.3.1</span><span class="vdate">2026-09</span><span class="tag g">فعلی</span></div>
+        <ul>
+          <li><strong>بازنویسی لایه‌ی موبایل سایت</strong> — رفع باگ cascade در CSS که گرید ۴ستونه‌ی دسکتاپ را روی گوشی رندر می‌کرد و کارت‌های OAuth را از لبه بیرون می‌زد؛ حالا همه‌ی گریدها ۲ستونه/تک‌ستونه‌ی درست هستند</li>
+          <li><strong>کف فونت ۱۲px</strong> برای بج‌ها و تگ‌ها روی موبایل + شکست امن توکن‌های بلند کد داخل متن فارسی (<bdi class="lt">overflow-wrap:anywhere</bdi>)</li>
+          <li><strong>پالایش متن‌ها</strong> — پاراگراف هیرو روان‌تر با جزیره‌های bidi کمتر؛ کدباکس‌های موبایل فشرده‌تر با همین خوانایی</li>
+        </ul>
+      </div>
+      <div class="titem alt">
+        <div class="vhead"><span class="vnum grad">v1.3.0</span><span class="vdate">2026-09</span></div>
+        <ul>
+          <li><strong>OAuth Device Flow</strong> (<bdi class="lt">RFC 8628</bdi>) — اتصال بدون کپی کلید برای Cline، Kilo Code، GitHub Copilot، Hermes و هر کلاینت دیگر؛ همان الگوی 9router با endpointهای <bdi class="lt v">/oauth/device/start</bdi> و <bdi class="lt v">/oauth/device/poll</bdi></li>
+          <li><strong>پنل «اتصالات» در داشبورد</strong> — درخواست‌های در انتظار با بج زنده، کلاینت‌های متصل با آمار مستقل، کپی و لغو لحظه‌ای کلید</li>
+          <li><strong>صفحه‌ی تأیید فارسی</strong> در <bdi class="lt v">/oauth/authorize</bdi> — نمایش کلاینت و کد، مجاز فقط از localhost یا با نشست ادمین؛ کدها ۱۵ دقیقه‌ای منقضی و یک‌بارمصرف</li>
+          <li><strong>کلیدهای مجازی</strong> — هر اتصال یک <bdi class="lt v">sk-omni-…</bdi> اختصاصی با فیلد client و user_code در store؛ سازگار با سهمیه و allowlist موجود</li>
+          <li><strong>پالایش تایپوگرافی موبایل</strong> — رفع سرریز گرید split در بندها، کف فونت ترمینال ۱۲px، فشرده‌سازی letter-spacing کیکرها روی گوشی</li>
+        </ul>
+      </div>
+      <div class="titem">
+        <div class="vhead"><span class="vnum">v1.2.0</span><span class="vdate">2026-09</span></div>
         <ul>
           <li><strong>پروایدر OpenCode Zen</strong> (<bdi class="lt">oc</bdi>) — مدل‌های رایگان بدون کلید، fetch خودکار، Anthropic ترجمه‌شده و کلید اختیاری برای zen پولی</li>
           <li><strong>RTK Token Saver</strong> — فشرده‌سازی خودکار tool_result شامل git-diff، grep، file-list، dedup و smart-truncate به‌همراه آمار بایت صرفه‌جویی‌شده</li>
@@ -1000,16 +1041,6 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
           <li><strong>GLM 5.3</strong> — نام‌گذاری جدید پرچم‌دار Z.AI در کاتالوگ و زنجیره‌های fallback</li>
           <li><strong>داشبورد ۲.۰</strong> — چیدمان حرفه‌ای با سایدبار، Token Saver، کمبوها و پلی‌گراند جدید</li>
           <li>رفع باگ health-check بریج‌ها (احراز هویت fetch مدل‌ها)</li>
-        </ul>
-      </div>
-      <div class="titem">
-        <div class="vhead"><span class="vnum grad">v1.3.0</span><span class="vdate">2026-09</span><span class="tag g">فعلی</span></div>
-        <ul>
-          <li><strong>OAuth Device Flow</strong> (<bdi class="lt">RFC 8628</bdi>) — اتصال بدون کپی کلید برای Cline، Kilo Code، GitHub Copilot، Hermes و هر کلاینت دیگر؛ همان الگوی 9router با endpointهای <bdi class="lt v">/oauth/device/start</bdi> و <bdi class="lt v">/oauth/device/poll</bdi></li>
-          <li><strong>پنل «اتصالات» در داشبورد</strong> — درخواست‌های در انتظار با بج زنده، کلاینت‌های متصل با آمار مستقل، کپی و لغو لحظه‌ای کلید</li>
-          <li><strong>صفحه‌ی تأیید فارسی</strong> در <bdi class="lt v">/oauth/authorize</bdi> — نمایش کلاینت و کد، مجاز فقط از localhost یا با نشست ادمین؛ کدها ۱۵ دقیقه‌ای منقضی و یک‌بارمصرف</li>
-          <li><strong>کلیدهای مجازی</strong> — هر اتصال یک <bdi class="lt v">sk-omni-…</bdi> اختصاصی با فیلد client و user_code در store؛ سازگار با سهمیه و allowlist موجود</li>
-          <li><strong>پالایش تایپوگرافی موبایل</strong> — رفع سرریز گرید split در بندها، کف فونت ترمینال ۱۲px، فشرده‌سازی letter-spacing کیکرها روی گوشی</li>
         </ul>
       </div>
       <div class="titem alt">
