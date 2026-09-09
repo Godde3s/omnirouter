@@ -18,19 +18,23 @@
   --bg:#05060f; --bg2:#0a0c1a;
   --panel:rgba(255,255,255,.035); --panel2:rgba(255,255,255,.06);
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
-  --text:#e9ebf8; --muted:#9aa3bd; --dim:#6b7390;
+  --text:#eef0fb; --muted:#aab2cc; --dim:#7e86a4;
   --violet:#8b5cf6; --cyan:#22d3ee; --magenta:#e879f9; --lime:#a3e635; --amber:#fbbf24;
   --grad:linear-gradient(110deg,#8b5cf6,#22d3ee 45%,#e879f9);
   --r:22px; --r-sm:14px;
   --mono:'JetBrains Mono',ui-monospace,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:clip}
 body{
   background:var(--bg); color:var(--text);
   font-family:'Vazirmatn',system-ui,-apple-system,'Segoe UI',sans-serif;
-  line-height:1.9; overflow-x:hidden;
+  line-height:1.9; overflow-x:clip;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
 }
+b,strong{font-weight:800;color:var(--text)}
+section[id],header[id]{scroll-margin-top:80px}
 ::selection{background:rgba(139,92,246,.4)}
 /* ---------- aurora background ---------- */
 .aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
@@ -61,14 +65,30 @@ nav.scrolled{background:rgba(6,7,18,.72);backdrop-filter:blur(18px);-webkit-back
 .gh-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;border:1px solid var(--line2);
   background:var(--panel2);color:var(--text)!important;text-decoration:none;font-size:.9rem;transition:.25s}
 .gh-btn:hover{border-color:var(--violet);box-shadow:0 0 18px rgba(139,92,246,.35)}
-@media(max-width:880px){.nav-links{display:none}}
+/* ---------- burger + mobile menu ---------- */
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;padding:0 10px}
+.burger span{display:block;height:2px;border-radius:2px;background:var(--text);transition:.3s}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:880px){
+  .nav-links{display:none}
+  .burger{display:inline-flex}
+}
+.mobile-menu{position:fixed;top:72px;inset-inline:14px;z-index:49;display:none;flex-direction:column;gap:2px;
+  background:rgba(9,11,24,.94);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border:1px solid var(--line2);border-radius:18px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.mobile-menu.open{display:flex;animation:fadeUp .3s both}
+.mobile-menu a{padding:13px 16px;border-radius:12px;color:var(--text);text-decoration:none;font-weight:600;font-size:.98rem;transition:.2s}
+.mobile-menu a:hover{background:var(--panel2)}
+.mobile-menu a.mm-gh{margin-top:4px;border-top:1px solid var(--line);border-radius:0 0 12px 12px;padding-top:15px;color:var(--cyan)}
 /* ---------- hero ---------- */
 .hero{padding:190px 0 90px;text-align:center;position:relative}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:999px;
   border:1px solid var(--line2);background:var(--panel);font-size:.85rem;color:var(--muted);margin-bottom:30px}
 .pulse{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 rgba(163,230,53,.6);animation:pulse 2s infinite}
 @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(163,230,53,0)}100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}}
-h1.title{font-size:clamp(2.6rem,7vw,4.9rem);font-weight:900;line-height:1.25;letter-spacing:-.5px}
+h1.title{font-size:clamp(2.5rem,7vw,4.7rem);font-weight:900;line-height:1.4;text-wrap:balance}
 .grad-text{background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s linear infinite}
 @keyframes shine{to{background-position:220% center}}
 .hero p.sub{max-width:760px;margin:26px auto 0;color:var(--muted);font-size:1.13rem}
@@ -232,6 +252,78 @@ footer{border-top:1px solid var(--line);padding:54px 0 40px;margin-top:40px;back
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
 .reveal.in{opacity:1;transform:none}
 .d1r{transition-delay:.08s}.d2r{transition-delay:.16s}.d3r{transition-delay:.24s}.d4r{transition-delay:.32s}
+
+/* ---------- readability: long tokens, headings ---------- */
+h1,h2,h3,h4{text-wrap:balance}
+.sec-head h2{line-height:1.6}
+.sec-head p{line-height:2.1;font-size:1.02rem}
+.b-card p,.prov p,.ver li,.pane-info li,.q .a p,.route-note,.foot-desc{overflow-wrap:anywhere}
+.b-card p{line-height:2.05}
+.prov p{line-height:2.05}
+.q .a p{line-height:2.15}
+.pane-info li{line-height:2.05;padding:8px 0}
+.ver li{line-height:2;padding:6px 0}
+.step p{line-height:2.05}
+.ticker-track{will-change:transform}
+
+/* ---------- responsive: ≤880px ---------- */
+@media(max-width:880px){
+  .pane-grid{gap:16px}
+  .demo-grid{gap:16px}
+  .hero{padding:150px 0 66px}
+}
+
+/* ---------- responsive: ≤720px ---------- */
+@media(max-width:720px){
+  .wrap{padding:0 18px}
+  section{padding:58px 0}
+  .sec-head{margin-bottom:36px}
+  .sec-head p{font-size:.96rem}
+  .hero{padding:132px 0 56px}
+  .hero-badge{font-size:.78rem;padding:6px 14px;margin-bottom:22px}
+  .hero p.sub{font-size:1rem;line-height:2.15;margin-top:18px}
+  .cta-row{gap:10px;margin-top:30px}
+  .cta-row .btn{flex:1 1 100%;justify-content:center;padding:14px 22px}
+  .stat-chips{gap:8px;margin-top:30px}
+  .chip{font-size:.78rem;padding:7px 14px}
+  .ticker{padding:12px 0}
+  .tk{font-size:.8rem}
+  .term-body{font-size:.72rem;padding:16px 14px;min-height:280px;line-height:2.05}
+  .term-bar{padding:11px 14px}
+  .route-panel{padding:18px}
+  .route-item{padding:11px 13px;font-size:.86rem}
+  .route-note{font-size:.8rem}
+  .bento{gap:13px}
+  .b-card{padding:20px 18px}
+  .b-card h3{font-size:1rem}
+  .b-card p{font-size:.9rem}
+  .b-ico{width:40px;height:40px;font-size:19px;border-radius:11px}
+  .prov-grid,.ver-grid,.steps{gap:13px}
+  .prov,.step,.ver,.model{padding:20px 18px}
+  .prov h3,.step h3{font-size:.98rem}
+  .prov p,.step p,.ver li,.model p{font-size:.88rem}
+  .codebox{font-size:.7rem;padding:14px;padding-top:46px;line-height:2.1}
+  .copy{top:8px;inset-inline-end:8px}
+  .tabs{gap:8px}
+  .tab{padding:9px 15px;font-size:.85rem}
+  .pane-info{padding:20px 18px}
+  .pane-info h3{font-size:1.05rem}
+  .ver{gap:10px}
+  .meter{height:7px}
+  .q>button{padding:16px 18px;font-size:.93rem;line-height:1.8}
+  .q .a p{padding:0 18px 18px;font-size:.88rem}
+  .foot-grid{grid-template-columns:1fr;gap:26px}
+  .disclaimer{font-size:.76rem;padding:14px 16px;line-height:2}
+  .blob{filter:blur(72px);opacity:.4}
+}
+
+/* ---------- responsive: ≤400px ---------- */
+@media(max-width:400px){
+  .hero p.sub{font-size:.94rem}
+  .term-body{font-size:.65rem}
+  .logo{font-size:1rem}
+  .gh-btn{padding:7px 13px;font-size:.82rem}
+}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   .reveal{opacity:1;transform:none}
@@ -258,6 +350,18 @@ footer{border-top:1px solid var(--line);padding:54px 0 40px;margin-top:40px;back
       <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
       GitHub
     </a>
+    <button class="burger" id="burger" aria-label="منو" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features">امکانات</a>
+    <a href="#demo">دمو</a>
+    <a href="#providers">پروایدرها</a>
+    <a href="#start">شروع سریع</a>
+    <a href="#connect">اتصال ایجنت‌ها</a>
+    <a href="#changelog">تغییرات</a>
+    <a href="#models">مدل‌ها</a>
+    <a href="#faq">سوالات</a>
+    <a class="mm-gh" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">⭐ GitHub — ستاره بده</a>
   </div>
 </nav>
 
@@ -679,6 +783,25 @@ claude <span class="st">"این ریپو رو بررسی کن و تست بنوی
   </div>
 </footer>
 <script>
+// ---------- burger / mobile menu ----------
+const burger = document.getElementById('burger');
+const mmenu = document.getElementById('mobileMenu');
+burger.addEventListener('click', e => {
+  e.stopPropagation();
+  const open = mmenu.classList.toggle('open');
+  burger.classList.toggle('open', open);
+  burger.setAttribute('aria-expanded', open);
+});
+mmenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  mmenu.classList.remove('open'); burger.classList.remove('open');
+  burger.setAttribute('aria-expanded', 'false');
+}));
+document.addEventListener('click', e => {
+  if (mmenu.classList.contains('open') && !mmenu.contains(e.target) && e.target !== burger) {
+    mmenu.classList.remove('open'); burger.classList.remove('open');
+  }
+});
+
 // ---------- navbar scroll ----------
 const nav = document.getElementById('nav');
 addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 30), {passive:true});
