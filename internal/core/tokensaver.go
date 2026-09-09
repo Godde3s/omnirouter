@@ -89,10 +89,10 @@ const (
 )
 
 var promptModeText = map[string]string{
-	"caveman":         cavemanText,
-	"ponytail-lite":   ponytailLite,
-	"ponytail-full":   ponytailFull,
-	"ponytail-ultra":  ponytailUltra,
+	"caveman":        cavemanText,
+	"ponytail-lite":  ponytailLite,
+	"ponytail-full":  ponytailFull,
+	"ponytail-ultra": ponytailUltra,
 }
 
 // ValidPromptMode reports whether a mode id is supported.

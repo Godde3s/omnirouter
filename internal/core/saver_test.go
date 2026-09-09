@@ -57,7 +57,7 @@ func TestRTKCompressesOpenAIToolOutput(t *testing.T) {
 func TestRTKCompressesAnthropicToolResult(t *testing.T) {
 	log := strings.Repeat("2026-01-01 ERROR service crashed again\n", 120)
 	body := map[string]interface{}{
-		"model": "glm-5.3",
+		"model":  "glm-5.3",
 		"system": "you are helpful",
 		"messages": []map[string]interface{}{
 			{"role": "user", "content": []interface{}{
