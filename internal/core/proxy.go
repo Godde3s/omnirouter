@@ -239,7 +239,9 @@ func (f *forwarder) ForwardChat(w http.ResponseWriter, r *http.Request, body []b
                 Stream *bool  `json:"stream"`
         }
         _ = json.Unmarshal(body, &req)
-        stream := req.Stream == nil || *req.Stream
+        // OpenAI spec: stream defaults to false when omitted (clients like
+        // OpenCode/Cline often drop the field entirely and expect JSON back).
+        stream := req.Stream != nil && *req.Stream
 
         // per-key allowlist
         if k, ok := f.store.LookupKey(keyName); ok && !modelAllowed(k.AllowedModels, req.Model, f.registry) {
