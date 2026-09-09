@@ -15,6 +15,7 @@ import (
 // and warms the session + live model cache in the background.
 func Init() {
 	initAccounts()
+	startCookieHeartbeat()
 	gRunning.Store(true)
 
 	go func() {
