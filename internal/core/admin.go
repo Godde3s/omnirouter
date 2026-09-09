@@ -37,7 +37,7 @@ var admin = &adminAuth{tokens: map[string]int64{}}
 
 const adminSessionTTL = 12 * time.Hour
 
-const routerVersion = "1.3.0"
+const routerVersion = "1.3.1"
 
 func (a *adminAuth) login(password, real string) (string, bool) {
 	if subtle.ConstantTimeCompare([]byte(password), []byte(real)) != 1 {

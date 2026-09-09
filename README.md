@@ -21,10 +21,12 @@
 
 ---
 
-## 🚀 چه خبره از v1.0.0 تا v1.2.0؟
+## 🚀 چه خبره از v1.0.0 تا v1.3.1؟
 
 | نسخه | چه چیزهایی اضافه/عوض شد |
 |---|---|
+| **v1.3.1** (امروز) | 📱 **بازنویسی لایه‌ی موبایل سایت Pages** — رفع باگ cascade در CSS (گرید ۴ستونه‌ی دسکتاپ روی گوشی رندر می‌شد و کارت‌های OAuth از لبه بیرون می‌زدند) + کف فونت ۱۲px برای بج‌ها/تگ‌ها + شکست امن توکن‌های بلند کد در متن فارسی · 🏷 نسخه‌ی باینری به 1.3.1 (smoke 31/31 سبز) |
+| **v1.3.0** | 🔐 **OAuth Device Flow (RFC 8628)** — اتصال بدون کپی کلید مثل 9router: `POST /oauth/device/start` + `poll` + صفحه‌ی تأیید فارسی `/oauth/authorize` — برای **Cline، Kilo Code، GitHub Copilot، Hermes Agent، Claude Code، Codex، Cursor، Roo، Continue، OpenCode** و هر کلاینت دیگر · 🎛 **پنل «اتصالات» در داشبورد** — pending ها با بج زنده، کلاینت‌های متصل با آمار مستقل و لغو لحظه‌ای · 🔑 **کلید مجازی per-کلاینت** (`sk-omni-…`) سازگار با سهمیه و allowlist |
 | **v1.2.0** (امروز) | 🆓 **پروایدر OpenCode Zen (`oc`)** — مدل‌های رایگان **بدون هیچ کلیدی** (مثل OpenCode Free در 9router) + fetch خودکار ۷۰+ مدل + کلید اختیاری برای مدل‌های پولی zen · 🚀 **RTK Token Saver** — فشرده‌سازی خودکار خروجی ابزارها (git diff/grep/ls/لاگ) با فیلترهای امن · 🎯 **کمبوهای نام‌دار** — `combo:free-stack` زنجیره‌ی qwen→gemini→oc آماده‌ی نصب تازه · 🐴 **Caveman + Ponytail** (Lite/Full/Ultra) با هدر `X-Omni-Prompt-Mode` · 🏷 **GLM 5.3 و GLM 5.3-Flash** — نام‌گذاری جدید پرچم‌دار Z.AI · 🖥 **داشبورد ۲.۰** با سایدبار حرفه‌ای، Token Saver، کمبوها و پلی‌گراند جدید · 🐞 فیکس health-check بریج‌ها (توکن روی fetch مدل‌ها) |
 | **v1.1.1** (امروز) | 🐞 **فیکس استاندارد OpenAI**: وقتی کلاینت فیلد `stream` را نمی‌فرستد (OpenCode و خیلی‌ها همین‌اند)، حالا **JSON** برمی‌گردد نه SSE — سینک‌شده به هر ۵ ریپو (qwen v1.0.3، glm v1.0.3، gemini v1.0.2) + ۳ چک رگرسیون جدید (smoke 34/34) |
 | **v1.1.0** | 🧬 برج **Gemini** (مهمان بدون کوکی، ویژن، heartbeat خودکار PSIDTS) · 📊 **آمار مصرف واقعی** (توکن هر درخواست، نمودار ۴۸ ساعته) · 🎭 **Alias مدل** (`gpt-4o` → `qwen3.8-max`) · 🔑 **سهمیه + Allowlist** per-key · ⏱ Retry/Cooldown هوشمند · 🔢 `/v1/messages/count_tokens` · 🎛 داشبورد v2 با KPI و پلی‌گراند |
@@ -46,6 +48,7 @@ OmniRouter چهار بریج اثبات‌شده‌ی **qwen-free-api**، **glm-
 | Tool calling کامل (چرخه‌ی R1→R2) برای Hermes/OpenCode/Cline | ✅ |
 | مدل `auto` با زنجیره‌ی failover بین ارائه‌دهنده‌ها | ✅ |
 | **برج Gemini وب** — مهمان بدون کوکی هم کار می‌کند (اثبات زنده) | ✅ |
+| **OAuth Device Flow** — اتصال Cline / Kilo Code / GitHub Copilot / Hermes و ۸ کلاینت دیگر بدون کپی کلید | ✅ v1.3.0 |
 | **OpenCode Zen (پروایدر `oc`)** — مدل‌های رایگان **بدون کلید**، fetch خودکار، Anthropic ترجمه‌شده | ✅ v1.2.0 |
 | **RTK Token Saver** — فشرده‌سازی خودکار tool_result (git diff / grep / ls / لاگ) + آمار بایت صرفه‌جویی‌شده | ✅ v1.2.0 |
 | **کمبوهای نام‌دار** — `combo:my-stack` با fallback ترتیبی + کمبوی آماده `free-stack` | ✅ v1.2.0 |
