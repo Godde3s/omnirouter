@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>OmniRouter — یک روتر برای همه‌ی مدل‌ها</title>
-<meta name="description" content="روتر یکپارچه‌ی مدل‌های هوش مصنوعی: Qwen، GLM 5.3، DeepSeek، Gemini و OpenCode بدون کلید — با failover خودکار، RTK Token Saver و داشبورد فارسی. سازگار با OpenAI و Anthropic.">
+<title>OmniRouter — One Router for Every Model</title>
+<meta name="description" content="A unified router for AI models: Qwen, GLM 5.3, DeepSeek, Gemini and keyless OpenCode — automatic failover, RTK Token Saver and OAuth device-flow connections. OpenAI and Anthropic compatible.">
 <meta name="theme-color" content="#070b1a">
-<meta property="og:title" content="OmniRouter — یک روتر برای همه‌ی مدل‌ها">
-<meta property="og:description" content="کدنویسی ایجنتی رایگان و بدون کلید با OpenCode Zen — GLM 5.3، Qwen3.8-max، DeepSeek، Gemini. یک فایل، هر پلتفرمی.">
+<meta property="og:title" content="OmniRouter — One Router for Every Model">
+<meta property="og:description" content="Free keyless agentic coding with OpenCode Zen — GLM 5.3, Qwen3.8-max, DeepSeek, Gemini. One binary, every platform.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b7cff'/%3E%3Cstop offset='1' stop-color='%233ee0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M12 2l8 4.6v8.8L12 20l-8-4.6V6.6L12 2z' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%233ee0ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
    OmniRouter — Nebula Edition · 2026
@@ -28,7 +28,8 @@
   --grad:linear-gradient(100deg,#8b7cff 5%,#3ee0ff 95%);
   --grad2:linear-gradient(100deg,#ff6ad5 5%,#8b7cff 90%);
   --mono:'JetBrains Mono','Space Grotesk',ui-monospace,monospace;
-  --disp:'Space Grotesk','Vazirmatn',sans-serif;
+  --disp:'Space Grotesk','Inter',sans-serif;
+  --sans:'Inter',system-ui,sans-serif;
   --maxw:1180px; --r:22px; --rs:14px;
   --sec:clamp(64px,9vw,122px);
   --shadow:0 30px 80px -20px rgba(3,6,20,.85);
@@ -40,9 +41,9 @@
 html{scroll-behavior:smooth;overflow-x:clip;-webkit-text-size-adjust:100%;scroll-padding-top:96px}
 body{
   background:var(--bg0);color:var(--ink);
-  font-family:'Vazirmatn',system-ui,sans-serif;
+  font-family:var(--sans);
   font-size:clamp(15.5px,.3vw + 15px,17px);
-  line-height:2.05;overflow-x:clip;
+  line-height:1.7;overflow-x:clip;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
 img,svg{display:block;max-width:100%}
@@ -99,7 +100,7 @@ strong{color:var(--ink);font-weight:700}
 }
 .kicker::before{content:'';width:28px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
 .sec-head{max-width:780px;margin:0 auto clamp(38px,5.6vw,66px);text-align:center}
-.sec-head p{margin-top:.9em;font-size:clamp(.95rem,.4vw + .87rem,1.12rem)}
+.sec-head p{margin-top:.9em;font-size:clamp(.98rem,.4vw + .9rem,1.15rem);line-height:1.7}
 .wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(18px,4.5vw,32px)}
 section{padding-block:var(--sec);position:relative}
 /* ═══════════ nav ═══════════ */
@@ -189,7 +190,7 @@ section{padding-block:var(--sec);position:relative}
 .hero .badges{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.7rem}
 .hero h1{max-width:920px;margin-inline:auto}
 .hero h1 .line{display:block}
-.hero .sub{max-width:680px;margin:1.4rem auto 1.15rem;font-size:clamp(1rem,.55vw + .9rem,1.19rem);line-height:2.15}
+.hero .sub{max-width:680px;margin:1.4rem auto 1.15rem;font-size:clamp(1.05rem,.5vw + .95rem,1.25rem);line-height:1.75}
 .hero .btn-row{justify-content:center;margin-bottom:1.7rem}
 .hero .mini{display:flex;gap:.5rem 1.4rem;flex-wrap:wrap;justify-content:center;font-size:.86rem;color:var(--dim)}
 .hero .mini span{display:inline-flex;align-items:center;gap:.45rem}
@@ -230,7 +231,7 @@ section{padding-block:var(--sec);position:relative}
 .term-bar i{width:11px;height:11px;border-radius:50%}
 .term-bar i:nth-child(1){background:#ff5f96}.term-bar i:nth-child(2){background:#ffc35c}.term-bar i:nth-child(3){background:#43f0c8}
 .term-bar span{margin-inline-start:auto;font-family:var(--mono);font-size:.72rem;color:var(--dim);direction:ltr}
-.term-body{padding:1.15rem 1.3rem;font-family:var(--mono);font-size:clamp(.75rem,.9vw + .5rem,.84rem);
+.term-body{padding:1.15rem 1.3rem;font-family:var(--mono);font-size:clamp(.76rem,.9vw + .52rem,.86rem);
   line-height:2.1;text-align:left;direction:ltr;color:#c6d2f2;overflow-x:auto;white-space:pre;min-height:13.5em}
 .term-body .cm{color:#5f6c99}.term-body .ok{color:var(--mint)}.term-body .vi{color:var(--vio2)}
 .term-body .cy{color:var(--cyan)}.term-body .am{color:var(--amber)}.term-body .lm{color:var(--pink)}
@@ -279,10 +280,10 @@ section{padding-block:var(--sec);position:relative}
 .ox-card:nth-child(3n) .ox-ava{background:linear-gradient(135deg,var(--mint),var(--cyan))}
 .ox-name{font-weight:700;font-size:.95rem}
 .ox-name bdi{direction:ltr;unicode-bidi:isolate}
-.ox-desc{font-size:.82rem;color:var(--dim);line-height:1.85}
+.ox-desc{font-size:.82rem;color:var(--dim);line-height:1.6}
 .ox-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:1.5rem}
 .ox-step{position:relative;padding:1.15rem 1.1rem;border-radius:16px;background:var(--panel);
-  border:1px solid var(--bord);font-size:.92rem;color:var(--mut);line-height:1.95;overflow-wrap:anywhere}
+  border:1px solid var(--bord);font-size:.92rem;color:var(--mut);line-height:1.7;overflow-wrap:anywhere}
 .ox-step .n{position:absolute;top:-13px;inset-inline-start:1rem;width:26px;height:26px;border-radius:9px;
   background:linear-gradient(135deg,var(--vio2),var(--cyan));color:#0b0e1e;font-weight:800;font-size:.85rem;
   display:flex;align-items:center;justify-content:center;font-family:var(--mono)}
@@ -293,7 +294,7 @@ section{padding-block:var(--sec);position:relative}
   margin-top:1.8rem;padding:clamp(1.1rem,2.5vw,1.8rem);border-radius:20px;
   background:linear-gradient(140deg,rgba(139,124,255,.10),rgba(62,224,255,.04)),var(--panel);
   border:1px solid var(--bord2)}
-.ox-secnote{display:flex;gap:.7rem;align-items:flex-start;margin-top:1.2rem;font-size:.85rem;color:var(--dim);line-height:1.95}
+.ox-secnote{display:flex;gap:.7rem;align-items:flex-start;margin-top:1.2rem;font-size:.85rem;color:var(--dim);line-height:1.65}
 .ox-secnote svg{flex:none;width:19px;height:19px;color:var(--mint);margin-top:.3rem}
 @media(min-width:640px){.ox-grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:1020px){
@@ -310,7 +311,6 @@ section{padding-block:var(--sec);position:relative}
 @keyframes tick{to{transform:translateX(-50%)}}
 .tk{font-family:var(--mono);font-size:.84rem;color:var(--dim);display:inline-flex;align-items:center;gap:.6rem;white-space:nowrap;flex:none}
 .tk b{color:var(--ink);font-weight:600;unicode-bidi:isolate}
-.tk .fa{font-family:'Vazirmatn',sans-serif}
 /* ═══════════ band + split + checklist ═══════════ */
 .band{border-block:1px solid var(--bord);position:relative}
 .band::before{content:'';position:absolute;inset:0;pointer-events:none;
@@ -321,7 +321,7 @@ section{padding-block:var(--sec);position:relative}
 @media(min-width:920px){.split{grid-template-columns:1.04fr .96fr}}
 .check-list{display:flex;flex-direction:column;gap:.85rem;margin-top:1.4rem}
 .check-list li{display:grid;grid-template-columns:auto 1fr;gap:.75rem;align-items:start;
-  color:var(--mut);font-size:.95rem;overflow-wrap:anywhere}
+  color:var(--mut);font-size:.95rem;line-height:1.65;overflow-wrap:anywhere}
 .check-list li svg{width:19px;height:19px;color:var(--mint);flex-shrink:0;margin-top:.42em}
 .check-list li b{display:inline}
 /* ═══════════ codebox ═══════════ */
@@ -335,7 +335,7 @@ section{padding-block:var(--sec);position:relative}
   background:var(--grad);color:#fff;font-size:.72rem;font-weight:800;padding:.24em .9em;border-radius:99px;direction:ltr;
   letter-spacing:.06em}
 .codebox.has-badge{padding-top:2.6rem}
-.cap{margin-top:.85rem;color:var(--dim);font-size:.83rem;line-height:1.9}
+.cap{margin-top:.85rem;color:var(--dim);font-size:.83rem;line-height:1.65}
 /* ═══════════ cards + 3D tilt ═══════════ */
 .card{position:relative;background:var(--panel);border:1px solid var(--bord);border-radius:var(--r);
   padding:clamp(1.2rem,2.4vw,1.6rem);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
@@ -349,7 +349,7 @@ section{padding-block:var(--sec);position:relative}
 .card:hover{border-color:rgba(139,124,255,.3);box-shadow:var(--shadow)}
 .card:hover::before,.card:hover::after{opacity:1}
 .card h3{margin:.95rem 0 .4rem}
-.card p{font-size:.92rem;line-height:2}
+.card p{font-size:.92rem;line-height:1.7}
 .card .ico{margin-bottom:.2rem}
 /* steps */
 .steps{counter-reset:st;display:grid;gap:clamp(12px,1.6vw,18px)}
@@ -389,7 +389,7 @@ section{padding-block:var(--sec);position:relative}
 .prow:hover{background:rgba(160,180,255,.03)}
 .prow .pn{font-family:var(--mono);font-size:.86rem;font-weight:600;color:var(--ink);direction:ltr;unicode-bidi:isolate;text-align:start}
 .prow .pt{justify-self:start}
-.prow .pd{color:var(--mut);font-size:.9rem;line-height:1.95}
+.prow .pd{color:var(--mut);font-size:.9rem;line-height:1.7}
 @media(min-width:880px){
   .prow{grid-template-columns:1.05fr auto 1.55fr;gap:1.2rem}
   .prow .pt{justify-self:center}
@@ -418,20 +418,20 @@ section{padding-block:var(--sec);position:relative}
 .titem .vnum{font-family:var(--mono);font-weight:700;font-size:1.1rem;direction:ltr;unicode-bidi:isolate}
 .titem .vdate{font-family:var(--mono);font-size:.74rem;color:var(--dim);direction:ltr}
 .titem ul{display:flex;flex-direction:column;gap:.4rem}
-.titem li{position:relative;padding-inline-start:1.15em;color:var(--mut);font-size:.92rem;overflow-wrap:anywhere}
+.titem li{position:relative;padding-inline-start:1.15em;color:var(--mut);font-size:.92rem;line-height:1.65;overflow-wrap:anywhere}
 .titem li::before{content:'';position:absolute;inset-inline-start:0;top:.95em;width:5px;height:5px;border-radius:50%;background:var(--cyan)}
 /* ═══════════ FAQ ═══════════ */
 .faq{max-width:800px;margin-inline:auto;display:flex;flex-direction:column;gap:.75rem}
 details{background:var(--panel);border:1px solid var(--bord);border-radius:var(--rs);overflow:hidden;transition:border-color .2s}
 details[open]{border-color:rgba(139,124,255,.35)}
 summary{cursor:pointer;list-style:none;padding:1.1rem 1.3rem;font-weight:700;font-size:.98rem;
-  display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:54px;line-height:1.8}
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:54px;line-height:1.5}
 summary::-webkit-details-marker{display:none}
 summary .pl{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;
   border:1px solid var(--bord2);color:var(--cyan);transition:.25s}
 summary .pl svg{width:13px;height:13px}
 details[open] summary .pl{transform:rotate(45deg);background:rgba(139,124,255,.14)}
-details .a{padding:0 1.3rem 1.2rem;color:var(--mut);font-size:.93rem;overflow-wrap:anywhere}
+details .a{padding:0 1.3rem 1.2rem;color:var(--mut);font-size:.93rem;line-height:1.7;overflow-wrap:anywhere}
 /* ═══════════ big CTA ═══════════ */
 .cta-box{position:relative;border:1px solid var(--bord2);border-radius:calc(var(--r) + 8px);overflow:hidden;
   padding:clamp(2.4rem,6vw,4.5rem) clamp(1.2rem,4vw,3rem);text-align:center;
@@ -530,57 +530,57 @@ footer .fl a:hover{color:var(--cyan)}
 </svg>
 
 <!-- ═══════ nav ═══════ -->
-<nav class="nav" id="nav" aria-label="ناوبری اصلی">
+<nav class="nav" id="nav" aria-label="Main navigation">
   <div class="nav-in">
-    <a class="logo" href="#top" aria-label="OmniRouter — بالای صفحه">
+    <a class="logo" href="#top" aria-label="OmniRouter — back to top">
       <svg class="hex" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-hex"/></svg>
       <b>Omni<span class="grad">Router</span></b>
     </a>
     <div class="nav-links">
       <a href="#opencode">OpenCode Free</a>
       <a href="#saver">Token Saver</a>
-      <a href="#features">قابلیت‌ها</a>
-      <a href="#start">شروع سریع</a>
-      <a href="#oauth">اتصال OAuth</a>
-      <a href="#models">مدل‌ها</a>
+      <a href="#features">Features</a>
+      <a href="#start">Quick Start</a>
+      <a href="#oauth">OAuth</a>
+      <a href="#models">Models</a>
       <a href="#faq">FAQ</a>
     </div>
     <a class="nav-cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gh"/></svg>
       GitHub
     </a>
-    <button class="burger" id="burger" aria-label="باز کردن منو" aria-expanded="false">
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
       <svg class="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><use href="#i-menu"/></svg>
       <svg class="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><use href="#i-x"/></svg>
     </button>
   </div>
 </nav>
 <div class="mnav" id="mnav">
-  <a href="#opencode"><span class="no">01</span> OpenCode Free — بدون کلید</a>
+  <a href="#opencode"><span class="no">01</span> OpenCode Free — no key</a>
   <a href="#saver"><span class="no">02</span> Token Saver</a>
-  <a href="#features"><span class="no">03</span> قابلیت‌ها</a>
-  <a href="#start"><span class="no">04</span> شروع سریع</a>
-  <a href="#connect"><span class="no">05</span> اتصال کلاینت‌ها</a>
-  <a href="#oauth"><span class="no">06</span> اتصال OAuth — بدون کپی کلید</a>
-  <a href="#models"><span class="no">07</span> مدل‌ها</a>
-  <a href="#changelog"><span class="no">08</span> تغییرات نسخه‌ها</a>
-  <a href="#faq"><span class="no">09</span> سؤال‌های پرتکرار</a>
+  <a href="#features"><span class="no">03</span> Features</a>
+  <a href="#start"><span class="no">04</span> Quick Start</a>
+  <a href="#connect"><span class="no">05</span> Connect clients</a>
+  <a href="#oauth"><span class="no">06</span> OAuth — keyless connect</a>
+  <a href="#models"><span class="no">07</span> Models</a>
+  <a href="#changelog"><span class="no">08</span> Changelog</a>
+  <a href="#faq"><span class="no">09</span> FAQ</a>
   <a class="cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub — omnirouter</a>
 </div>
 <!-- ═══════ hero ═══════ -->
 <header class="hero" id="top">
   <div class="wrap hero-in">
     <div class="badges rv in">
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-keyoff"/></svg><span class="ben">OpenCode Zen</span><b>بدون کلید</b></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-keyoff"/></svg><span class="ben">OpenCode Zen</span><b>keyless</b></span>
       <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-compress"/></svg><span class="ben">RTK</span> Token Saver</span>
       <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-layers"/></svg><span class="ben">OpenAI + Anthropic</span></span>
     </div>
     <h1 class="rv in">
-      <span class="line">یک روتر، <span class="grad">همه‌ی مدل‌ها.</span></span>
-      <span class="line">کدنویسی رایگان، بدون توقف.</span>
+      <span class="line">One router, <span class="grad">every model.</span></span>
+      <span class="line">Free coding, no downtime.</span>
     </h1>
-    <p class="sub rv in" style="--d:.08s">بریج واقعی وب برای <bdi>Qwen</bdi>، <bdi>GLM 5.3</bdi>، <bdi>DeepSeek</bdi> و <bdi>Gemini</bdi> — کنار پروایدر رایگان <bdi>OpenCode Zen</bdi>. همه پشت یک endpoint: اتصال OAuth بدون کپی‌پیست کلید، failover خودکار و فشرده‌سازی توکن. یک فایل، بدون وابستگی.</p>
-    <div class="mrow rv in" style="--d:.11s" aria-label="مدل‌های شاخص">
+    <p class="sub rv in" style="--d:.08s">Real web bridges for <bdi>Qwen</bdi>, <bdi>GLM 5.3</bdi>, <bdi>DeepSeek</bdi> and <bdi>Gemini</bdi> — plus the free <bdi>OpenCode Zen</bdi> provider. All behind one endpoint: OAuth connection with zero key copy-paste, automatic failover and token compression. One binary, no dependencies.</p>
+    <div class="mrow rv in" style="--d:.11s" aria-label="Featured models">
       <span class="mpill"><span class="dot" style="background:var(--vio)"></span>qwen3.8-max</span>
       <span class="mpill"><span class="dot" style="background:var(--cyan)"></span>GLM 5.3</span>
       <span class="mpill"><span class="dot" style="background:var(--rose)"></span>deepseek-chat</span>
@@ -588,23 +588,23 @@ footer .fl a:hover{color:var(--cyan)}
       <span class="mpill"><span class="dot" style="background:var(--amber)"></span>oc/big-pickle · free</span>
     </div>
     <div class="btn-row rv in" style="--d:.14s">
-      <a class="btn pri" href="#start">شروع در ۶۰ ثانیه
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></a>
-      <a class="btn" href="#opencode"><span class="ben">OpenCode Free</span> — بدون کلید</a>
+      <a class="btn pri" href="#start">Start in 60 seconds
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-arrow"/></svg></a>
+      <a class="btn" href="#opencode"><span class="ben">OpenCode Free</span> — keyless</a>
     </div>
     <div class="mini rv in" style="--d:.2s">
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>ویندوز</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>لینوکس</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>مک</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>داکر</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>کلیدهای <bdi class="lt v">sk-</bdi></span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>Windows</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>Linux</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>macOS</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>Docker</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><bdi class="lt v">sk-</bdi> keys</span>
     </div>
 
     <div class="stats rv">
-      <div><span class="n" data-count="77">۰</span><span class="l">مدل زنده در کاتالوگ</span></div>
-      <div><span class="n" data-count="5">۰</span><span class="l">پروایدر داخلی</span></div>
-      <div><span class="n" data-usd="1">$0</span><span class="l">هزینه‌ی شروع</span></div>
-      <div><span class="n" data-count="1">۰</span><span class="l">فایل اجرایی</span></div>
+      <div><span class="n" data-count="77">0</span><span class="l">live models in catalog</span></div>
+      <div><span class="n" data-count="5">0</span><span class="l">built-in providers</span></div>
+      <div><span class="n" data-usd="1">$0</span><span class="l">cost to start</span></div>
+      <div><span class="n" data-count="1">0</span><span class="l">file to run</span></div>
     </div>
 
     <!-- 3D holographic stage -->
@@ -626,17 +626,17 @@ footer .fl a:hover{color:var(--cyan)}
 <!-- ═══════ ticker ═══════ -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track" id="ticker-track">
-    <span class="tk"><span class="dot" style="background:var(--amber)"></span><b>OAuth Device Flow</b><span class="fa">اتصال بدون کپی کلید</span></span>
-    <span class="tk"><span class="dot" style="background:var(--mint)"></span><b>Kilo Code</b><span class="fa">یکی از ۱۲ کلاینت</span></span>
-    <span class="tk"><span class="dot" style="background:var(--pink)"></span><b>GitHub Copilot</b><span class="fa">کلاینت روتر</span></span>
-    <span class="tk"><span class="dot" style="background:var(--vio)"></span><b>qwen3.8-max</b><span class="fa">tool-calling</span></span>
-    <span class="tk"><span class="dot" style="background:var(--cyan)"></span><b>GLM 5.3</b><span class="fa">پرچم‌دار</span></span>
-    <span class="tk"><span class="dot" style="background:var(--cyan)"></span><b>GLM 5.3-flash</b><span class="fa">سریع</span></span>
-    <span class="tk"><span class="dot" style="background:var(--mint)"></span><b>gemini-3.6-flash</b><span class="fa">مهمان</span></span>
-    <span class="tk"><span class="dot" style="background:var(--rose)"></span><b>deepseek-chat</b><span class="fa">PoW</span></span>
-    <span class="tk"><span class="dot" style="background:var(--amber)"></span><b>oc/big-pickle</b><span class="fa">بدون کلید</span></span>
-    <span class="tk"><span class="dot" style="background:var(--pink)"></span><b>combo:free-stack</b><span class="fa">زنجیره</span></span>
-    <span class="tk"><span class="dot" style="background:var(--vio2)"></span><b>/v1/messages</b><span class="fa">anthropic</span></span>
+    <span class="tk"><span class="dot" style="background:var(--amber)"></span><b>OAuth Device Flow</b><span>keyless connect</span></span>
+    <span class="tk"><span class="dot" style="background:var(--mint)"></span><b>Kilo Code</b><span>one of 12 clients</span></span>
+    <span class="tk"><span class="dot" style="background:var(--pink)"></span><b>GitHub Copilot</b><span>router client</span></span>
+    <span class="tk"><span class="dot" style="background:var(--vio)"></span><b>qwen3.8-max</b><span>tool-calling</span></span>
+    <span class="tk"><span class="dot" style="background:var(--cyan)"></span><b>GLM 5.3</b><span>flagship</span></span>
+    <span class="tk"><span class="dot" style="background:var(--cyan)"></span><b>GLM 5.3-flash</b><span>fast lane</span></span>
+    <span class="tk"><span class="dot" style="background:var(--mint)"></span><b>gemini-3.6-flash</b><span>guest mode</span></span>
+    <span class="tk"><span class="dot" style="background:var(--rose)"></span><b>deepseek-chat</b><span>auto PoW</span></span>
+    <span class="tk"><span class="dot" style="background:var(--amber)"></span><b>oc/big-pickle</b><span>no key</span></span>
+    <span class="tk"><span class="dot" style="background:var(--pink)"></span><b>combo:free-stack</b><span>fallback chain</span></span>
+    <span class="tk"><span class="dot" style="background:var(--vio2)"></span><b>/v1/messages</b><span>anthropic</span></span>
   </div>
 </div>
 
@@ -646,15 +646,15 @@ footer .fl a:hover{color:var(--cyan)}
     <div class="split">
       <div class="rv">
         <span class="kicker">OpenCode Free · No API Key</span>
-        <h2>مثل 9router: مدل‌های رایگان،<br><span class="grad">بدون هیچ کلیدی</span></h2>
-        <p style="margin-top:1.1rem">پروایدر داخلی <bdi class="lt">oc</bdi> به دروازه‌ی Zen سایت OpenCode وصل می‌شود — همان کاری که 9router می‌کند. مدل‌های رایگانش فقط یک شناسه‌ی نشست می‌خواهند که OmniRouter خودش می‌سازد. <strong>هیچ ثبت‌نامی، هیچ کلیدی.</strong></p>
+        <h2>Like 9router: free models,<br><span class="grad">zero keys</span></h2>
+        <p style="margin-top:1.1rem">The built-in <bdi class="lt">oc</bdi> provider connects to OpenCode’s Zen gateway — exactly what 9router does. Its free models only need a random session ID, which OmniRouter generates for you. <strong>No sign-up, no keys.</strong></p>
         <ul class="check-list">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>بدون کلید و ثبت‌نام</strong> — نصب کن و همان لحظه مدل‌های رایگان را صدا بزن.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>فهرست مدل زنده</strong> — مدل‌ها هر ۶۰ ثانیه از منبع رسمی zen تازه می‌شوند؛ هیچ هاردکدی در کار نیست.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>استریم SSE و tool-calling</strong> — پاس‌ترو شفاف است و فرمت OpenAI دست‌نخورده می‌ماند.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>پشتیبانی Anthropic</strong> — مسیر <bdi class="lt">/v1/messages</bdi> روی <bdi class="lt">oc</bdi> ترجمه‌ی کامل می‌شود؛ حتی بلوک‌های thinking.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>مدل‌های پولی zen؟</strong> فقط <bdi class="lt v">OPENCODE_API_KEY</bdi> را در env بگذار؛ همان مسیر با کلید باز می‌شود: <bdi class="lt v">glm-5.3</bdi>، <bdi class="lt v">claude</bdi>، <bdi class="lt v">gpt</bdi>.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>سشن سفارشی</strong> — با هدر <bdi class="lt">x-session-id</bdi> خودت کنترلش کن.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>No key, no sign-up</strong> — install and call free models instantly.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Live model list</strong> — refreshed from the official zen source every 60 seconds; nothing is hardcoded.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>SSE streaming + tool-calling</strong> — transparent pass-through; the OpenAI format stays intact.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Anthropic support</strong> — the <bdi class="lt">/v1/messages</bdi> route is fully translated for <bdi class="lt">oc</bdi>; thinking blocks included.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Paid zen models?</strong> Just set <bdi class="lt v">OPENCODE_API_KEY</bdi> — the same route unlocks <bdi class="lt v">glm-5.3</bdi>, <bdi class="lt v">claude</bdi> and <bdi class="lt v">gpt</bdi>.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Custom sessions</strong> — take control with the <bdi class="lt">x-session-id</bdi> header.</span></li>
         </ul>
       </div>
       <div class="rv" style="--d:.1s">
@@ -673,7 +673,7 @@ curl http://localhost:8080/v1/chat/completions \
 
 <span class="c1"># paid zen? just add a key:</span>
 <span class="c1"># OPENCODE_API_KEY=...  ->  oc/glm-5.3</span></div>
-        <p class="cap">شناسه‌های رایگان zen به‌مرور تغییر می‌کنند — OmniRouter هر ۶۰ ثانیه خودش لیست را تازه می‌کند و هرچه بیاید، همان لحظه در کاتالوگ و داشبورد می‌بینی.</p>
+        <p class="cap">Free zen IDs rotate over time — OmniRouter refreshes the list every 60 seconds; whatever shows up lands in your catalog and dashboard instantly.</p>
       </div>
     </div>
   </div>
@@ -684,16 +684,16 @@ curl http://localhost:8080/v1/chat/completions \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">RTK Token Saver</span>
-      <h2>هر درخواست، <span class="grad">۲۰ تا ۴۰٪</span> ارزان‌تر</h2>
-      <p>خروجی ابزارهایی مثل <bdi class="lt">git diff</bdi> و <bdi class="lt">grep</bdi> و لاگ‌های طولانی معمولاً ۳۰ تا ۵۰٪ بودجه‌ی پرامپت ایجنتی را می‌سوزانند. Token Saver داخلی OmniRouter — بر اساس ایده‌ی RTK در 9router — آن‌ها را قبل از رسیدن به مدل فشرده می‌کند: تشخیص خودکار، بدون تنظیمات و safe-by-design.</p>
+      <h2>Every request, <span class="grad">20–40%</span> cheaper</h2>
+      <p>Output from tools like <bdi class="lt">git diff</bdi>, <bdi class="lt">grep</bdi> and long logs typically burns 30–50% of an agentic prompt budget. OmniRouter’s built-in Token Saver — inspired by RTK in 9router — compresses them before they reach the model: automatic detection, zero configuration, safe by design.</p>
     </div>
     <div class="grid g-auto rv">
-      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-diff"/></svg></div><h3>git-diff</h3><p>هانک‌های حجیم حذف می‌شوند؛ فهرست فایل‌ها و آمار <bdi class="lt">+/−</bdi> برای هر فایل می‌ماند. یک دیف ۵۰هزار کاراکتری به چند صد بایت خلاصه می‌شود.</p></div>
-      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-compress"/></svg></div><h3>grep و لاگ‌ها</h3><p>خطوط تکراری دی‌دوپ می‌شوند، سقف پاسخ برای هر فایل اعمال می‌شود و تکرارها به شکل <bdi class="lt">×N</bdi> جمع می‌شوند؛ خروجی ده‌ها برابر کوچک‌تر می‌شود.</p></div>
-      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div><h3>find و ls و tree</h3><p>فهرست‌های طولانی مسیرها به شمارش فایل و پوشه به‌علاوه‌ی نمونه‌ی مسیرهای اول فشرده می‌شوند؛ مدل تصویر درستی از ساختار پروژه می‌گیرد.</p></div>
-      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></div><h3>smart-truncate</h3><p>متن عمومی بزرگ؟ سر و دمِ محتوای مهم نگه داشته می‌شود و بخش میانی با نشانگر حذف علامت‌گذاری می‌شود.</p></div>
-      <div class="card tlt"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></div><h3>امنیت تضمینی</h3><p>اگر فیلتری خطا بدهد یا خروجی بزرگ‌تر شود، بی‌سروصدا متن اصلی می‌رود — خطای فشرده‌سازی هیچ‌وقت درخواست را نمی‌شکند.</p></div>
-      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt"/></svg></div><h3>Caveman و Ponytail</h3><p>حالت‌های خروجی: پاسخ کوتاه و فنی با Caveman؛ کدنویسی YAGNI در سه سطح Lite و Full و Ultra با Ponytail — روی RTK سوارند.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-diff"/></svg></div><h3>git-diff</h3><p>Huge hunks are dropped; the file list and a <bdi class="lt">+/&#8722;</bdi> stat per file stay behind. A 50k-char diff shrinks to a few hundred bytes.</p></div>
+      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-compress"/></svg></div><h3>grep &amp; logs</h3><p>Duplicate lines are deduped, per-file caps applied and repeats collapsed as <bdi class="lt">×N</bdi> — output shrinks by orders of magnitude.</p></div>
+      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div><h3>find / ls / tree</h3><p>Long path listings compress into file and folder counts plus a sample of top paths — the model keeps a correct picture of your project.</p></div>
+      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></div><h3>smart-truncate</h3><p>Huge generic text? The head and tail of what matters are kept; the middle is replaced with a removal marker.</p></div>
+      <div class="card tlt"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></div><h3>Safety guaranteed</h3><p>If a filter errors or grows the payload, the original text passes through silently — compression can never break a request.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt"/></svg></div><h3>Caveman &amp; Ponytail</h3><p>Output modes: short, technical replies with Caveman; YAGNI coding styles in Lite / Full / Ultra with Ponytail — both ride on RTK.</p></div>
     </div>
     <div class="rv" style="margin-top:1.7rem">
       <div class="codebox" style="max-width:760px;margin-inline:auto"><span class="c1"># bypass for one single request (like 9router)</span>
@@ -714,14 +714,14 @@ curl http://localhost:8080/v1/chat/completions \
     <div class="split">
       <div class="rv">
         <span class="kicker">Custom Combos</span>
-        <h2>زنجیره‌ی fallback<br>به <span class="grad">نام خودت</span></h2>
-        <p style="margin-top:1.1rem">مثل 9router، کمبوهای نام‌دار بساز: اشتراک گران، بعد ارزان، بعد رایگان. هر گام که شکست یا سهمیه‌اش تمام شد، بعدی همین‌طور بی‌سروصدا جواب می‌دهد. مدل‌های <bdi class="lt v">auto</bdi> هم خودشان همین زنجیره‌ی هوشمند را دارند.</p>
+        <h2>Fallback chains,<br><span class="grad">your name</span></h2>
+        <p style="margin-top:1.1rem">Like 9router, build named combos: expensive first, then cheap, then free. When a step fails or runs out of quota, the next answers silently. The <bdi class="lt v">auto</bdi> model runs this smart chain by itself.</p>
         <div class="flow" aria-hidden="true">
-          <div class="fnode"><span class="fx f1">1</span><b>qwen/qwen3.8-max</b><span class="ft">قوی‌ترین برای ایجنت</span></div>
-          <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"/></svg>شکست یا ۴۲۹؟ گام بعد</div>
-          <div class="fnode"><span class="fx f2">2</span><b>gemini/gemini-3.6-flash</b><span class="ft">مهمان، بی‌توکن</span></div>
-          <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"/></svg>سهمیه تمام؟ گام بعد</div>
-          <div class="fnode"><span class="fx f3">3</span><b>oc/big-pickle</b><span class="ft">رایگان، بی‌کلید</span></div>
+          <div class="fnode"><span class="fx f1">1</span><b>qwen/qwen3.8-max</b><span class="ft">strongest agent</span></div>
+          <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"/></svg>fail or 429? next step</div>
+          <div class="fnode"><span class="fx f2">2</span><b>gemini/gemini-3.6-flash</b><span class="ft">guest, no token</span></div>
+          <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"/></svg>quota out? next step</div>
+          <div class="fnode"><span class="fx f3">3</span><b>oc/big-pickle</b><span class="ft">free, keyless</span></div>
         </div>
       </div>
       <div class="rv" style="--d:.1s">
@@ -735,10 +735,10 @@ curl http://localhost:8080/v1/chat/completions \
 
 <span class="c1"># result: coding that never stops -- $0</span></div>
         <ul class="check-list" style="margin-top:1.3rem">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>تعریف از داشبورد یا مستقیم از env با <bdi class="lt">COMBOS</bdi></span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>مصرف مثل یک مدل معمولی: <bdi class="lt">"model": "combo:my-stack"</bdi></span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>کمبوی آماده‌ی <bdi class="lt">free-stack</bdi> در نصب تازه</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>سازگار با سهمیه‌ی کلید و allowlist هر مدل</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>Define from the dashboard or straight from env via <bdi class="lt">COMBOS</bdi></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>Use it like any model: <bdi class="lt">"model": "combo:my-stack"</bdi></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>The <bdi class="lt">free-stack</bdi> preset ships with a fresh install</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>Plays nice with key quotas and per-model allowlists</span></li>
         </ul>
       </div>
     </div>
@@ -749,19 +749,19 @@ curl http://localhost:8080/v1/chat/completions \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Everything Included</span>
-      <h2>هر چیزی که از یک روتر <span class="grad">انتظار داری</span></h2>
-      <p>همه‌ی قابلیت‌های 9router که روی معماری بریج-وب معنا دارند — به‌علاوه‌ی چیزهایی که فقط OmniRouter دارد: PoW واقعی دیپ‌سیک، کشف زنده‌ی مدل گوگل و تشخیص خودکار ابزار.</p>
+      <h2>Everything you expect from <span class="grad">a router</span></h2>
+      <p>Every 9router capability that makes sense on a web-bridge architecture — plus things only OmniRouter has: real DeepSeek PoW, live Google model discovery and automatic tool detection.</p>
     </div>
     <div class="grid g-auto rv">
-      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-route"/></svg></div><h3>Failover بین پروایدرها</h3><p>خطای ۴۲۹ یا ۴۰۱ یا 5xx؟ کاندیدای بعدی قبل از اولین بایت استریم وارد می‌شود و پروایدر خطاکار کوتاه به نیمکت می‌نشیند تا ترجیح سلامت حفظ بماند.</p></div>
-      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-layers"/></svg></div><h3>دو پروتکل، یک روتر</h3><p><bdi class="lt">/v1/chat/completions</bdi> و <bdi class="lt">/v1/messages</bdi> — ترجمه‌ی کامل OpenAI و Anthropic با بلوک‌های thinking و tool-calling در هر دو سو.</p></div>
-      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"/></svg></div><h3>آمار و لاگ زنده</h3><p>توکن واقعی هر درخواست (استخراج usage از JSON و دم SSE)، باکت ساعتی ۴۸گانه به تفکیک پروایدر و مدل و کلید، لاگ حلقه‌ای ۵۰۰تایی.</p></div>
-      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-key"/></svg></div><h3>کلیدهای مجازی</h3><p>کلیدهای <bdi class="lt v">sk-</bdi> با سهمیه‌ی درخواست، allowlist مدل مثل <bdi class="lt v">qwen/*</bdi> و مدیریت کامل از داشبورد — توکن‌های وب هیچ‌وقت به کلاینت نمی‌رسند.</p></div>
-      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></div><h3>Alias مدل</h3><p>هر نامی به هر مدل آپستریم. <bdi class="lt v">"glm"</bdi> را به <bdi class="lt v">glm-5.3</bdi> مپ کن؛ کلاینت‌ها بی‌تغییر می‌مانند و جابه‌جایی مدل یک کلیک است.</p></div>
-      <div class="card tlt"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg></div><h3>پروایدر سفارشی</h3><p>هر API سازگار OpenAI را وصل کن: از Gemini AI Studio و OpenRouter و Groq گرفته تا Ollama و LM Studio — با پری‌ست آماده و fetch خودکار مدل‌ها.</p></div>
-      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cpu"/></svg></div><h3>count_tokens محلی</h3><p><bdi class="lt">/v1/messages/count_tokens</bdi> بدون رفت‌وبرگشت به آپستریم جواب می‌دهد — برای بودجه‌بندی کانتکست کلاینت‌ها.</p></div>
-      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gauge"/></svg></div><h3>داشبورد فارسی ۲.۰</h3><p>نمای کلی با نمودار ۴۸ساعته، پروایدرها، Token Saver، کمبوها، کلیدها، پلی‌گراند استریم با نمایش thinking و لاگ زنده — همه RTL.</p></div>
-      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div><h3>یک فایل، هرجا</h3><p>تک‌باینری Go بدون وابستگی برای ویندوز، لینوکس و مک (amd64 + arm64)، اسکریپت‌های <bdi class="lt">start.sh</bdi> و <bdi class="lt">start.bat</bdi> و docker-compose آماده.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-route"/></svg></div><h3>Failover across providers</h3><p>429, 401 or 5xx? The next candidate steps in before the first streamed byte, while failing providers cool down briefly and healthy traffic keeps flowing.</p></div>
+      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-layers"/></svg></div><h3>Two protocols, one router</h3><p><bdi class="lt">/v1/chat/completions</bdi> and <bdi class="lt">/v1/messages</bdi> — full OpenAI and Anthropic translation with thinking blocks and tool-calling on both sides.</p></div>
+      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"/></svg></div><h3>Live stats &amp; logs</h3><p>Real tokens per request (usage extracted from JSON and SSE tails), 48 hourly buckets per provider/model/key, and a 500-entry ring log.</p></div>
+      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-key"/></svg></div><h3>Virtual keys</h3><p><bdi class="lt v">sk-</bdi> keys with request quotas and model allowlists like <bdi class="lt v">qwen/*</bdi>, fully managed from the dashboard — web tokens never reach a client.</p></div>
+      <div class="card tlt"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-spark"/></svg></div><h3>Model alias</h3><p>Map any name to any upstream model. Point <bdi class="lt v">"glm"</bdi> at <bdi class="lt v">glm-5.3</bdi>; clients stay untouched and switching models is one click.</p></div>
+      <div class="card tlt"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg></div><h3>Custom providers</h3><p>Plug any OpenAI-compatible API: Gemini AI Studio, OpenRouter, Groq, Ollama, LM Studio — with ready presets and automatic model fetch.</p></div>
+      <div class="card tlt"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cpu"/></svg></div><h3>Local count_tokens</h3><p><bdi class="lt">/v1/messages/count_tokens</bdi> answers without an upstream round-trip — for client context budgeting.</p></div>
+      <div class="card tlt"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gauge"/></svg></div><h3>Dashboard 2.0</h3><p>An overview with the 48-hour chart, providers, Token Saver, combos, keys, a streaming playground with thinking output and a live log — all local.</p></div>
+      <div class="card tlt"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div><h3>One file, anywhere</h3><p>A single dependency-free Go binary for Windows, Linux and macOS (amd64 + arm64); <bdi class="lt">start.sh</bdi>, <bdi class="lt">start.bat</bdi> and docker-compose included.</p></div>
     </div>
   </div>
 </section>
@@ -771,20 +771,20 @@ curl http://localhost:8080/v1/chat/completions \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Quick Start</span>
-      <h2>سه قدم تا <span class="grad">اولین پاسخ</span></h2>
-      <p>بدون Node، بدون Python، بدون Docker. باینری را بگیر، اجرا کن، از داشبورد کلید بگیر — تمام.</p>
+      <h2>Three steps to <span class="grad">your first answer</span></h2>
+      <p>No Node, no Python, no Docker. Grab the binary, run it, take a key from the dashboard — done.</p>
     </div>
     <div class="steps rv">
       <div class="step card tlt">
-        <h3>دانلود و اجرا</h3>
-        <p style="margin-bottom:.7rem">از Releases بگیر یا خودت بساز:</p>
+        <h3>Download &amp; run</h3>
+        <p style="margin-bottom:.7rem">Grab a release or build it yourself:</p>
         <div class="codebox">git clone https://github.com/Godde3s/omnirouter
 cd omnirouter &amp;&amp; go build -o omnirouter .
 ./omnirouter      <span class="c1"># or start.bat on windows</span></div>
       </div>
       <div class="step card tlt">
-        <h3>داشبورد و کلید</h3>
-        <p style="margin-bottom:.7rem"><bdi class="lt">localhost:8080</bdi> را باز کن (رمز: <bdi class="lt">ADMIN_PASSWORD</bdi>). کلید <bdi class="lt v">sk-</bdi> آماده است؛ توکن‌های وب را در <bdi class="lt">.env</bdi> بگذار.</p>
+        <h3>Dashboard &amp; key</h3>
+        <p style="margin-bottom:.7rem">Open <bdi class="lt">localhost:8080</bdi> (password: <bdi class="lt">ADMIN_PASSWORD</bdi>). An <bdi class="lt v">sk-</bdi> key is ready; drop your web tokens into <bdi class="lt">.env</bdi>.</p>
         <div class="codebox"><span class="c1"># .env -- all optional</span>
 QWEN_TOKEN=...
 DEEPSEEK_TOKENS=...
@@ -792,8 +792,8 @@ GEMINI_COOKIES=...   <span class="c1"># empty = guest</span>
 OPENCODE_API_KEY=... <span class="c1"># paid zen only</span></div>
       </div>
       <div class="step card tlt">
-        <h3>به هر کلاینتی وصل کن</h3>
-        <p style="margin-bottom:.7rem">Endpoint را بده، مدل بگو — یا <bdi class="lt v">auto</bdi> بگذار:</p>
+        <h3>Point any client at it</h3>
+        <p style="margin-bottom:.7rem">Set the endpoint, pick a model — or just use <bdi class="lt v">auto</bdi>:</p>
         <div class="codebox">Base URL: http://localhost:8080/v1
 API Key:  sk-...  <span class="c1"># from dashboard</span>
 Model:    auto    <span class="c1"># or combo:free-stack</span></div>
@@ -806,11 +806,11 @@ Model:    auto    <span class="c1"># or combo:free-stack</span></div>
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Bring Your Own Agent</span>
-      <h2>اتصال <span class="grad">همه‌ی کلاینت‌ها</span></h2>
-      <p>هر ابزاری که OpenAI یا Anthropic حرف می‌زند، با OmniRouter حرف می‌زند. اسنیپت را کپی کن، endpoint و کلید را بگذار، تمام.</p>
+      <h2>Connect <span class="grad">every client</span></h2>
+      <p>If a tool speaks OpenAI or Anthropic, it speaks OmniRouter. Copy the snippet, set endpoint and key — done.</p>
     </div>
     <div class="rv">
-      <div class="tab-list" role="tablist" aria-label="کلاینت‌ها">
+      <div class="tab-list" role="tablist" aria-label="Clients">
         <button class="tab on" data-t="t-openc">OpenCode</button>
         <button class="tab" data-t="t-cline">Cline</button>
         <button class="tab" data-t="t-cc">Claude Code</button>
@@ -819,7 +819,7 @@ Model:    auto    <span class="c1"># or combo:free-stack</span></div>
         <button class="tab" data-t="t-hermes">Hermes</button>
       </div>
       <div class="tabpane on" id="t-openc">
-        <p style="margin-bottom:.9rem">در <bdi class="lt">~/.config/opencode/opencode.json</bdi> — مدل‌های <bdi class="lt v">oc/*</bdi> هیچ کلید بیرونی نمی‌خواهند:</p>
+        <p style="margin-bottom:.9rem">In <bdi class="lt">~/.config/opencode/opencode.json</bdi> — <bdi class="lt v">oc/*</bdi> models need no external key:</p>
         <div class="codebox">{
   <span class="s">"provider"</span>: {
     <span class="s">"omni"</span>: {
@@ -832,22 +832,22 @@ Model:    auto    <span class="c1"># or combo:free-stack</span></div>
 }</div>
       </div>
       <div class="tabpane" id="t-cline">
-        <p style="margin-bottom:.9rem">تنظیمات Cline ← API Provider:</p>
+        <p style="margin-bottom:.9rem">Cline → API Provider settings:</p>
         <div class="codebox">Provider:   <span class="n">OpenAI Compatible</span>
 Base URL:   <span class="n">http://localhost:8080/v1</span>
 API Key:    <span class="n">sk-omni</span>   <span class="c1"># from dashboard</span>
 Model:      <span class="n">qwen/qwen3.8-max</span>  <span class="c1"># or combo:free-stack</span></div>
-        <p class="cap">برای حالت Anthropic در Cline، همان Base URL با مسیر <bdi class="lt">/v1/messages</bdi> و کلید <bdi class="lt v">sk-</bdi> کار می‌کند.</p>
+        <p class="cap">For Cline’s Anthropic mode, the same Base URL with the <bdi class="lt">/v1/messages</bdi> route and your <bdi class="lt v">sk-</bdi> key works.</p>
       </div>
       <div class="tabpane" id="t-cc">
-        <p style="margin-bottom:.9rem">Claude Code با پروتکل Anthropic وصل می‌شود:</p>
+        <p style="margin-bottom:.9rem">Claude Code connects via the Anthropic protocol:</p>
         <div class="codebox"><span class="fn">export</span> ANTHROPIC_BASE_URL=<span class="n">http://localhost:8080</span>
 <span class="fn">export</span> ANTHROPIC_API_KEY=<span class="n">sk-omni</span>
 <span class="fn">export</span> ANTHROPIC_MODEL=<span class="n">qwen/qwen3.8-max</span>
 claude <span class="s">"hello!"</span></div>
       </div>
       <div class="tabpane" id="t-codex">
-        <p style="margin-bottom:.9rem">در <bdi class="lt">~/.codex/config.toml</b>:</p>
+        <p style="margin-bottom:.9rem">In <bdi class="lt">~/.codex/config.toml</b>:</p>
         <div class="codebox">model_providers.omni]
 name = <span class="s">"OmniRouter"</span>
 base_url = <span class="s">"http://localhost:8080/v1"</span>
@@ -857,13 +857,13 @@ model = <span class="n">"auto"</span>
 model_provider = <span class="s">"omni"</span></div>
       </div>
       <div class="tabpane" id="t-cursor">
-        <p style="margin-bottom:.9rem">Cursor ← Settings ← Models ← OpenAI API Key ← Override Base URL:</p>
+        <p style="margin-bottom:.9rem">Cursor → Settings → Models → OpenAI API Key → Override Base URL:</p>
         <div class="codebox">Base URL:  <span class="n">http://localhost:8080/v1</span>
 API Key:   <span class="n">sk-omni</span>
 Model:     <span class="n">oc/big-pickle</span>  <span class="c1"># or any catalog id</span></div>
       </div>
       <div class="tabpane" id="t-hermes">
-        <p style="margin-bottom:.9rem">Hermes با فرمت OpenAI و tool-calling کامل — تست‌شده‌ی زنده با چرخه‌ی R1 به R2:</p>
+        <p style="margin-bottom:.9rem">Hermes speaks OpenAI with full tool-calling — live-tested with the R1→R2 cycle:</p>
         <div class="codebox">endpoint: <span class="n">http://localhost:8080/v1</span>
 api_key:  <span class="n">sk-omni</span>
 model:    <span class="n">qwen/qwen3.8-max</span>
@@ -878,36 +878,36 @@ tools:    <span class="n">true</span>   <span class="c1"># proven live</span></d
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">OAuth Device Flow · RFC 8628</span>
-      <h2>اتصال با یک کلیک، <span class="grad">بدون کپی کلید</span></h2>
-      <p>مثل 9router: ابزارت را بگو کی هستی، تو فقط یک کد را تأیید کن. برای هر کلاینت یک کلید مجازی جدا ساخته می‌شود که هر لحظه از داشبورد قابل لغو است.</p>
+      <h2>Connect in one click, <span class="grad">no key copying</span></h2>
+      <p>Like 9router: your tool announces itself, you approve one code. Every client gets its own virtual key that you can revoke from the dashboard at any moment.</p>
     </div>
 
     <div class="ox-grid rv">
-      <div class="ox-card"><span class="ox-ava">C</span><span class="ox-name"><bdi>Cline</bdi></span><span class="ox-desc">دستیار کدنویسی VS Code — OpenAI و Anthropic</span></div>
-      <div class="ox-card"><span class="ox-ava">K</span><span class="ox-name"><bdi>Kilo Code</bdi></span><span class="ox-desc">پروفایل‌های Architect / Code / Debug</span></div>
-      <div class="ox-card"><span class="ox-ava">G</span><span class="ox-name"><bdi>GitHub Copilot</bdi></span><span class="ox-desc">اشتراک Copilot به‌عنوان کلاینت روتر</span></div>
-      <div class="ox-card"><span class="ox-ava">H</span><span class="ox-name"><bdi>Hermes Agent</bdi></span><span class="ox-desc">ایجنت خودکار با tool-calling کامل</span></div>
-      <div class="ox-card"><span class="ox-ava">C</span><span class="ox-name"><bdi>Claude Code</bdi></span><span class="ox-desc">ترمینال Anthropic از مسیر messages</span></div>
-      <div class="ox-card"><span class="ox-ava">X</span><span class="ox-name"><bdi>Codex CLI</bdi></span><span class="ox-desc">ترمینال OpenAI با config.toml</span></div>
-      <div class="ox-card"><span class="ox-ava">R</span><span class="ox-name"><bdi>Roo Code</bdi></span><span class="ox-desc">انشعاب Cline با حالت‌های چندگانه</span></div>
-      <div class="ox-card"><span class="ox-ava">C</span><span class="ox-name"><bdi>Continue</bdi></span><span class="ox-desc">ادیتور متن‌باز VS Code و JetBrains</span></div>
-      <div class="ox-card"><span class="ox-ava">O</span><span class="ox-name"><bdi>OpenCode</bdi></span><span class="ox-desc">کلاینت ترمینال TUI — از قبل بدون کلید</span></div>
-      <div class="ox-card"><span class="ox-ava">U</span><span class="ox-name"><bdi>Cursor</bdi></span><span class="ox-desc">ادیتور AI با Override Base URL</span></div>
-      <div class="ox-card"><span class="ox-ava">D</span><span class="ox-name"><bdi>Factory Droid</bdi></span><span class="ox-desc">ایجنت Factory AI</span></div>
-      <div class="ox-card"><span class="ox-ava">+</span><span class="ox-name">هر ابزار دیگری</span><span class="ox-desc">هر کلاینت OpenAI یا Anthropic-سازگار</span></div>
+      <div class="ox-card"><span class="ox-ava">C</span><span class="ox-name"><bdi>Cline</bdi></span><span class="ox-desc">VS Code coding assistant — OpenAI &amp; Anthropic</span></div>
+      <div class="ox-card"><span class="ox-ava">K</span><span class="ox-name"><bdi>Kilo Code</bdi></span><span class="ox-desc">Architect / Code / Debug profiles</span></div>
+      <div class="ox-card"><span class="ox-ava">G</span><span class="ox-name"><bdi>GitHub Copilot</bdi></span><span class="ox-desc">Your Copilot subscription as a router client</span></div>
+      <div class="ox-card"><span class="ox-ava">H</span><span class="ox-name"><bdi>Hermes Agent</bdi></span><span class="ox-desc">Autonomous agent with full tool-calling</span></div>
+      <div class="ox-card"><span class="ox-ava">C</span><span class="ox-name"><bdi>Claude Code</bdi></span><span class="ox-desc">Anthropic terminal via the messages route</span></div>
+      <div class="ox-card"><span class="ox-ava">X</span><span class="ox-name"><bdi>Codex CLI</bdi></span><span class="ox-desc">OpenAI terminal with config.toml</span></div>
+      <div class="ox-card"><span class="ox-ava">R</span><span class="ox-name"><bdi>Roo Code</bdi></span><span class="ox-desc">Cline fork with multiple modes</span></div>
+      <div class="ox-card"><span class="ox-ava">C</span><span class="ox-name"><bdi>Continue</bdi></span><span class="ox-desc">Open-source assistant for VS Code &amp; JetBrains</span></div>
+      <div class="ox-card"><span class="ox-ava">O</span><span class="ox-name"><bdi>OpenCode</bdi></span><span class="ox-desc">Terminal TUI client — already keyless</span></div>
+      <div class="ox-card"><span class="ox-ava">U</span><span class="ox-name"><bdi>Cursor</bdi></span><span class="ox-desc">AI editor with Base URL override</span></div>
+      <div class="ox-card"><span class="ox-ava">D</span><span class="ox-name"><bdi>Factory Droid</bdi></span><span class="ox-desc">Factory AI agent</span></div>
+      <div class="ox-card"><span class="ox-ava">+</span><span class="ox-name">Any other tool</span><span class="ox-desc">Any OpenAI- or Anthropic-compatible client</span></div>
     </div>
 
     <div class="ox-steps rv">
-      <div class="ox-step"><span class="n">۱</span><strong>ابزارت کد می‌گیرد.</strong> یک درخواست ساده به <code>POST /oauth/device/start</code> با نام کلاینت — کد ۸ کاراکتری مثل <code>K7QW-2XRT</code> برمی‌گردد، همان استانداردی که Copilot و Cline استفاده می‌کنند.</div>
-      <div class="ox-step"><span class="n">۲</span><strong>تو تأیید می‌کنی.</strong> صفحه‌ی فارسی <code>/oauth/authorize</code> را باز کن، کلاینت و کد را ببین و دکمه‌ی «تأیید و اتصال» را بزن. از داشبورد هم می‌شود تأیید یا رد کرد.</div>
-      <div class="ox-step"><span class="n">۳</span><strong>کلید خودکار ساخته می‌شود.</strong> ابزار با <code>POST /oauth/device/poll</code> کلید مجازی اختصاصی <code>sk-omni-…</code> را می‌گیرد؛ آمار مصرفش جدا نگه‌داری می‌شود و لغو آن لحظه‌ای است.</div>
+      <div class="ox-step"><span class="n">1</span><strong>Your tool asks for a code.</strong> One simple call to <code>POST /oauth/device/start</code> with a client name returns an 8-character code like <code>K7QW-2XRT</code> — the same standard Copilot and Cline use.</div>
+      <div class="ox-step"><span class="n">2</span><strong>You approve it.</strong> Open the <code>/oauth/authorize</code> page, check the client and code, hit “Approve &amp; connect” — or approve or deny it from the dashboard.</div>
+      <div class="ox-step"><span class="n">3</span><strong>A key is minted.</strong> The tool picks up its dedicated virtual <code>sk-omni-…</code> key via <code>POST /oauth/device/poll</code>; its usage is tracked separately and revocation is instant.</div>
     </div>
 
     <div class="ox-consent rv">
       <div>
-        <h3 style="font-size:1.12rem;margin-bottom:.55rem">صفحه‌ی تأیید فارسی — همان لحظه در مرورگر</h3>
-        <p style="color:var(--mut);font-size:.95rem;line-height:2.05">کد را که باز کنی، OmniRouter نشان می‌دهد چه کلاینتی، چه دسترسی‌ای خواسته. کلید ساخته‌شده فقط برای همان ابزار است: می‌توانی سقف درخواست بگذاری، مدل‌هایش را محدود کنی یا با یک دکمه از پنل «اتصالات» داشبورد لغوش کنی — دقیقاً حس داشبورد 9router، با پالت و زبان خودمان.</p>
-        <div class="ox-secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-shield"/></svg><span>امنیت محلی: تأیید فقط از localhost یا با نشست ادمین پذیرفته می‌شود؛ کدها ۱۵ دقیقه‌ای منقضی می‌شوند و هر بار مصرف، بی‌اعتبار می‌گردند.</span></div>
+        <h3 style="font-size:1.12rem;margin-bottom:.55rem">A consent page — right in your browser</h3>
+        <p style="color:var(--mut);font-size:.95rem;line-height:1.7">Open the code page and OmniRouter shows you which client asked for what. The minted key belongs to that tool alone: cap its requests, restrict its models, or revoke it with one button from the dashboard’s Connections panel — the 9router dashboard feel, in our own palette.</p>
+        <div class="ox-secnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-shield"/></svg><span>Local-first security: approval only from localhost or with an admin session; codes expire after 15 minutes and are single-use.</span></div>
       </div>
       <div class="codebox has-badge"><span class="nobadge">CONSENT</span>$ curl -s -X POST localhost:8080/oauth/device/start \
     -d '{"client":"cline"}'
@@ -918,7 +918,7 @@ tools:    <span class="n">true</span>   <span class="c1"># proven live</span></d
   <span class="s">"expires_in"</span>: <span class="fn">900</span>
 }
 
-<span class="c1"># بعد از تأیید در مرورگر:</span>
+<span class="c1"># after you approve it in the browser:</span>
 $ curl -s -X POST localhost:8080/oauth/device/poll \
     -d '{"device_code":"omni_…"}'
 { <span class="s">"access_token"</span>: <span class="n">"sk-omni-…"</span>,
@@ -931,28 +931,28 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">9router Parity</span>
-      <h2>قابلیت‌های 9router، <span class="grad">تک‌به‌تک</span></h2>
-      <p>OmniRouter الگوی 9router را جدی می‌گیرد — هر قابلیتی که روی معماری بریج-وبِ ما معنا داشته، پیاده شده است.</p>
+      <h2>9router’s features, <span class="grad">one by one</span></h2>
+      <p>OmniRouter takes the 9router pattern seriously — every capability that makes sense on our web-bridge architecture is implemented.</p>
     </div>
     <div class="prows rv">
-      <div class="prow"><span class="pn">OAuth Device Flow</span><span class="pt tag g">جدید در v1.3.0</span><span class="pd">اتصال Cline، Kilo Code، GitHub Copilot، Hermes و ۸ کلاینت دیگر با استاندارد RFC 8628 — بدون کپی‌پیست کلید.</span></div>
-      <div class="prow"><span class="pn">Virtual Keys per Client</span><span class="pt tag g">✓</span><span class="pd">برای هر اتصال یک کلید مجازی جدا با آمار مستقل، سقف اختیاری و لغو لحظه‌ای از پنل اتصالات.</span></div>
-      <div class="prow"><span class="pn">OpenCode Free (no auth)</span><span class="pt tag g">پروایدر oc</span><span class="pd">همان مسیر zen: بدون کلید، fetch خودکار مدل‌ها و کلید اختیاری برای مدل‌های پولی.</span></div>
-      <div class="prow"><span class="pn">RTK Token Saver</span><span class="pt tag g">داخلی</span><span class="pd">فشرده‌سازی tool_result با فیلترهای تشخیص خودکار؛ پیش‌فرض روشن به‌علاوه‌ی هدر bypass.</span></div>
-      <div class="prow"><span class="pn">Headroom Token Saver</span><span class="pt tag a">ساده‌شده</span><span class="pd">حالت‌های خروجی Caveman و Ponytail داخلی‌اند؛ کامپرسور خارجی لازم نیست.</span></div>
-      <div class="prow"><span class="pn">Caveman / Ponytail</span><span class="pt tag g">✓</span><span class="pd">پرامپت‌مودها از داشبورد یا هدر <bdi class="lt">X-Omni-Prompt-Mode</bdi>.</span></div>
-      <div class="prow"><span class="pn">Custom Combos</span><span class="pt tag g">✓</span><span class="pd">زنجیره‌های نام‌دار <bdi class="lt v">combo:*</bdi> با fallback ترتیبی.</span></div>
-      <div class="prow"><span class="pn">Smart Fallback</span><span class="pt tag g">✓</span><span class="pd">زنجیره‌ی auto به‌علاوه‌ی retry هر پروایدر و cooldown سلامت‌محور.</span></div>
-      <div class="prow"><span class="pn">Format Translation</span><span class="pt tag g">✓</span><span class="pd">OpenAI و Anthropic و فرمت‌های وب هر بریج — گوگل، PoW دیپ‌سیک و بقیه.</span></div>
-      <div class="prow"><span class="pn">Quota Tracking</span><span class="pt tag g">✓</span><span class="pd">آمار توکن واقعی به تفکیک کلید و پروایدر و مدل، با باکت ساعتی و سهمیه‌ی کلید.</span></div>
-      <div class="prow"><span class="pn">Multi-Account</span><span class="pt tag g">✓</span><span class="pd">پول اکانت و توکن در هر بریج با چرخش و cooldown هنگام ۴۲۹.</span></div>
-      <div class="prow"><span class="pn">Auto Token Refresh</span><span class="pt tag g">✓</span><span class="pd">هارت‌بیت PSIDTS گوگل، PoW خودکار دیپ‌سیک و bx کوان — همه خودکار.</span></div>
-      <div class="prow"><span class="pn">Request Logging</span><span class="pt tag g">✓</span><span class="pd">لاگ زنده با تأخیر، توکن و بایت‌های صرفه‌جویی‌شده‌ی RTK.</span></div>
-      <div class="prow"><span class="pn">Usage Analytics</span><span class="pt tag g">✓</span><span class="pd">نمودار ۴۸ساعته و جدول مدل‌های پرکاربرد در داشبورد.</span></div>
-      <div class="prow"><span class="pn">Virtual API Keys</span><span class="pt tag g">✓</span><span class="pd">کلیدهای <bdi class="lt v">sk-</bdi> با سهمیه و allowlist — توکن وب هرگز به کلاینت نمی‌رسد.</span></div>
-      <div class="prow"><span class="pn">Deploy Anywhere</span><span class="pt tag g">✓</span><span class="pd">تک‌باینری ویندوز، لینوکس و مک به‌علاوه‌ی داکر؛ همین صفحه هم روی GitHub Pages است.</span></div>
-      <div class="prow"><span class="pn">Count Tokens</span><span class="pt tag g">✓</span><span class="pd"><bdi class="lt">/v1/messages/count_tokens</bdi> به‌صورت کاملاً محلی.</span></div>
-      <div class="prow"><span class="pn">Cloud Sync</span><span class="pt tag a">—</span><span class="pd">فایل <bdi class="lt">omnirouter.json</bdi> را خودت سینک کن؛ سرویس ابری نمی‌خواهیم.</span></div>
+      <div class="prow"><span class="pn">OAuth Device Flow</span><span class="pt tag g">new in v1.3.0</span><span class="pd">Connect Cline, Kilo Code, GitHub Copilot, Hermes and 8 more clients over RFC 8628 — no key copy-paste.</span></div>
+      <div class="prow"><span class="pn">Virtual Keys per Client</span><span class="pt tag g">✓</span><span class="pd">Each connection gets its own virtual key with independent stats, optional caps and instant revocation from the Connections panel.</span></div>
+      <div class="prow"><span class="pn">OpenCode Free (no auth)</span><span class="pt tag g">oc provider</span><span class="pd">The zen route: keyless, automatic model fetch, optional key for paid models.</span></div>
+      <div class="prow"><span class="pn">RTK Token Saver</span><span class="pt tag g">built-in</span><span class="pd">tool_result compression with auto-detecting filters; on by default plus a bypass header.</span></div>
+      <div class="prow"><span class="pn">Headroom Token Saver</span><span class="pt tag a">simplified</span><span class="pd">Caveman and Ponytail output modes are built in; no external compressor needed.</span></div>
+      <div class="prow"><span class="pn">Caveman / Ponytail</span><span class="pt tag g">✓</span><span class="pd">Prompt modes from the dashboard or the <bdi class="lt">X-Omni-Prompt-Mode</bdi> header.</span></div>
+      <div class="prow"><span class="pn">Custom Combos</span><span class="pt tag g">✓</span><span class="pd">Named <bdi class="lt v">combo:*</bdi> chains with sequential fallback.</span></div>
+      <div class="prow"><span class="pn">Smart Fallback</span><span class="pt tag g">✓</span><span class="pd">The auto chain plus per-provider retry and health-aware cooldown.</span></div>
+      <div class="prow"><span class="pn">Format Translation</span><span class="pt tag g">✓</span><span class="pd">OpenAI, Anthropic and each bridge’s web format — Google, DeepSeek PoW and the rest.</span></div>
+      <div class="prow"><span class="pn">Quota Tracking</span><span class="pt tag g">✓</span><span class="pd">Real token stats per key, provider and model, with hourly buckets and key quotas.</span></div>
+      <div class="prow"><span class="pn">Multi-Account</span><span class="pt tag g">✓</span><span class="pd">Account and token pools per bridge, with rotation and cooldown on 429.</span></div>
+      <div class="prow"><span class="pn">Auto Token Refresh</span><span class="pt tag g">✓</span><span class="pd">Google PSIDTS heartbeat, automatic DeepSeek PoW and Qwen bx — all automatic.</span></div>
+      <div class="prow"><span class="pn">Request Logging</span><span class="pt tag g">✓</span><span class="pd">A live log with latency, tokens and RTK bytes saved.</span></div>
+      <div class="prow"><span class="pn">Usage Analytics</span><span class="pt tag g">✓</span><span class="pd">A 48-hour chart and a top-models table in the dashboard.</span></div>
+      <div class="prow"><span class="pn">Virtual API Keys</span><span class="pt tag g">✓</span><span class="pd"><bdi class="lt v">sk-</bdi> keys with quotas and allowlists — web tokens never reach a client.</span></div>
+      <div class="prow"><span class="pn">Deploy Anywhere</span><span class="pt tag g">✓</span><span class="pd">Single binaries for Windows, Linux and macOS plus Docker; this very page runs on GitHub Pages.</span></div>
+      <div class="prow"><span class="pn">Count Tokens</span><span class="pt tag g">✓</span><span class="pd"><bdi class="lt">/v1/messages/count_tokens</bdi> computed fully locally.</span></div>
+      <div class="prow"><span class="pn">Cloud Sync</span><span class="pt tag a">—</span><span class="pd">Sync the <bdi class="lt">omnirouter.json</bdi> file yourself; we don’t want a cloud service.</span></div>
     </div>
   </div>
 </section>
@@ -961,45 +961,45 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Model Rankings</span>
-      <h2>کدام مدل برای <span class="grad">ایجنت</span>؟</h2>
-      <p>جمع‌بندی تست‌های زنده‌ی خودمان روی همین روتر — کدنویسی، tool-calling و پایداری حالت مهمان.</p>
+      <h2>Which model for <span class="grad">agents</span>?</h2>
+      <p>Our own live tests on this very router — coding, tool-calling and guest-mode stability.</p>
     </div>
     <div class="grid g-auto rv">
       <div class="card tlt">
         <div class="rank"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-medal"/></svg></div><span class="pos">01</span></div>
-        <h3><span class="en">qwen3.8-max</span> <span class="tag v">ایجنت</span></h3>
-        <p>قوی‌ترین برای کدنویسی و tool-calling — چرخه‌ی کامل R1 به R2 زنده اثبات شده است. <span class="tag a">توکن می‌خواهد</span></p>
-        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۹۶٪</span></div><div class="bar"><div class="fill" data-w="96"></div></div></div>
+        <h3><span class="en">qwen3.8-max</span> <span class="tag v">agent</span></h3>
+        <p>Strongest for coding and tool-calling — the full R1→R2 cycle proven live. <span class="tag a">needs token</span></p>
+        <div class="meter"><div class="lbl"><span>Agentic quality</span><span>96%</span></div><div class="bar"><div class="fill" data-w="96"></div></div></div>
       </div>
       <div class="card tlt">
         <div class="rank"><div class="ico c-cy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-medal"/></svg></div><span class="pos">02</span></div>
-        <h3><span class="en">GLM 5.3</span> <span class="tag g">جدید</span></h3>
-        <p>پرچم‌دار تازه‌ی Z.AI — زنده در کاتالوگ. نسخه‌ی سریع <bdi class="lt">GLM 5.3-flash</bdi> هم برای چت و ایجنت‌های سبک.</p>
-        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۹۲٪</span></div><div class="bar"><div class="fill" data-w="92"></div></div></div>
+        <h3><span class="en">GLM 5.3</span> <span class="tag g">new</span></h3>
+        <p>Z.AI’s fresh flagship — live in the catalog. The fast <bdi class="lt">GLM 5.3-flash</bdi> variant covers chat and light agents.</p>
+        <div class="meter"><div class="lbl"><span>Agentic quality</span><span>92%</span></div><div class="bar"><div class="fill" data-w="92"></div></div></div>
       </div>
       <div class="card tlt">
         <div class="rank"><div class="ico c-mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-medal"/></svg></div><span class="pos">03</span></div>
-        <h3><span class="en">gemini-3.6-flash</span> <span class="tag g">مهمان</span></h3>
-        <p>پایدارترین حالت بی‌توکن — مهمانِ گوگل و fallback اولِ هر کمبو؛ ویژن واقعی هم دارد.</p>
-        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۸۶٪</span></div><div class="bar"><div class="fill" data-w="86"></div></div></div>
+        <h3><span class="en">gemini-3.6-flash</span> <span class="tag g">guest</span></h3>
+        <p>The most stable tokenless mode — Google guest and the first fallback in every combo; real vision too.</p>
+        <div class="meter"><div class="lbl"><span>Agentic quality</span><span>86%</span></div><div class="bar"><div class="fill" data-w="86"></div></div></div>
       </div>
       <div class="card tlt">
         <div class="rank"><div class="ico c-am"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></div><span class="pos">04</span></div>
         <h3><span class="en">deepseek-chat</span> <span class="tag v">PoW</span></h3>
-        <p>استدلال قوی با PoW خودکار — wasm رسمی دیپ‌سیک داخل باینری، بدون سرویس بیرونی.</p>
-        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۸۸٪</span></div><div class="bar"><div class="fill" data-w="88"></div></div></div>
+        <p>Strong reasoning with automatic PoW — the official DeepSeek wasm inside the binary, no external service.</p>
+        <div class="meter"><div class="lbl"><span>Agentic quality</span><span>88%</span></div><div class="bar"><div class="fill" data-w="88"></div></div></div>
       </div>
       <div class="card tlt">
         <div class="rank"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-keyoff"/></svg></div><span class="pos">05</span></div>
-        <h3><span class="en">oc/big-pickle</span> <span class="tag g">بدون کلید</span></h3>
-        <p>رایگانِ zen برای شروع صفر تا صد؛ همراه <bdi class="lt">nemotron-3-ultra-free</bdi> و <bdi class="lt">mimo-v2.5-free</bdi>.</p>
-        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۷۴٪</span></div><div class="bar"><div class="fill" data-w="74"></div></div></div>
+        <h3><span class="en">oc/big-pickle</span> <span class="tag g">keyless</span></h3>
+        <p>zen’s free tier for a zero-to-hero start; with <bdi class="lt">nemotron-3-ultra-free</bdi> and <bdi class="lt">mimo-v2.5-free</bdi>.</p>
+        <div class="meter"><div class="lbl"><span>Agentic quality</span><span>74%</span></div><div class="bar"><div class="fill" data-w="74"></div></div></div>
       </div>
       <div class="card tlt">
         <div class="rank"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg></div><span class="pos">∞</span></div>
-        <h3>هر مدل دیگری</h3>
-        <p>پروایدر سفارشی اضافه کن — AI Studio، OpenRouter، Groq، Ollama — بقیه‌ی مسیر یکی است.</p>
-        <div class="meter"><div class="lbl"><span>انعطاف</span><span>∞</span></div><div class="bar"><div class="fill" data-w="100"></div></div></div>
+        <h3>Any other model</h3>
+        <p>Add a custom provider — AI Studio, OpenRouter, Groq, Ollama — the rest of the path is identical.</p>
+        <div class="meter"><div class="lbl"><span>Flexibility</span><span>∞</span></div><div class="bar"><div class="fill" data-w="100"></div></div></div>
       </div>
     </div>
   </div>
@@ -1010,62 +1010,62 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Changelog</span>
-      <h2>از v1.0 تا <span class="grad">v1.3.1</span></h2>
+      <h2>From v1.0 to <span class="grad">v1.3.1</span></h2>
     </div>
     <div class="tline rv">
       <div class="titem">
-        <div class="vhead"><span class="vnum">v1.3.1</span><span class="vdate">2026-09</span><span class="tag g">فعلی</span></div>
+        <div class="vhead"><span class="vnum">v1.3.1</span><span class="vdate">2026-09</span><span class="tag g">current</span></div>
         <ul>
-          <li><strong>بازنویسی لایه‌ی موبایل سایت</strong> — رفع باگ cascade در CSS که گرید ۴ستونه‌ی دسکتاپ را روی گوشی رندر می‌کرد و کارت‌های OAuth را از لبه بیرون می‌زد؛ حالا همه‌ی گریدها ۲ستونه/تک‌ستونه‌ی درست هستند</li>
-          <li><strong>کف فونت ۱۲px</strong> برای بج‌ها و تگ‌ها روی موبایل + شکست امن توکن‌های بلند کد داخل متن فارسی (<bdi class="lt">overflow-wrap:anywhere</bdi>)</li>
-          <li><strong>پالایش متن‌ها</strong> — پاراگراف هیرو روان‌تر با جزیره‌های bidi کمتر؛ کدباکس‌های موبایل فشرده‌تر با همین خوانایی</li>
+          <li><strong>Site goes fully English</strong> — every section, label and code sample rewritten in optimized LTR English with Latin-tuned typography (Inter + Space Grotesk, line-height 1.6–1.75)</li>
+          <li><strong>Mobile cascade bug fixed at the root</strong> — overrides moved to the end of the stylesheet so grids collapse properly (2-col / 1-col); 12px type floors and safe breaking of long code tokens (<bdi class="lt">overflow-wrap:anywhere</bdi>)</li>
+          <li><strong>Changelog repaired</strong> — v1.2.0 was mislabeled as v1.3.0; the timeline now reads v1.0 → v1.3.1 in the right order</li>
         </ul>
       </div>
       <div class="titem alt">
         <div class="vhead"><span class="vnum grad">v1.3.0</span><span class="vdate">2026-09</span></div>
         <ul>
-          <li><strong>OAuth Device Flow</strong> (<bdi class="lt">RFC 8628</bdi>) — اتصال بدون کپی کلید برای Cline، Kilo Code، GitHub Copilot، Hermes و هر کلاینت دیگر؛ همان الگوی 9router با endpointهای <bdi class="lt v">/oauth/device/start</bdi> و <bdi class="lt v">/oauth/device/poll</bdi></li>
-          <li><strong>پنل «اتصالات» در داشبورد</strong> — درخواست‌های در انتظار با بج زنده، کلاینت‌های متصل با آمار مستقل، کپی و لغو لحظه‌ای کلید</li>
-          <li><strong>صفحه‌ی تأیید فارسی</strong> در <bdi class="lt v">/oauth/authorize</bdi> — نمایش کلاینت و کد، مجاز فقط از localhost یا با نشست ادمین؛ کدها ۱۵ دقیقه‌ای منقضی و یک‌بارمصرف</li>
-          <li><strong>کلیدهای مجازی</strong> — هر اتصال یک <bdi class="lt v">sk-omni-…</bdi> اختصاصی با فیلد client و user_code در store؛ سازگار با سهمیه و allowlist موجود</li>
-          <li><strong>پالایش تایپوگرافی موبایل</strong> — رفع سرریز گرید split در بندها، کف فونت ترمینال ۱۲px، فشرده‌سازی letter-spacing کیکرها روی گوشی</li>
+          <li><strong>OAuth Device Flow</strong> (<bdi class="lt">RFC 8628</bdi>) — keyless connection for Cline, Kilo Code, GitHub Copilot, Hermes and any other client; the 9router pattern with <bdi class="lt v">/oauth/device/start</bdi> and <bdi class="lt v">/oauth/device/poll</bdi></li>
+          <li><strong>Connections panel in the dashboard</strong> — live-badged pending requests, connected clients with independent stats, one-click copy and instant revocation</li>
+          <li><strong>Consent page</strong> at <bdi class="lt v">/oauth/authorize</bdi> — shows client and code; allowed only from localhost or with an admin session; codes expire in 15 minutes and are single-use</li>
+          <li><strong>Virtual keys</strong> — every connection gets a dedicated <bdi class="lt v">sk-omni-…</bdi> with client and user_code fields in the store; works with existing quotas and allowlists</li>
+          <li><strong>Mobile typography pass</strong> — split-grid overflow fixed, 12px terminal font floor, tighter kicker letter-spacing on phones</li>
         </ul>
       </div>
       <div class="titem">
         <div class="vhead"><span class="vnum">v1.2.0</span><span class="vdate">2026-09</span></div>
         <ul>
-          <li><strong>پروایدر OpenCode Zen</strong> (<bdi class="lt">oc</bdi>) — مدل‌های رایگان بدون کلید، fetch خودکار، Anthropic ترجمه‌شده و کلید اختیاری برای zen پولی</li>
-          <li><strong>RTK Token Saver</strong> — فشرده‌سازی خودکار tool_result شامل git-diff، grep، file-list، dedup و smart-truncate به‌همراه آمار بایت صرفه‌جویی‌شده</li>
-          <li><strong>کمبوهای نام‌دار</strong> — <bdi class="lt v">combo:*</bdi> با fallback ترتیبی و کمبوی آماده‌ی <bdi class="lt v">free-stack</bdi></li>
-          <li><strong>حالت‌های پرامپت</strong> — Caveman و Ponytail در سه سطح، با هدرهای <bdi class="lt">X-Omni-Token-Saver</bdi> و <bdi class="lt">X-Omni-Prompt-Mode</bdi></li>
-          <li><strong>GLM 5.3</strong> — نام‌گذاری جدید پرچم‌دار Z.AI در کاتالوگ و زنجیره‌های fallback</li>
-          <li><strong>داشبورد ۲.۰</strong> — چیدمان حرفه‌ای با سایدبار، Token Saver، کمبوها و پلی‌گراند جدید</li>
-          <li>رفع باگ health-check بریج‌ها (احراز هویت fetch مدل‌ها)</li>
+          <li><strong>OpenCode Zen provider</strong> (<bdi class="lt">oc</bdi>) — free keyless models, automatic fetch, translated Anthropic and an optional key for paid zen</li>
+          <li><strong>RTK Token Saver</strong> — automatic tool_result compression: git-diff, grep, file-list, dedup and smart-truncate, plus bytes-saved stats</li>
+          <li><strong>Named combos</strong> — <bdi class="lt v">combo:*</bdi> chains with sequential fallback and the ready-made <bdi class="lt v">free-stack</bdi></li>
+          <li><strong>Prompt modes</strong> — Caveman and Ponytail in three levels, via the <bdi class="lt">X-Omni-Token-Saver</bdi> and <bdi class="lt">X-Omni-Prompt-Mode</bdi> headers</li>
+          <li><strong>GLM 5.3</strong> — Z.AI’s new flagship naming across the catalog and fallback chains</li>
+          <li><strong>Dashboard 2.0</strong> — a professional sidebar layout with Token Saver, combos and a new playground</li>
+          <li>Fixed a bridge health-check bug (auth on model fetch)</li>
         </ul>
       </div>
       <div class="titem alt">
         <div class="vhead"><span class="vnum">v1.1.0 → v1.1.1</span><span class="vdate">2026-09</span></div>
         <ul>
-          <li>بریج Gemini مهمان — بدون کوکی، با اثبات زنده‌ی PONG — به‌همراه هارت‌بیت PSIDTS</li>
-          <li>آمار مصرف واقعی، alias هر پروایدر، سهمیه و allowlist کلید</li>
-          <li><strong>رفع باگ مهم:</strong> stream پیش‌فرض false طبق مشخصات OpenAI — کلاینت‌هایی مثل OpenCode که فیلد را نمی‌فرستند حالا JSON می‌گیرند نه خطا</li>
-          <li>پلی‌گراند استریم با thinking و ویرایشگر alias</li>
+          <li>Guest Gemini bridge — cookie-free with a live-proven PONG — plus the PSIDTS heartbeat</li>
+          <li>Real usage stats, per-provider alias, key quotas and allowlists</li>
+          <li><strong>Important fix:</strong> stream now defaults to false per the OpenAI spec — clients like OpenCode that omit the field get JSON instead of an error</li>
+          <li>Streaming playground with thinking and an alias editor</li>
         </ul>
       </div>
       <div class="titem">
         <div class="vhead"><span class="vnum">v1.0.0</span><span class="vdate">2026-08</span></div>
         <ul>
-          <li>هسته‌ی روتر: کاتالوگ زنده، resolve سه‌فرمی و failover بین ۴ بریج وب</li>
-          <li>PoW واقعی دیپ‌سیک — wasm رسمی داخل wazero، بدون CGO</li>
-          <li>داشبورد فارسی RTL، کلیدهای <bdi class="lt v">sk-</bdi> و اسکریپت‌های start</li>
+          <li>Router core: live catalog, three-format resolve and failover across 4 web bridges</li>
+          <li>Real DeepSeek PoW — official wasm inside wazero, no CGO</li>
+          <li>Web dashboard, <bdi class="lt v">sk-</bdi> virtual keys and start scripts</li>
         </ul>
       </div>
       <div class="titem alt">
-        <div class="vhead"><span class="vnum">نقشه‌ی راه</span></div>
+        <div class="vhead"><span class="vnum">Roadmap</span></div>
         <ul>
-          <li>ذخیره‌سازی تنظیمات saver و کمبوها از داشبورد به فایل</li>
-          <li>پشتیبانی صدا (STT و TTS) برای پروایدرهای self-hosted</li>
-          <li>سینک تنظیمات بین دستگاه‌ها</li>
+          <li>Persist saver and combo settings from the dashboard to file</li>
+          <li>Voice support (STT &amp; TTS) for self-hosted providers</li>
+          <li>Settings sync across devices</li>
         </ul>
       </div>
     </div>
@@ -1077,37 +1077,37 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">FAQ</span>
-      <h2>سؤال‌های <span class="grad">پرتکرار</span></h2>
+      <h2>Frequently asked <span class="grad">questions</span></h2>
     </div>
     <div class="faq rv">
       <details>
-        <summary>واقعاً بدون هیچ کلیدی می‌شود کدنویسی کرد؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
-        <div class="a">بله — دو مسیر بدون کلید داریم. اول <strong>Gemini مهمان</strong>: برای بریج gemini هیچ کوکی‌ای لازم نیست و در تست‌های ما از IP دیتاسنتر هم جواب داد. دوم <strong>مدل‌های رایگان OpenCode Zen</strong> از طریق پروایدر <bdi class="lt">oc</bdi> که فقط یک شناسه‌ی نشست تصادفی می‌خواهد که روتر خودش می‌سازد. کمبوی آماده‌ی <bdi class="lt v">combo:free-stack</bdi> همین‌ها را پشت هم می‌چیند.</div>
+        <summary>Can I really code without any keys at all?<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">Yes — there are two keyless routes. First, <strong>guest Gemini</strong>: the gemini bridge needs no cookies at all and answered even from a datacenter IP in our tests. Second, the <strong>free OpenCode Zen models</strong> via the <bdi class="lt">oc</bdi> provider, which only needs a random session ID the router generates. The ready-made <bdi class="lt v">combo:free-stack</bdi> stacks them back to back.</div>
       </details>
       <details>
-        <summary>چطور Cline یا Kilo Code را بدون کپی‌پیست کلید وصل کنم؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
-        <div class="a">با OAuth Device Flow جدید v1.3.0. در ابزار یا ترمینال یک بار <bdi class="lt">POST /oauth/device/start</bdi> را با نام کلاینت صدا بزن؛ کد ۸ کاراکتری می‌گیری. آن را در صفحه‌ی <bdi class="lt">/oauth/authorize</bdi> تأیید کن — تمام. ابزار با poll کلید مجازی خودش را خودکار می‌گیرد و از آن لحظه در پنل «اتصالات» داشبورد با آمار مستقل می‌بینی‌اش. این دقیقاً همان تجربه‌ی اتصال Copilot و Cline در 9router است.</div>
+        <summary>How do I connect Cline or Kilo Code without copy-pasting keys?<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">With the v1.3.0 OAuth Device Flow. Call <bdi class="lt">POST /oauth/device/start</bdi> once with a client name; you get an 8-character code. Approve it on the <bdi class="lt">/oauth/authorize</bdi> page — done. The tool picks up its virtual key automatically via poll and shows up in the dashboard’s Connections panel with its own stats. Exactly the Copilot-and-Cline connection experience 9router offers.</div>
       </details>
       
       <details>
-        <summary>سهمیه‌ی رایگان zen تمام می‌شود چه؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
-        <div class="a">اگر در زنجیره‌ی auto یا کمبو، بعد از <bdi class="lt v">oc/*</bdi> یک گام دیگر باشد، روتر خودش می‌رود سراغ بعدی. خطای <bdi class="lt">FreeUsageLimitError</bdi> مثل هر ۴۲۹ دیگری قابل retry است و failover را فعال می‌کند. برای سهمیه‌ی بیشتر هم می‌توانی <bdi class="lt v">OPENCODE_API_KEY</bdi> بگذاری تا مدل‌های پولی مثل <bdi class="lt v">oc/glm-5.3</bdi> باز شوند.</div>
+        <summary>What happens when the free zen quota runs out?<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">If another step follows <bdi class="lt v">oc/*</bdi> in the auto chain or your combo, the router moves on by itself. <bdi class="lt">FreeUsageLimitError</bdi> is retryable like any other 429 and triggers failover. For extra quota, set <bdi class="lt v">OPENCODE_API_KEY</bdi> to unlock paid models like <bdi class="lt v">oc/glm-5.3</bdi>.</div>
       </details>
       <details>
-        <summary>RTK چطور مطمئن می‌شود چیزی مهم از دست نمی‌رود؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
-        <div class="a">فیلترها ساختار محتوای ابزار را می‌شناسند: دیف، وضعیت گیت، grep و فهرست مسیرها. فقط بخش‌های تکراری و حجیم خلاصه می‌شوند — آمار مثبت و منفی، مسیرها و خطوط یکتا سر جایشان می‌مانند. اگر فیلتر مطمئن نباشد یا خروجی بزرگ‌تر از ورودی شود، متن اصلی دست‌نخورده می‌رود. با هدر <bdi class="lt">X-Omni-Token-Saver: off</bdi> هم برای هر درخواست می‌توانی کلاً خاموشش کنی.</div>
+        <summary>How does RTK make sure nothing important is lost?<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">The filters understand tool content structure: diffs, git status, grep output and path listings. Only repetitive bulk is summarized — plus/minus stats, paths and unique lines stay put. If a filter is unsure or the output grows larger than the input, the original text passes through untouched. You can also switch it off per request with the <bdi class="lt">X-Omni-Token-Saver: off</bdi> header.</div>
       </details>
       <details>
-        <summary>توکن‌های وبم کجا می‌روند؟ امن است؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
-        <div class="a">توکن‌ها فقط در <bdi class="lt">.env</bdi> یا استور محلی خودت می‌مانند و بین روتر و سایت ارائه‌دهنده رد و بدل می‌شوند. کلاینت‌ها فقط کلیدهای مجازی <bdi class="lt v">sk-</bdi> خود روتر را می‌بینند. هیچ چیزی به هیچ سروری غیر از خود ارائه‌دهنده‌ها ارسال نمی‌شود — همه‌چیز تک‌باینری محلی است.</div>
+        <summary>Where do my web tokens go? Is it safe?<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">Tokens stay in your local <bdi class="lt">.env</bdi> or store and are only exchanged between the router and the provider sites. Clients only ever see the router’s own virtual <bdi class="lt v">sk-</bdi> keys. Nothing is sent to any server beyond the providers themselves — everything is one local binary.</div>
       </details>
       <details>
-        <summary>فرق OmniRouter با گذاشتن بریج‌ها کنار هم چیست؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
-        <div class="a">بریج‌های تکی هرکدام یک پورت، یک فرمت و یک توکن دارند. OmniRouter همه را پشت یک endpoint استاندارد می‌گذارد: یک کلید برای همه، resolve خودکار مدل، failover بین سرویس‌ها، سهمیه و آمار یکپارچه، و Token Saver که روی همه اعمال می‌شود — چیزی که با چند بریج مجزا عملاً ممکن نیست.</div>
+        <summary>Why OmniRouter instead of running bridges side by side?<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">Standalone bridges each have a port, a format and a token. OmniRouter puts them all behind one standard endpoint: a single key for everything, automatic model resolve, failover across services, unified quota and stats, and a Token Saver applied to all of it — practically impossible with separate bridges.</div>
       </details>
       <details>
-        <summary>روی ویندوز چطور اجرا کنم؟<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
-        <div class="a">از Releases پکیج <bdi class="lt">windows-amd64.zip</bdi> را بگیر، extract کن و <bdi class="lt">start.bat</bdi> را اجرا کن — اولین اجرا فایل <bdi class="lt">.env</bdi> می‌سازد و راهنما نشان می‌دهد. باینری‌های macOS (اینتل و ARM) و لینوکس (amd64 و ARM64) هم در همان ریلیز هستند.</div>
+        <summary>How do I run it on Windows?<span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><use href="#i-plus"/></svg></span></summary>
+        <div class="a">Grab <bdi class="lt">windows-amd64.zip</bdi> from Releases, extract it and run <bdi class="lt">start.bat</bdi> — the first run creates a <bdi class="lt">.env</bdi> file and prints a short guide. macOS (Intel and ARM) and Linux (amd64 and ARM64) binaries are in the same release.</div>
       </details>
     </div>
   </div>
@@ -1118,15 +1118,15 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
   <div class="wrap">
     <div class="cta-box rv">
       <span class="kicker" style="justify-content:center">Ready in 60 seconds</span>
-      <h2>امشب شروع کن، <span class="grad">صفر تومان</span> بساز.</h2>
-      <p>یک باینری، پنج پروایدر، مدل‌های رایگان بدون کلید — و زنجیره‌ای که هیچ‌وقت نمی‌ایستد.</p>
+      <h2>Start tonight, build for <span class="grad">$0</span>.</h2>
+      <p>One binary, five providers, free keyless models — and a chain that never stops.</p>
       <div class="btn-row" style="justify-content:center">
         <a class="btn pri" href="https://github.com/Godde3s/omnirouter/releases" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg>
-          دانلود از Releases</a>
+          Download from Releases</a>
         <a class="btn" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><use href="#i-gh"/></svg>
-          سورس روی GitHub</a>
+          Source on GitHub</a>
       </div>
     </div>
   </div>
@@ -1141,31 +1141,31 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
           <svg class="hex" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-hex"/></svg>
           <b>Omni<span class="grad">Router</span></b>
         </a>
-        <p style="margin-top:.9rem;max-width:360px;font-size:.9rem">یک روتر برای همه‌ی مدل‌ها. بریج‌های واقعی وب به‌علاوه‌ی هر API سازگار OpenAI، با failover و Token Saver — تک‌باینری و متن‌باز.</p>
+        <p style="margin-top:.9rem;max-width:360px;font-size:.9rem">One router for every model. Real web bridges plus any OpenAI-compatible API, with failover and a Token Saver — a single open-source binary.</p>
         <div style="margin-top:1.1rem;display:flex;gap:.5rem;flex-wrap:wrap">
-          <span class="chip"><span class="dot" style="background:var(--cyan)"></span><b class="en">v1.3.0</b></span>
+          <span class="chip"><span class="dot" style="background:var(--cyan)"></span><b class="en">v1.3.1</b></span>
           <span class="chip"><span class="dot" style="background:var(--mint)"></span><b class="en">Go 1.25</b></span>
           <span class="chip"><span class="dot" style="background:var(--vio)"></span><b class="en">MIT</b></span>
         </div>
       </div>
       <div class="fl">
-        <h4>سند</h4>
+        <h4>Docs</h4>
         <a href="#opencode">OpenCode Free</a>
-        <a href="#start">شروع سریع</a>
-        <a href="#connect">اتصال کلاینت‌ها</a>
-        <a href="#parity">برابری با 9router</a>
-        <a href="#changelog">تغییرات نسخه‌ها</a>
+        <a href="#start">Quick Start</a>
+        <a href="#connect">Connect clients</a>
+        <a href="#parity">9router parity</a>
+        <a href="#changelog">Changelog</a>
       </div>
       <div class="fl">
-        <h4>لینک‌ها</h4>
+        <h4>Links</h4>
         <a href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub — omnirouter ↗</a>
         <a href="https://github.com/Godde3s/omnirouter/releases" target="_blank" rel="noopener">Releases ↗</a>
-        <a href="https://github.com/decolua/9router" target="_blank" rel="noopener">الهام‌گرفته از 9router ↗</a>
+        <a href="https://github.com/decolua/9router" target="_blank" rel="noopener">Inspired by 9router ↗</a>
         <a href="https://opencode.ai/zen" target="_blank" rel="noopener">OpenCode Zen ↗</a>
       </div>
     </div>
     <div class="copy">
-      <span>برای کدنویسیِ رایگان — ۲۰۲۶</span>
+      <span>Built for free coding — 2026</span>
       <span class="en" style="font-family:var(--mono);font-size:.85em">godde3s.github.io/omnirouter</span>
     </div>
   </div>
@@ -1176,7 +1176,7 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
 'use strict';
 var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* LTR scroll containers in an RTL page start at the left edge */
+/* keep LTR code scrollers at their start edge on first paint */
 function fixScroll(){document.querySelectorAll('.codebox,.term-body').forEach(function(b){b.scrollLeft=0})}
 fixScroll();setTimeout(fixScroll,400);addEventListener('load',fixScroll);
 
@@ -1211,7 +1211,7 @@ var tk=document.getElementById('ticker-track');if(tk)tk.innerHTML+=tk.innerHTML;
   var lines=[
     ['cm','# one binary -- every model, one endpoint'],
     ['','$ ./omnirouter'],
-    ['vi','OmniRouter v1.3.0 - bridges online'],
+    ['vi','OmniRouter v1.3.1 - bridges online'],
     ['ok','\u2713 qwen \u2713 glm-5.3 \u2713 deepseek \u2713 gemini \u2713 oc'],
     ['cy','77 models live - dashboard : localhost:8080'],
     ['cm','# keyless -- OpenCode Zen free tier'],
