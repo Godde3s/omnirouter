@@ -64,6 +64,9 @@ type Registry struct {
 
         coolMu    sync.Mutex
         coolUntil map[string]int64 // provider id → cooldown expiry (unix)
+
+        // combos: named failover chains ("combo:my-stack" → ["qwen/qwen3.8-max", …])
+        combos map[string][]string
 }
 
 const catalogTTL = 60 * time.Second
@@ -73,6 +76,7 @@ func NewRegistry(internalToken string, customs []CustomProvider) *Registry {
                 catalog:   map[string]catalogEntry{},
                 client:    &http.Client{Timeout: 15 * time.Second},
                 coolUntil: map[string]int64{},
+                combos:    map[string][]string{},
         }
         // Bridge defaults; enablement is decided by the caller per config.
         r.providers = append(r.providers,
@@ -80,6 +84,7 @@ func NewRegistry(internalToken string, customs []CustomProvider) *Registry {
                 &Provider{ID: "glm", Kind: KindBridge, Label: "GLM (chat.z.ai)", Enabled: true},
                 &Provider{ID: "ds", Kind: KindBridge, Label: "DeepSeek (chat.deepseek.com)", Enabled: true},
                 &Provider{ID: "gemini", Kind: KindBridge, Label: "Gemini (gemini.google.com)", Enabled: true},
+                &Provider{ID: "oc", Kind: KindBridge, Label: "OpenCode Zen (opencode.ai — FREE, no key)", Enabled: true},
         )
         for _, c := range customs {
                 if !c.Enabled {
@@ -166,6 +171,42 @@ func (r *Registry) OwnerOf(model string) string {
         return ""
 }
 
+// SetCombo installs/updates a named failover chain and rebuilds the catalog.
+func (r *Registry) SetCombo(name string, chain []string) {
+        name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+        if name == "" {
+                return
+        }
+        r.mu.Lock()
+        defer r.mu.Unlock()
+        r.combos[name] = chain
+        r.rebuildCatalogLocked()
+}
+
+// DeleteCombo removes a named chain; returns false when it did not exist.
+func (r *Registry) DeleteCombo(name string) bool {
+        name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+        r.mu.Lock()
+        defer r.mu.Unlock()
+        if _, ok := r.combos[name]; !ok {
+                return false
+        }
+        delete(r.combos, name)
+        r.rebuildCatalogLocked()
+        return true
+}
+
+// Combos returns the named chains (dashboard view).
+func (r *Registry) Combos() map[string][]string {
+        r.mu.RLock()
+        defer r.mu.RUnlock()
+        out := make(map[string][]string, len(r.combos))
+        for k, v := range r.combos {
+                out[k] = append([]string(nil), v...)
+        }
+        return out
+}
+
 // Cooldown marks a provider unhealthy for the next `seconds` so failover
 // prefers other candidates.
 func (r *Registry) Cooldown(providerID string, seconds int64) {
@@ -221,8 +262,13 @@ func fetchModels(ctx context.Context, client *http.Client, p *Provider) ([]strin
         if err != nil {
                 return nil, err
         }
-        if p.Kind == KindCustom && p.APIKey != "" {
+        switch {
+        case p.Kind == KindCustom && p.APIKey != "":
                 req.Header.Set("Authorization", "Bearer "+p.APIKey)
+        case p.Kind == KindBridge:
+                // bridges sit behind their own AUTH_TOKEN (shared secret or
+                // the per-bridge default the core mirrors in bridgeAuthHeader)
+                req.Header.Set("Authorization", bridgeModelsAuth(p.ID, internalTokenGlobal))
         }
         resp, err := client.Do(req)
         if err != nil {
@@ -250,16 +296,47 @@ func fetchModels(ctx context.Context, client *http.Client, p *Provider) ([]strin
         return out, nil
 }
 
+// internalTokenGlobal mirrors AUTH_TOKEN ("" when unset) so fetchModels can
+// authenticate against bridge listeners exactly like chat forwarding does.
+var internalTokenGlobal string
+
+// SetInternalToken records the shared bridge secret for models fetching.
+func (r *Registry) SetInternalToken(tok string) { internalTokenGlobal = tok }
+
+// bridgeModelsAuth returns the Authorization header value for a bridge
+// /v1/models call — identical semantics to bridgeAuthHeader.
+func bridgeModelsAuth(providerID, internalToken string) string {
+        if internalToken != "" {
+                return "Bearer " + internalToken
+        }
+        switch providerID {
+        case "glm":
+                return "Bearer Waguri"
+        case "qwen":
+                return "Bearer qwen"
+        case "ds":
+                return "Bearer deepseek"
+        case "gemini":
+                return "Bearer gemini"
+        case "oc":
+                return "Bearer opencode"
+        }
+        return ""
+}
+
 func fallbackBridgeModels(id string) []string {
         switch id {
         case "qwen":
                 return []string{"qwen3.8-max", "qwen3.7-plus"}
         case "glm":
-                return []string{"GLM-5.1", "GLM-5"}
+                return []string{"glm-5.3", "glm-5.3-flash"}
         case "ds":
                 return []string{"deepseek-chat", "deepseek-reasoner"}
         case "gemini":
                 return []string{"gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.1-pro"}
+        case "oc":
+                // free-tier names verified live; the list auto-refreshes anyway
+                return []string{"big-pickle", "nemotron-3-ultra-free", "mimo-v2.5-free"}
         }
         return nil
 }
@@ -283,6 +360,12 @@ func (r *Registry) rebuildCatalogLocked() {
                         if _, exists := r.catalog[public]; !exists {
                                 r.catalog[public] = catalogEntry{Model: public, Upstream: upstream, Provider: p.ID}
                         }
+                }
+        }
+        // named combos surface as public model ids owned by "combo"
+        for name := range r.combos {
+                if _, exists := r.catalog["combo:"+name]; !exists {
+                        r.catalog["combo:"+name] = catalogEntry{Model: "combo:" + name, Provider: "combo"}
                 }
         }
 }
@@ -362,6 +445,14 @@ func (r *Registry) Resolve(model string) []*Provider {
                 return chain
         }
 
+        // named combos: "combo:my-stack" or "combo/my-stack" → ordered chain
+        if rest, ok := strings.CutPrefix(model, "combo:"); ok {
+                return r.resolveComboLocked(rest)
+        }
+        if rest, ok := strings.CutPrefix(model, "combo/"); ok {
+                return r.resolveComboLocked(rest)
+        }
+
         // explicit prefix form: "qwen/qwen3.8-max" or "gemini/gemini-2.5-flash"
         if i := strings.Index(model, "/"); i > 0 {
                 return r.resolvePrefixLocked(model[:i], model[i+1:])
@@ -396,6 +487,24 @@ func (r *Registry) Resolve(model string) []*Provider {
                                 chain = append(chain, &cp)
                                 break
                         }
+                }
+        }
+        return chain
+}
+
+// resolveComboLocked expands a named combo into its ordered candidate chain.
+// Unknown entries are skipped so a dead provider never poisons the combo.
+func (r *Registry) resolveComboLocked(name string) []*Provider {
+        name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+        chainSpecs, ok := r.combos[name]
+        if !ok {
+                return nil
+        }
+        var chain []*Provider
+        for _, spec := range chainSpecs {
+                spec = strings.TrimSpace(spec)
+                if i := strings.Index(spec, "/"); i > 0 {
+                        chain = append(chain, r.resolvePrefixLocked(spec[:i], spec[i+1:])...)
                 }
         }
         return chain
@@ -446,7 +555,8 @@ func autoChainIDs(r *Registry) []string {
                 {"qwen", "qwen3.8-max"},
                 {"ds", "deepseek-chat"},
                 {"gemini", "gemini-3.6-flash"},
-                {"glm", "GLM-5.1"},
+                {"glm", "glm-5.3"},
+                {"oc", "big-pickle"}, // free emergency tier, 9router parity
         }
         var out []string
         for _, pf := range preferred {

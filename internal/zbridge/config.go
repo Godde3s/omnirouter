@@ -151,7 +151,7 @@ func loadConfig() *Config {
     c.AgentModeVariant = "modern"
     c.Logging.Level = "debug"
     c.Logging.Format = "text"
-    c.KnownModels = []string{"GLM-5.1", "GLM-5"}
+    c.KnownModels = []string{"glm-5.3", "glm-5.3-flash", "glm-5.2", "glm-4.7"}
     c.StreamHoldback = 24
     c.SyncMode = false
     c.SessionPoolSize = defaultPoolSize

@@ -5,6 +5,7 @@ package core
 
 import (
         "context"
+        "encoding/json"
         "errors"
         "fmt"
         "log"
@@ -99,10 +100,29 @@ func Run() {
                 internal = append(internal, &internalServer{id: "gemini", srv: srv, addr: "http://" + ln.Addr().String()})
         }()
 
+        // OpenCode Zen (free tier needs NO key — the 9router "OpenCode Free"
+        // parity provider; paid models unlock with OPENCODE_API_KEY)
+        func() {
+                obInit()
+                ln, err := net.Listen("tcp", "127.0.0.1:0")
+                if err != nil {
+                        log.Printf("[Router] OpenCode internal listener failed: %v", err)
+                        return
+                }
+                srv := &http.Server{Handler: obHandler()}
+                go srv.Serve(ln)
+                internal = append(internal, &internalServer{id: "oc", srv: srv, addr: "http://" + ln.Addr().String()})
+        }()
+
+        initSaver()
         registry := NewRegistry(cfg.InternalToken, store.ListProviders())
+        registry.SetInternalToken(cfg.InternalToken)
         for _, is := range internal {
                 registry.SetBridgeURL(is.id, is.addr)
         }
+        // Named combos: COMBOS env wins, else persisted, else one showcase
+        // chain on fresh installs (9router "Custom Combos" parity).
+        seedCombos(registry, store)
         // A bridge without credentials still boots (its handlers answer with
         // bilingual guidance); "auto" routing skips it when unhealthy —
         // health is probed live in RefreshModels, so nothing to force here.
@@ -154,8 +174,8 @@ func Run() {
 ║                        🌐  OmniRouter  v%s                            ║
 ║        یک روتر برای همه‌ی مدل‌ها — one router for every model        ║
 ╠════════════════════════════════════════════════════════════════════╣
-║  Providers (embedded):  Qwen (chat.qwen.ai) · GLM (chat.z.ai) ·    ║
-║                         DeepSeek · Gemini (gemini.google.com)      ║
+║  Providers (embedded):  Qwen · GLM · DeepSeek · Gemini ·           ║
+║                         OpenCode Zen (FREE — no API key needed)    ║
 ║                         + هر API سازگار OpenAI (داشبورد)           ║
 ║  Models available:      %-44d║
 ║  Dashboard:             http://localhost:%d/  (رمز: ADMIN_PASSWORD)║
@@ -229,6 +249,35 @@ func Run() {
         }
 }
 
+// seedCombos installs persisted combos into the registry, honoring the
+// COMBOS env (JSON map) when provided, and seeds one showcase combo for
+// fresh installs.
+func seedCombos(reg *Registry, st *Store) {
+        if env := strings.TrimSpace(os.Getenv("COMBOS")); env != "" {
+                var m map[string][]string
+                if json.Unmarshal([]byte(env), &m) == nil && len(m) > 0 {
+                        for name, chain := range m {
+                                reg.SetCombo(name, chain)
+                                st.SetCombo(name, chain)
+                        }
+                        return
+                }
+        }
+        persisted := st.ListCombos()
+        for name, chain := range persisted {
+                reg.SetCombo(name, chain)
+        }
+        if len(persisted) == 0 {
+                def := map[string][]string{
+                        "free-stack": {"qwen/qwen3.8-max", "gemini/gemini-3.6-flash", "oc/big-pickle"},
+                }
+                for name, chain := range def {
+                        reg.SetCombo(name, chain)
+                        st.SetCombo(name, chain)
+                }
+        }
+}
+
 func keyNote(created bool) string {
         if created {
                 return "  (کلید تازه ساخته شد — در داشبورد مدیریتش کن / fresh key created — manage in dashboard)   "
@@ -258,7 +307,7 @@ func cors(next http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
                 w.Header().Set("Access-Control-Allow-Origin", "*")
                 w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
-                w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-api-key, anthropic-version, x-omni-admin")
+                w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-api-key, anthropic-version, x-omni-admin, x-omni-token-saver, x-omni-prompt-mode, x-session-id, x-opencode-session")
                 if r.Method == "OPTIONS" {
                         w.WriteHeader(200)
                         return

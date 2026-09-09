@@ -2,885 +2,873 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OmniRouter — یک روتر، همه‌ی مدل‌ها</title>
-<meta name="description" content="روتر یکپارچه‌ی وب‌به‌API برای Qwen، GLM، DeepSeek و Gemini + هر API دلخواه — سازگار با OpenAI و Anthropic، استریم واقعی، Tool Calling، Failover خودکار و داشبورد فارسی.">
-<meta property="og:title" content="OmniRouter — یک روتر، همه‌ی مدل‌ها">
-<meta property="og:description" content="چهار بریج وبِ رایگان پشت یک درگاه سازگار با OpenAI و Anthropic — یک کلید، یک داشبورد، صفر وابستگی.">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#05060f">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>OmniRouter — یک روتر برای همه‌ی مدل‌ها</title>
+<meta name="description" content="روتر یکپارچه‌ی مدل‌های هوش مصنوعی: Qwen، GLM 5.3، DeepSeek، Gemini و OpenCode بدون کلید — با failover خودکار، RTK Token Saver و داشبورد فارسی. OpenAI + Anthropic سازگار.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
+/* ============ tokens ============ */
 :root{
-  --bg:#05060f; --bg2:#0a0c1a;
-  --panel:rgba(255,255,255,.035); --panel2:rgba(255,255,255,.06);
-  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
-  --text:#eef0fb; --muted:#aab2cc; --dim:#7e86a4;
-  --violet:#8b5cf6; --cyan:#22d3ee; --magenta:#e879f9; --lime:#a3e635; --amber:#fbbf24;
-  --grad:linear-gradient(110deg,#8b5cf6,#22d3ee 45%,#e879f9);
-  --r:22px; --r-sm:14px;
+  --bg:#07070c; --bg2:#0b0b13; --panel:rgba(19,19,30,.66); --panel2:rgba(26,26,40,.5);
+  --bord:rgba(255,255,255,.085); --bord2:rgba(255,255,255,.14);
+  --txt:#f2f1f8; --mut:#b6b3cc; --dim:#8c89a6;
+  --vio:#8b5cf6; --cy:#22d3ee; --gr:#34d399; --am:#fbbf24; --rd:#fb7185; --or:#fb923c;
+  --grad:linear-gradient(100deg,#a78bfa,#22d3ee);
   --mono:'JetBrains Mono',ui-monospace,monospace;
+  --maxw:1140px;
+  --r:18px; --rs:12px;
+  --pad-y:clamp(64px,9vw,110px);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:clip}
+/* ============ reset/base (MOBILE FIRST) ============ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip;-webkit-text-size-adjust:100%}
 body{
-  background:var(--bg); color:var(--text);
-  font-family:'Vazirmatn',system-ui,-apple-system,'Segoe UI',sans-serif;
-  line-height:1.9; overflow-x:clip;
-  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-  text-rendering:optimizeLegibility;
+  background:var(--bg); color:var(--txt);
+  font-family:'Vazirmatn',system-ui,sans-serif;
+  font-size:clamp(15px,.4vw + 14px,16.5px);
+  font-weight:400; line-height:2; overflow-x:clip;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
 }
-b,strong{font-weight:800;color:var(--text)}
-section[id],header[id]{scroll-margin-top:80px}
+/* aurora — subtle, fixed */
+.bg-fx{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+.bg-fx::before,.bg-fx::after{content:'';position:absolute;border-radius:50%;filter:blur(110px);opacity:.16}
+.bg-fx::before{width:56vw;height:56vw;min-width:340px;min-height:340px;background:#7c5cff;top:-18vw;left:-12vw}
+.bg-fx::after{width:46vw;height:46vw;min-width:280px;min-height:280px;background:#0ea5e9;top:32vh;right:-16vw;opacity:.10}
+img,svg,canvas{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+ul,ol{padding-right:1.4em}
 ::selection{background:rgba(139,92,246,.4)}
-/* ---------- aurora background ---------- */
-.aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(110px);opacity:.5;will-change:transform}
-.b1{width:56vw;height:56vw;background:radial-gradient(circle,#6d28d9aa,transparent 65%);top:-22vw;right:-14vw;animation:drift1 26s ease-in-out infinite alternate}
-.b2{width:44vw;height:44vw;background:radial-gradient(circle,#0e7490aa,transparent 65%);top:32vh;left:-16vw;animation:drift2 31s ease-in-out infinite alternate}
-.b3{width:38vw;height:38vw;background:radial-gradient(circle,#a21caf88,transparent 65%);bottom:-14vw;right:24vw;animation:drift3 24s ease-in-out infinite alternate}
-@keyframes drift1{to{transform:translate(-9vw,7vh) scale(1.15)}}
-@keyframes drift2{to{transform:translate(11vw,-6vh) scale(.9)}}
-@keyframes drift3{to{transform:translate(-7vw,-9vh) scale(1.2)}}
-.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
-/* ---------- layout ---------- */
-.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-section{padding:96px 0}
-@media(max-width:720px){section{padding:64px 0}}
-/* ---------- navbar ---------- */
-nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:.35s;
-  background:transparent;border-bottom:1px solid transparent}
-nav.scrolled{background:rgba(6,7,18,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--line)}
-.nav-in{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:26px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.12rem;text-decoration:none;color:var(--text);white-space:nowrap}
-.logo .orb{width:34px;height:34px;border-radius:11px;background:conic-gradient(from 210deg,#8b5cf6,#22d3ee,#e879f9,#8b5cf6);display:grid;place-items:center;font-size:17px;box-shadow:0 0 22px rgba(139,92,246,.55);animation:spin 9s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.nav-links{display:flex;gap:22px;margin-inline-start:auto}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:.92rem;transition:.2s}
-.nav-links a:hover{color:var(--text)}
-.gh-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;border:1px solid var(--line2);
-  background:var(--panel2);color:var(--text)!important;text-decoration:none;font-size:.9rem;transition:.25s}
-.gh-btn:hover{border-color:var(--violet);box-shadow:0 0 18px rgba(139,92,246,.35)}
-/* ---------- burger + mobile menu ---------- */
-.burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;padding:0 10px}
-.burger span{display:block;height:2px;border-radius:2px;background:var(--text);transition:.3s}
-.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.burger.open span:nth-child(2){opacity:0}
-.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-@media(max-width:880px){
-  .nav-links{display:none}
-  .burger{display:inline-flex}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#26263a;border-radius:8px}
+:focus-visible{outline:2px solid var(--vio);outline-offset:3px;border-radius:6px}
+
+/* ============ typography ============ */
+h1,h2,h3,h4{font-weight:800;line-height:1.5;text-wrap:balance}
+h1{font-size:clamp(1.85rem,4.6vw + .9rem,3.4rem);line-height:1.45;letter-spacing:-.01em}
+h2{font-size:clamp(1.45rem,2.6vw + .7rem,2.25rem)}
+h3{font-size:clamp(1.08rem,.8vw + .9rem,1.3rem);font-weight:700}
+p{color:var(--mut);text-wrap:pretty}
+strong,b{color:var(--txt);font-weight:700}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:var(--mono);direction:ltr;unicode-bidi:isolate;font-size:.88em;overflow-wrap:break-word}
+.kicker{
+  display:inline-block;direction:ltr;font-family:var(--mono);font-size:.78rem;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--cy);
+  background:rgba(34,211,238,.09);border:1px solid rgba(34,211,238,.22);
+  padding:.3em 1em;border-radius:99px;margin-bottom:1.1em;
 }
-.mobile-menu{position:fixed;top:72px;inset-inline:14px;z-index:49;display:none;flex-direction:column;gap:2px;
-  background:rgba(9,11,24,.94);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-  border:1px solid var(--line2);border-radius:18px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
-.mobile-menu.open{display:flex;animation:fadeUp .3s both}
-.mobile-menu a{padding:13px 16px;border-radius:12px;color:var(--text);text-decoration:none;font-weight:600;font-size:.98rem;transition:.2s}
-.mobile-menu a:hover{background:var(--panel2)}
-.mobile-menu a.mm-gh{margin-top:4px;border-top:1px solid var(--line);border-radius:0 0 12px 12px;padding-top:15px;color:var(--cyan)}
-/* ---------- hero ---------- */
-.hero{padding:190px 0 90px;text-align:center;position:relative}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:999px;
-  border:1px solid var(--line2);background:var(--panel);font-size:.85rem;color:var(--muted);margin-bottom:30px}
-.pulse{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 rgba(163,230,53,.6);animation:pulse 2s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(163,230,53,0)}100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}}
-h1.title{font-size:clamp(2.5rem,7vw,4.7rem);font-weight:900;line-height:1.4;text-wrap:balance}
-.grad-text{background:var(--grad);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s linear infinite}
-@keyframes shine{to{background-position:220% center}}
-.hero p.sub{max-width:760px;margin:26px auto 0;color:var(--muted);font-size:1.13rem}
-.hero p.sub b{color:var(--text)}
-.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:40px}
-.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 30px;border-radius:14px;font-weight:700;font-size:1rem;text-decoration:none;transition:.25s;cursor:pointer;border:none;font-family:inherit}
-.btn-primary{background:var(--grad);background-size:180% auto;color:#fff;box-shadow:0 8px 32px rgba(139,92,246,.4)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 42px rgba(139,92,246,.55);background-position:90% center}
-.btn-ghost{border:1px solid var(--line2);background:var(--panel);color:var(--text)}
-.btn-ghost:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(34,211,238,.25);transform:translateY(-2px)}
-.stat-chips{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:46px}
-.chip{padding:9px 20px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:.88rem;color:var(--muted)}
-.chip b{color:var(--text)}
-/* ---------- ticker ---------- */
-.ticker{border-block:1px solid var(--line);background:rgba(10,12,26,.6);overflow:hidden;padding:16px 0;
-  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-.ticker-track{display:flex;gap:44px;width:max-content;animation:ticker 30s linear infinite}
-.ticker:hover .ticker-track{animation-play-state:paused}
-@keyframes ticker{to{transform:translateX(50%)}}
-.tk{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.9rem;color:var(--muted);white-space:nowrap;direction:ltr}
-.tk i{font-style:normal;font-size:.75rem;padding:2px 9px;border-radius:6px;font-family:'Vazirmatn';direction:rtl}
-.tk .p{background:rgba(139,92,246,.16);color:#c4b5fd}
-.tk .g{background:rgba(163,230,53,.13);color:#bef264}
-/* ---------- section head ---------- */
-.sec-head{text-align:center;margin-bottom:56px}
-.sec-head .kicker{font-size:.85rem;font-weight:700;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase;direction:ltr;display:inline-block}
-.sec-head h2{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:900;margin-top:10px}
-.sec-head p{color:var(--muted);max-width:640px;margin:14px auto 0}
-/* ---------- glass cards ---------- */
-.glass{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:.3s}
-.glass:hover{border-color:var(--line2);transform:translateY(-3px)}
-/* ---------- demo ---------- */
-.demo-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:22px;align-items:stretch}
-@media(max-width:900px){.demo-grid{grid-template-columns:1fr}}
-.term{background:#080a16;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.5)}
-.term-bar{display:flex;align-items:center;gap:8px;padding:13px 18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
-.dot{width:12px;height:12px;border-radius:50%}
-.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
-.term-title{margin-inline-start:auto;font-family:var(--mono);font-size:.78rem;color:var(--dim);direction:ltr}
-.term-body{padding:22px;font-family:var(--mono);font-size:.86rem;line-height:2;direction:ltr;text-align:left;min-height:340px;white-space:pre-wrap;word-break:break-word}
-.t-cmd{color:#7dd3fc}.t-flag{color:#c4b5fd}.t-str{color:#bef264}.t-ok{color:#6ee7b7}.t-dim{color:#5b6478}.t-evt{color:#f0abfc}
-.cursor{display:inline-block;width:9px;height:1.15em;background:var(--cyan);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-.route-panel{padding:26px;display:flex;flex-direction:column;gap:16px}
-.route-title{font-weight:900;font-size:1.05rem;display:flex;align-items:center;gap:9px}
-.route-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:var(--r-sm);background:var(--panel);border:1px solid var(--line);font-size:.9rem}
-.route-item .num{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:.78rem;font-weight:900;flex-shrink:0}
-.ri1{border-inline-start:3px solid var(--lime)}.ri1 .num{background:rgba(163,230,53,.14);color:var(--lime)}
-.ri2{border-inline-start:3px solid var(--cyan);opacity:.8}.ri2 .num{background:rgba(34,211,238,.13);color:var(--cyan)}
-.ri3{border-inline-start:3px solid var(--magenta);opacity:.65}.ri3 .num{background:rgba(232,121,249,.12);color:var(--magenta)}
-.route-note{font-size:.83rem;color:var(--dim);line-height:1.9}
-/* ---------- bento ---------- */
-.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-@media(max-width:980px){.bento{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.bento{grid-template-columns:1fr}}
-.b-card{padding:28px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px}
-.b-wide{grid-column:span 2}
-@media(max-width:600px){.b-wide{grid-column:span 1}}
-.b-ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:22px;margin-bottom:6px}
-.i1{background:rgba(139,92,246,.15)}.i2{background:rgba(34,211,238,.13)}.i3{background:rgba(232,121,249,.13)}
-.i4{background:rgba(163,230,53,.12)}.i5{background:rgba(251,191,36,.13)}.i6{background:rgba(96,165,250,.14)}
-.b-card h3{font-size:1.08rem;font-weight:800}
-.b-card p{font-size:.9rem;color:var(--muted)}
-.b-card p code{font-family:var(--mono);font-size:.8rem;color:var(--cyan);background:rgba(34,211,238,.09);padding:2px 7px;border-radius:6px;direction:ltr;display:inline-block}
-.b-glow::after{content:'';position:absolute;inset:auto -30% -55% auto;width:70%;height:80%;background:radial-gradient(circle,rgba(139,92,246,.22),transparent 70%);pointer-events:none}
-.spark{width:100%;height:56px;margin-top:8px}
-.tag-new{position:absolute;top:16px;inset-inline-end:16px;font-size:.7rem;font-weight:800;padding:3px 11px;border-radius:999px;background:rgba(163,230,53,.14);color:var(--lime);border:1px solid rgba(163,230,53,.3)}
+.sec-head{max-width:720px;margin:0 auto var(--pad-y);text-align:center;margin-bottom:clamp(36px,6vw,56px)}
+.sec-head p{margin-top:.7em;font-size:clamp(.95rem,.5vw + .8rem,1.08rem)}
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(18px,4vw,28px)}
+section{padding-block:var(--pad-y);position:relative}
+[id]{scroll-margin-top:86px}
+
+/* ============ nav (mobile-first hamburger) ============ */
+.nav{
+  position:fixed;top:0;inset-inline:0;z-index:100;
+  background:rgba(7,7,12,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--bord);
+}
+.nav-in{max-width:var(--maxw);margin-inline:auto;padding:.65rem clamp(18px,4vw,28px);
+  display:flex;align-items:center;gap:1rem}
+.logo{font-weight:900;font-size:1.15rem;letter-spacing:-.01em;display:flex;align-items:center;gap:.5rem}
+.logo .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav-links{display:none;align-items:center;gap:.25rem;margin-inline-start:auto}
+.nav-links a{padding:.45rem .8rem;border-radius:9px;font-size:.92rem;font-weight:500;color:var(--mut);transition:.15s}
+.nav-links a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+.nav-cta{display:none;margin-inline-start:.4rem;padding:.5rem 1.15rem;border-radius:10px;background:var(--grad);color:#fff;font-weight:700;font-size:.9rem}
+.burger{
+  display:inline-flex;margin-inline-start:auto;align-items:center;justify-content:center;
+  width:42px;height:42px;border-radius:11px;border:1px solid var(--bord2);
+  background:rgba(255,255,255,.05);color:var(--txt);cursor:pointer;
+}
+.burger svg{width:20px;height:20px}
+.burger .ic-x{display:none}
+#navtoggle{position:absolute;opacity:0;pointer-events:none}
+#navtoggle:checked ~ .nav-in .burger .ic-menu{display:none}
+#navtoggle:checked ~ .nav-in .burger .ic-x{display:block}
+.m-panel{
+  display:none;position:fixed;top:64px;inset-inline:12px;z-index:99;
+  background:rgba(15,15,25,.97);border:1px solid var(--bord2);border-radius:16px;
+  padding:.7rem;box-shadow:0 24px 70px rgba(0,0,0,.6);
+}
+#navtoggle:checked ~ .m-panel{display:block;animation:drop .22s ease}
+@keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.m-panel a{display:block;padding:.8rem 1rem;border-radius:10px;font-weight:600;color:var(--mut)}
+.m-panel a:hover{background:rgba(255,255,255,.06);color:var(--txt)}
+.m-panel .cta{margin-top:.4rem;background:var(--grad);color:#fff;text-align:center}
+@media(min-width:960px){
+  .burger{display:none}
+  .nav-links,.nav-cta{display:inline-flex}
+  .m-panel{display:none !important}
+}
+
+/* ============ buttons ============ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+  padding:.9rem 1.7rem;border-radius:13px;font-weight:700;font-size:1rem;
+  border:1px solid var(--bord2);background:rgba(255,255,255,.05);color:var(--txt);
+  cursor:pointer;transition:.18s;min-height:48px;
+}
+.btn:hover{transform:translateY(-2px);border-color:var(--bord2);background:rgba(255,255,255,.09)}
+.btn.pri{background:var(--grad);border:none;color:#fff;box-shadow:0 10px 34px rgba(124,92,246,.35)}
+.btn.pri:hover{filter:brightness(1.1)}
+.btn-row{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center}
+
+/* ============ chips/cards ============ */
+.chip{
+  display:inline-flex;align-items:center;gap:.5rem;padding:.45rem 1.05rem;border-radius:99px;
+  background:var(--panel2);border:1px solid var(--bord);font-size:.86rem;color:var(--mut);
+}
+.chip b{color:var(--txt)}
+.card{
+  background:var(--panel);border:1px solid var(--bord);border-radius:var(--r);
+  padding:clamp(1.15rem,2.4vw,1.6rem);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:.2s;
+}
+.card:hover{border-color:var(--bord2);transform:translateY(-3px)}
+.card h3{margin:.6rem 0 .45rem}
+.card p{font-size:.93rem}
+.card .mono{white-space:nowrap}
+.ico{
+  width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;background:rgba(139,92,246,.13);border:1px solid rgba(139,92,246,.25);flex-shrink:0;
+}
+.ico.c{background:rgba(34,211,238,.11);border-color:rgba(34,211,238,.25)}
+.ico.g{background:rgba(52,211,153,.11);border-color:rgba(52,211,153,.25)}
+.ico.a{background:rgba(251,191,36,.11);border-color:rgba(251,191,36,.28)}
+.ico.r{background:rgba(251,113,133,.11);border-color:rgba(251,113,133,.25)}
+.grid{display:grid;gap:clamp(12px,1.6vw,18px)}
+.g-auto{grid-template-columns:repeat(auto-fit,minmax(min(100%,272px),1fr))}
+.g-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
 </style>
 <style>
-/* ---------- providers ---------- */
-.prov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media(max-width:920px){.prov-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.prov-grid{grid-template-columns:1fr}}
-.prov{padding:26px;display:flex;flex-direction:column;gap:12px}
-.prov-top{display:flex;align-items:center;gap:13px}
-.prov-logo{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-weight:900;font-size:1.05rem;font-family:var(--mono)}
-.prov h3{font-size:1.02rem}
-.prov small{color:var(--dim);font-family:var(--mono);font-size:.74rem;direction:ltr;display:block}
-.prov p{font-size:.86rem;color:var(--muted)}
-.pill{align-self:flex-start;font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:999px}
-.pl-green{background:rgba(163,230,53,.13);color:var(--lime)}
-.pl-cyan{background:rgba(34,211,238,.12);color:var(--cyan)}
-.pl-amber{background:rgba(251,191,36,.12);color:var(--amber)}
-.pl-violet{background:rgba(139,92,246,.15);color:#c4b5fd}
-/* ---------- steps ---------- */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:step}
-@media(max-width:880px){.steps{grid-template-columns:1fr}}
-.step{padding:28px;position:relative}
-.step .n{position:absolute;top:-16px;inset-inline-start:24px;width:38px;height:38px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-weight:900;color:#fff;font-size:1.05rem;box-shadow:0 6px 20px rgba(139,92,246,.45)}
-.step h3{margin-top:14px;font-size:1.05rem}
-.step p{font-size:.87rem;color:var(--muted);margin-bottom:14px}
-.codebox{position:relative;background:#080a16;border:1px solid var(--line);border-radius:var(--r-sm);padding:16px 18px;font-family:var(--mono);font-size:.8rem;line-height:2;direction:ltr;text-align:left;overflow-x:auto;white-space:pre}
-.codebox .cm{color:#5b6478}.codebox .kw{color:#c4b5fd}.codebox .st{color:#bef264}.codebox .fn{color:#7dd3fc}
-.copy{position:absolute;top:10px;inset-inline-end:10px;background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:8px;padding:4px 10px;font-size:.72rem;cursor:pointer;font-family:'Vazirmatn';transition:.2s}
-.copy:hover{color:var(--text);border-color:var(--violet)}
-/* ---------- connect tabs ---------- */
-.tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:26px}
-.tab{padding:10px 22px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:600;transition:.25s}
-.tab.on{background:rgba(139,92,246,.16);border-color:var(--violet);color:#fff;box-shadow:0 0 18px rgba(139,92,246,.3)}
-.tab-pane{display:none}.tab-pane.on{display:block;animation:fadeUp .45s both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.pane-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
-@media(max-width:880px){.pane-grid{grid-template-columns:1fr}}
-.pane-info{padding:28px}
-.pane-info h3{font-size:1.15rem;margin-bottom:12px}
-.pane-info p{font-size:.9rem;color:var(--muted);margin-bottom:10px}
-.pane-info ul{list-style:none;margin-top:6px}
-.pane-info li{font-size:.88rem;color:var(--muted);padding:7px 0;display:flex;gap:9px;align-items:flex-start}
-.pane-info li::before{content:'✦';color:var(--cyan);flex-shrink:0}
-.pane-info li code{font-family:var(--mono);font-size:.78rem;color:var(--cyan);direction:ltr;display:inline-block}
-/* ---------- changelog ---------- */
-.ver-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media(max-width:920px){.ver-grid{grid-template-columns:1fr}}
-.ver{padding:28px;position:relative;display:flex;flex-direction:column;gap:14px}
-.ver-hot{border-color:rgba(163,230,53,.35);box-shadow:0 0 34px rgba(163,230,53,.07)}
-.ver-head{display:flex;align-items:center;gap:12px}
-.ver-tag{font-family:var(--mono);font-weight:600;font-size:.95rem;padding:4px 14px;border-radius:9px;direction:ltr}
-.vt-lime{background:rgba(163,230,53,.13);color:var(--lime)}
-.vt-violet{background:rgba(139,92,246,.15);color:#c4b5fd}
-.vt-cyan{background:rgba(34,211,238,.12);color:var(--cyan)}
-.ver-date{font-size:.78rem;color:var(--dim)}
-.ver ul{list-style:none}
-.ver li{font-size:.87rem;color:var(--muted);padding:5px 0;display:flex;gap:9px}
-.ver li::before{content:'▸';color:var(--cyan);flex-shrink:0}
-.ver li b{color:var(--text);font-weight:700}
-/* ---------- models ---------- */
-.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-@media(max-width:980px){.model-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.model-grid{grid-template-columns:1fr}}
-.model{padding:26px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
-.model .medal{font-size:2.1rem}
-.model h3{font-family:var(--mono);font-size:.95rem;direction:ltr}
-.model .score{font-size:.8rem;color:var(--dim)}
-.model p{font-size:.83rem;color:var(--muted)}
-.meter{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
-.meter i{display:block;height:100%;border-radius:99px;width:0;transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
-.m1 i{background:linear-gradient(90deg,#a3e635,#22d3ee)}
-.m2 i{background:linear-gradient(90deg,#22d3ee,#8b5cf6)}
-.m3 i{background:linear-gradient(90deg,#8b5cf6,#e879f9)}
-.m4 i{background:linear-gradient(90deg,#e879f9,#fbbf24)}
-/* ---------- faq ---------- */
-.faq{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
-.q{overflow:hidden}
-.q>button{all:unset;display:flex;align-items:center;gap:14px;width:100%;padding:20px 24px;cursor:pointer;font-family:inherit;font-weight:700;font-size:.98rem;color:var(--text)}
-.q>button .pm{margin-inline-start:auto;font-size:1.25rem;color:var(--cyan);transition:.3s;flex-shrink:0}
-.q.open .pm{transform:rotate(45deg)}
-.q .a{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.q .a p{padding:0 24px 22px;font-size:.9rem;color:var(--muted)}
-/* ---------- footer ---------- */
-footer{border-top:1px solid var(--line);padding:54px 0 40px;margin-top:40px;background:rgba(8,10,20,.55)}
-.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:34px}
-@media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr}}
-.foot-grid h4{font-size:.95rem;margin-bottom:14px}
-.foot-grid a{display:block;color:var(--muted);text-decoration:none;font-size:.87rem;padding:4px 0;transition:.2s}
-.foot-grid a:hover{color:var(--cyan)}
-.foot-desc{font-size:.86rem;color:var(--muted);max-width:340px}
-.disclaimer{margin-top:36px;padding:16px 22px;border-radius:var(--r-sm);background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);font-size:.8rem;color:var(--muted)}
-.copyright{text-align:center;margin-top:30px;font-size:.8rem;color:var(--dim)}
-/* ---------- reveal ---------- */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
-.reveal.in{opacity:1;transform:none}
-.d1r{transition-delay:.08s}.d2r{transition-delay:.16s}.d3r{transition-delay:.24s}.d4r{transition-delay:.32s}
+/* ============ hero ============ */
+.hero{padding-top:clamp(112px,16vw,170px);text-align:center}
+.hero .badges{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.6rem}
+.hero h1{max-width:820px;margin-inline:auto}
+.hero .sub{max-width:640px;margin:1.2rem auto 2rem;font-size:clamp(1rem,.7vw + .85rem,1.18rem)}
+.hero .btn-row{margin-bottom:2.4rem}
+.hero .mini{display:flex;gap:.6rem 1.4rem;flex-wrap:wrap;justify-content:center;font-size:.86rem;color:var(--dim)}
 
-/* ---------- readability: long tokens, headings ---------- */
-h1,h2,h3,h4{text-wrap:balance}
-.sec-head h2{line-height:1.6}
-.sec-head p{line-height:2.1;font-size:1.02rem}
-.b-card p,.prov p,.ver li,.pane-info li,.q .a p,.route-note,.foot-desc{overflow-wrap:anywhere}
-.b-card p{line-height:2.05}
-.prov p{line-height:2.05}
-.q .a p{line-height:2.15}
-.pane-info li{line-height:2.05;padding:8px 0}
-.ver li{line-height:2;padding:6px 0}
-.step p{line-height:2.05}
-.ticker-track{will-change:transform}
+/* terminal */
+.term{
+  max-width:760px;margin:2.6rem auto 0;text-align:right;direction:rtl;
+  background:rgba(13,13,22,.85);border:1px solid var(--bord2);border-radius:var(--r);
+  box-shadow:0 30px 90px rgba(0,0,0,.5);overflow:hidden;
+}
+.term-bar{display:flex;align-items:center;gap:.45rem;padding:.7rem 1.05rem;border-bottom:1px solid var(--bord);background:rgba(255,255,255,.03)}
+.term-bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.term-bar i:nth-child(1){background:#ff5f57}.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-inline-start:auto;font-family:var(--mono);font-size:.72rem;color:var(--dim);direction:ltr}
+.term-body{padding:1.15rem 1.3rem;font-family:var(--mono);font-size:clamp(.72rem,.5vw + .62rem,.85rem);line-height:2.05;text-align:left;direction:ltr;color:#c9d4e8;overflow-x:auto;white-space:pre;min-height:12.2em}
+.term-body .cm{color:#5b6478}.term-body .ok{color:#34d399}.term-body .vi{color:#a78bfa}.term-body .cy{color:#22d3ee}.term-body .am{color:#fbbf24}
+.cursor{display:inline-block;width:.55em;height:1.05em;background:var(--cy);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media(min-width:720px){.term-body{min-height:10.8em}}
 
-/* ---------- responsive: ≤880px ---------- */
-@media(max-width:880px){
-  .pane-grid{gap:16px}
-  .demo-grid{gap:16px}
-  .hero{padding:150px 0 66px}
+/* ticker */
+.ticker{border-block:1px solid var(--bord);padding-block:1rem;overflow:hidden;position:relative;background:rgba(255,255,255,.015)}
+.ticker-track{display:flex;gap:2.6rem;width:max-content;animation:tick 34s linear infinite;direction:ltr}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+.tk{font-family:var(--mono);font-size:.86rem;color:var(--dim);display:flex;align-items:center;gap:.55rem;white-space:nowrap}
+.tk b{color:var(--txt);font-weight:600}
+
+/* feature highlight band (OpenCode free) */
+.band{
+  border-block:1px solid var(--bord);
+  background:
+    radial-gradient(680px 340px at 12% 50%, rgba(52,211,153,.10), transparent 60%),
+    radial-gradient(560px 300px at 88% 50%, rgba(34,211,238,.08), transparent 60%);
+}
+.split{display:grid;gap:clamp(22px,4vw,48px);align-items:center}
+@media(min-width:880px){.split{grid-template-columns:1.05fr .95fr}}
+.check-list{display:flex;flex-direction:column;gap:.65rem;margin-top:1.3rem;list-style:none;padding:0}
+.check-list li{display:flex;gap:.7rem;align-items:flex-start;color:var(--mut);font-size:.95rem}
+.check-list .mono{white-space:nowrap}
+.check-list li::before{content:'✓';color:var(--gr);font-weight:800;flex-shrink:0;margin-top:.08em}
+.codebox{
+  position:relative;background:#0a0a12;border:1px solid var(--bord2);border-radius:var(--rs);
+  padding:1.05rem 1.15rem;font-family:var(--mono);font-size:clamp(.72rem,.45vw + .65rem,.82rem);
+  line-height:1.95;text-align:left;direction:ltr;overflow-x:auto;white-space:pre;color:#c9d4e8;
+}
+.codebox .c1{color:#5b6478}.codebox .k{color:#a78bfa}.codebox .s{color:#34d399}.codebox .n{color:#fbbf24}.codebox .fn{color:#22d3ee}
+.nobadge{
+  position:absolute;top:.6rem;right:.85rem;background:linear-gradient(100deg,#34d399,#22d3ee);
+  color:#04281c;font-size:.7rem;font-weight:800;padding:.22em .9em;border-radius:99px;direction:ltr;
+}
+.codebox.has-badge{padding-top:2.5rem}
+
+/* steps */
+.steps{counter-reset:st;display:grid;gap:clamp(12px,1.6vw,18px)}
+@media(min-width:880px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{counter-increment:st;position:relative;padding-top:1rem}
+.step::before{
+  content:counter(st,decimal-leading-zero);position:absolute;top:-.35rem;inset-inline-end:.4rem;
+  font-family:var(--mono);font-size:2.6rem;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.4px rgba(167,139,250,.4);line-height:1;
 }
 
-/* ---------- responsive: ≤720px ---------- */
-@media(max-width:720px){
-  .wrap{padding:0 18px}
-  section{padding:58px 0}
-  .sec-head{margin-bottom:36px}
-  .sec-head p{font-size:.96rem}
-  .hero{padding:132px 0 56px}
-  .hero-badge{font-size:.78rem;padding:6px 14px;margin-bottom:22px}
-  .hero p.sub{font-size:1rem;line-height:2.15;margin-top:18px}
-  .cta-row{gap:10px;margin-top:30px}
-  .cta-row .btn{flex:1 1 100%;justify-content:center;padding:14px 22px}
-  .stat-chips{gap:8px;margin-top:30px}
-  .chip{font-size:.78rem;padding:7px 14px}
-  .ticker{padding:12px 0}
-  .tk{font-size:.8rem}
-  .term-body{font-size:.72rem;padding:16px 14px;min-height:280px;line-height:2.05}
-  .term-bar{padding:11px 14px}
-  .route-panel{padding:18px}
-  .route-item{padding:11px 13px;font-size:.86rem}
-  .route-note{font-size:.8rem}
-  .bento{gap:13px}
-  .b-card{padding:20px 18px}
-  .b-card h3{font-size:1rem}
-  .b-card p{font-size:.9rem}
-  .b-ico{width:40px;height:40px;font-size:19px;border-radius:11px}
-  .prov-grid,.ver-grid,.steps{gap:13px}
-  .prov,.step,.ver,.model{padding:20px 18px}
-  .prov h3,.step h3{font-size:.98rem}
-  .prov p,.step p,.ver li,.model p{font-size:.88rem}
-  .codebox{font-size:.7rem;padding:14px;padding-top:46px;line-height:2.1}
-  .copy{top:8px;inset-inline-end:8px}
-  .tabs{gap:8px}
-  .tab{padding:9px 15px;font-size:.85rem}
-  .pane-info{padding:20px 18px}
-  .pane-info h3{font-size:1.05rem}
-  .ver{gap:10px}
-  .meter{height:7px}
-  .q>button{padding:16px 18px;font-size:.93rem;line-height:1.8}
-  .q .a p{padding:0 18px 18px;font-size:.88rem}
-  .foot-grid{grid-template-columns:1fr;gap:26px}
-  .disclaimer{font-size:.76rem;padding:14px 16px;line-height:2}
-  .blob{filter:blur(72px);opacity:.4}
-}
+/* tables */
+.table-scroll{overflow-x:auto;border:1px solid var(--bord);border-radius:var(--r);background:var(--panel);-webkit-overflow-scrolling:touch}
+.tbl{width:100%;border-collapse:collapse;font-size:clamp(.82rem,.4vw + .74rem,.92rem);min-width:560px}
+.tbl th{background:rgba(255,255,255,.045);padding:.85rem 1.1rem;text-align:right;font-weight:700;color:var(--txt);white-space:nowrap;border-bottom:1px solid var(--bord2)}
+.tbl td{padding:.8rem 1.1rem;border-bottom:1px solid var(--bord);color:var(--mut);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .yes{color:var(--gr);font-weight:700}.tbl .no{color:var(--dim)}
+.tag{display:inline-flex;align-items:center;gap:.3rem;padding:.18em .8em;border-radius:99px;font-size:.74rem;font-weight:700;white-space:nowrap}
+.tag.g{background:rgba(52,211,153,.13);color:var(--gr)}
+.tag.v{background:rgba(167,139,250,.15);color:#c4b5fd}
+.tag.c{background:rgba(34,211,238,.13);color:var(--cy)}
+.tag.a{background:rgba(251,191,36,.14);color:var(--am)}
 
-/* ---------- responsive: ≤400px ---------- */
-@media(max-width:400px){
-  .hero p.sub{font-size:.94rem}
-  .term-body{font-size:.65rem}
-  .logo{font-size:1rem}
-  .gh-btn{padding:7px 13px;font-size:.82rem}
+/* meters (models) */
+.meter{margin-top:.9rem}
+.meter .bar{height:9px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.meter .fill{height:100%;border-radius:99px;background:var(--grad);width:0;transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.meter .lbl{display:flex;justify-content:space-between;font-size:.78rem;color:var(--dim);margin-bottom:.3rem}
+
+/* version cards */
+.ver .num{font-family:var(--mono);font-size:.78rem;color:var(--dim);direction:ltr;display:inline-block}
+.ver ul{margin-top:.6rem;display:flex;flex-direction:column;gap:.35rem;padding-right:1.15em}
+.ver li{font-size:.9rem;color:var(--mut)}
+.ver li::marker{color:var(--vio)}
+
+/* FAQ */
+.faq{max-width:780px;margin-inline:auto;display:flex;flex-direction:column;gap:.8rem}
+details{background:var(--panel);border:1px solid var(--bord);border-radius:var(--rs);overflow:hidden}
+details[open]{border-color:var(--bord2)}
+summary{
+  cursor:pointer;list-style:none;padding:1.05rem 1.25rem;font-weight:700;font-size:.98rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:52px;
 }
+summary::-webkit-details-marker{display:none}
+summary::after{content:'+';font-size:1.35rem;color:var(--dim);font-weight:400;transition:.2s;flex-shrink:0}
+details[open] summary::after{transform:rotate(45deg)}
+details .a{padding:0 1.25rem 1.15rem;color:var(--mut);font-size:.93rem}
+details .a .mono{font-size:.8em}
+
+/* footer */
+footer{border-top:1px solid var(--bord);padding:clamp(36px,6vw,64px) 0 40px;background:rgba(255,255,255,.015)}
+.foot-grid{display:grid;gap:2rem}
+@media(min-width:760px){.foot-grid{grid-template-columns:1.4fr 1fr 1fr}}
+footer h4{font-size:.95rem;margin-bottom:.8rem}
+footer a{display:block;color:var(--dim);padding-block:.22rem;font-size:.9rem;transition:.15s}
+footer a:hover{color:var(--txt)}
+.copy{margin-top:2.4rem;padding-top:1.4rem;border-top:1px solid var(--bord);display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:center;justify-content:space-between;color:var(--dim);font-size:.83rem}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-  .reveal{opacity:1;transform:none}
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .rv{opacity:1;transform:none}
+  html{scroll-behavior:auto}
 }
+
+/* tabs */
+.tab-list{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.tab{
+  padding:.65rem 1.25rem;border-radius:11px;border:1px solid var(--bord);
+  background:rgba(255,255,255,.04);color:var(--mut);font:inherit;font-weight:600;
+  font-size:.9rem;cursor:pointer;transition:.15s;min-height:44px;
+}
+.tab:hover{color:var(--txt);border-color:var(--bord2)}
+.tab.on{background:rgba(139,92,246,.16);border-color:rgba(139,92,246,.5);color:#d6c9ff}
+.tabpane{display:none}
+.tabpane.on{display:block;animation:fade .25s ease}
 </style>
+<noscript><style>.rv{opacity:1;transform:none}.term-body{white-space:pre-wrap}</style></noscript>
 </head>
 <body>
-<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
-<div class="grain"></div>
+<div class="bg-fx" aria-hidden="true"></div>
 
-<nav id="nav">
+<input type="checkbox" id="navtoggle" aria-hidden="true">
+<nav class="nav" aria-label="ناوبری اصلی">
   <div class="nav-in">
-    <a class="logo" href="#top"><span class="orb">🌐</span> OmniRouter</a>
+    <a class="logo" href="#top">🌐 <span class="g">OmniRouter</span></a>
     <div class="nav-links">
-      <a href="#features">امکانات</a>
-      <a href="#demo">دمو</a>
-      <a href="#providers">پروایدرها</a>
+      <a href="#opencode">OpenCode Free</a>
+      <a href="#saver">Token Saver</a>
+      <a href="#features">قابلیت‌ها</a>
       <a href="#start">شروع سریع</a>
-      <a href="#connect">اتصال ایجنت‌ها</a>
+      <a href="#models">مدل‌ها</a>
       <a href="#changelog">تغییرات</a>
-      <a href="#faq">سوالات</a>
+      <a href="#faq">FAQ</a>
     </div>
-    <a class="gh-btn" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-      GitHub
-    </a>
-    <button class="burger" id="burger" aria-label="منو" aria-expanded="false"><span></span><span></span><span></span></button>
-  </div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#features">امکانات</a>
-    <a href="#demo">دمو</a>
-    <a href="#providers">پروایدرها</a>
-    <a href="#start">شروع سریع</a>
-    <a href="#connect">اتصال ایجنت‌ها</a>
-    <a href="#changelog">تغییرات</a>
-    <a href="#models">مدل‌ها</a>
-    <a href="#faq">سوالات</a>
-    <a class="mm-gh" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">⭐ GitHub — ستاره بده</a>
+    <a class="nav-cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub ↗</a>
+    <label class="burger" for="navtoggle" aria-label="باز و بسته کردن منو">
+      <svg class="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg class="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </label>
   </div>
 </nav>
+<div class="m-panel">
+  <a href="#opencode">OpenCode Free — بدون کلید</a>
+  <a href="#saver">Token Saver</a>
+  <a href="#features">قابلیت‌ها</a>
+  <a href="#start">شروع سریع</a>
+  <a href="#connect">اتصال کلاینت‌ها</a>
+  <a href="#models">مدل‌ها</a>
+  <a href="#changelog">تغییرات</a>
+  <a href="#faq">FAQ</a>
+  <a class="cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub ↗</a>
+</div>
 
-<!-- ================= HERO ================= -->
 <header class="hero" id="top">
   <div class="wrap">
-    <div class="hero-badge"><span class="pulse"></span> نسخه‌ی v1.1.1 منتشر شد — فیکس استاندارد OpenAI + ۴ بریج کامل</div>
-    <h1 class="title">یک روتر،<br><span class="grad-text">همه‌ی مدل‌ها</span></h1>
-    <p class="sub">
-      چهار بریج اثبات‌شده‌ی <b>وب‌به‌API</b> — Qwen، GLM، DeepSeek و Gemini — کنار <b>هر API دلخواه</b>،
-      پشت یک درگاهِ سازگار با <b>OpenAI</b> و <b>Anthropic</b>.
-      یک کلید، یک داشبورد فارسی، یک باینری بدون وابستگی — با استریم واقعی، Tool Calling و Failover خودکار.
-    </p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="#start">⚡ شروع در ۳۰ ثانیه</a>
-      <a class="btn btn-ghost" href="#demo">▶ تماشای دمو</a>
+    <div class="badges">
+      <span class="chip">🆓 OpenCode Zen — <b>بدون کلید</b></span>
+      <span class="chip">🚀 RTK Token Saver</span>
+      <span class="chip">🧩 OpenAI + Anthropic</span>
     </div>
-    <div class="stat-chips">
-      <span class="chip"><b>۴</b> بریج وب رایگان</span>
-      <span class="chip"><b>۲</b> پروتکل API (OpenAI + Anthropic)</span>
-      <span class="chip"><b>۵</b> پلتفرم (win/linux/mac × amd64/arm64)</span>
-      <span class="chip"><b>۱</b> باینری ~۲۳MB، صفر وابستگی</span>
+    <h1>یک روتر، <span class="grad">همه‌ی مدل‌ها.</span><br>کدنویسی رایگان، بی‌وقفه.</h1>
+    <p class="sub">OmniRouter بریج‌های وب <strong>Qwen</strong>، <strong>GLM 5.3</strong>، <strong>DeepSeek</strong>، <strong>Gemini</strong> و <strong>OpenCode Zen</strong> را با پروایدرهای سفارشی ترکیب می‌کند — با failover خودکار، فشرده‌سازی توکن RTK و داشبورد فارسی. یک فایل، بدون وابستگی.</p>
+    <div class="btn-row">
+      <a class="btn pri" href="#start">شروع در ۶۰ ثانیه</a>
+      <a class="btn" href="#opencode">بدون کلید → OpenCode Free</a>
+    </div>
+    <div class="mini">
+      <span>🪟 ویندوز</span><span>🐧 لینوکس</span><span>🍎 مک</span><span>🐳 داکر</span><span>🔑 کلیدهای sk- با سهمیه</span><span>📊 آمار زنده</span>
+    </div>
+
+    <div class="term" dir="ltr">
+      <div class="term-bar"><i></i><i></i><i></i><span>omnirouter — zsh</span></div>
+      <div class="term-body" id="term"></div>
     </div>
   </div>
 </header>
 
-<!-- ================= TICKER ================= -->
 <div class="ticker" aria-hidden="true">
-  <div class="ticker-track" id="tickerTrack">
-    <span class="tk">qwen/qwen3.8-max <i class="p">قوی‌ترین برای ایجنت</i></span>
-    <span class="tk">gemini/gemini-3.6-flash <i class="g">مهمان بدون کوکی</i></span>
-    <span class="tk">ds/deepseek-chat <i class="p">PoW رسمی</i></span>
-    <span class="tk">glm/GLM-5.1 <i class="g">مهمان</i></span>
-    <span class="tk">auto <i class="p">زنجیره‌ی failover</i></span>
-    <span class="tk">gpt-4o <i class="g">→ alias به هر مدلی</i></span>
-    <span class="tk">claude-sonnet-4 <i class="g">→ /v1/messages</i></span>
+  <div class="ticker-track" id="ticker-track">
+    <span class="tk">◆ <b>qwen3.8-max</b> tool-calling</span>
+    <span class="tk">◆ <b>glm-5.3</b> جدید</span>
+    <span class="tk">◆ <b>glm-5.3-flash</b> سریع</span>
+    <span class="tk">◆ <b>gemini-3.6-flash</b> مهمان</span>
+    <span class="tk">◆ <b>deepseek-chat</b> PoW</span>
+    <span class="tk">◆ <b>oc/big-pickle</b> بدون کلید</span>
+    <span class="tk">◆ <b>combo:free-stack</b> زنجیره</span>
+    <span class="tk">◆ <b>/v1/messages</b> Anthropic</span>
   </div>
 </div>
-
-<!-- ================= DEMO ================= -->
-<section id="demo">
+<!-- ═══════════ OPENCODE FREE (بخش ویژه) ═══════════ -->
+<section class="band" id="opencode">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">Live Demo</div>
-      <h2>همین الان، از ترمینال خودت</h2>
-      <p>یک درخواست بزن — روتر خودش مدل را انتخاب، در صورت خطا failover و توکن‌ها را شمارش می‌کند.</p>
-    </div>
-    <div class="demo-grid">
-      <div class="term reveal">
-        <div class="term-bar"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="term-title">terminal — omnirouter</span></div>
-        <div class="term-body" id="term"></div>
+    <div class="split">
+      <div class="rv">
+        <span class="kicker">OpenCode Free · No API Key</span>
+        <h2>مثل 9router: مدل‌های رایگان<br><span class="grad">بدون هیچ کلیدی</span></h2>
+        <p style="margin-top:1rem">پروایدر داخلی <strong class="mono">oc</strong> به دروازه‌ی Zen سایت OpenCode وصل می‌شود — همان کاری که 9router می‌کند. مدل‌های رایگانش فقط یک شناسه‌ی نشست می‌خواهند که OmniRouter خودش می‌سازد. <strong>هیچ ثبت‌نامی، هیچ کلیدی.</strong></p>
+        <ul class="check-list">
+          <li><strong>بدون کلید و ثبت‌نام</strong> — نصب کن و همان لحظه مدل‌های رایگان را صدا بزن</li>
+          <li><strong>fetch خودکار مدل‌ها</strong> — لیست مدل‌ها زنده از منبع رسمی zen می‌آید و هر ۶۰ ثانیه تازه می‌شود.</li>
+          <li><strong>استریم SSE و tool-calling</strong> — پاس‌ترو شفاف است و فرمت OpenAI دست‌نخورده می‌ماند.</li>
+          <li><strong>پشتیبانی Anthropic</strong> — مسیر <span class="mono">/v1/messages</span> روی oc ترجمه‌ی کامل می‌شود؛ حتی بلوک‌های thinking.</li>
+          <li><strong>مدل‌های پولی؟</strong> کافی است <span class="mono">OPENCODE_API_KEY</span> را در env بگذاری؛ همان مسیر با کلید می‌رود: glm-5.3، claude، gpt.</li>
+          <li><strong>سشن سفارشی</strong> — با هدر <span class="mono">x-session-id</span> خودت کنترلش کن.</li>
+        </ul>
       </div>
-      <div class="glass route-panel reveal d2r">
-        <div class="route-title">🧭 تصمیم مسیریابی</div>
-        <div class="route-item ri1"><span class="num">۱</span><div><b>qwen/qwen3.8-max</b><br><small style="color:var(--dim)">سالم · p50 ≈ ۱.۲s · ابزارها ✓</small></div></div>
-        <div class="route-item ri2"><span class="num">۲</span><div><b>gemini/gemini-3.6-flash</b><br><small style="color:var(--dim)">مهمان · بدون کوکی · پشتیبان</small></div></div>
-        <div class="route-item ri3"><span class="num">۳</span><div><b>ds/deepseek-chat</b><br><small style="color:var(--dim)">استدلال قوی · نیاز به اکانت</small></div></div>
-        <p class="route-note">مدل <b style="color:var(--text)">auto</b> اولین گزینه‌ی سالم را انتخاب می‌کند؛ پروایدرِ خطاکار بعد از اتمام retryها تا COOLDOWN_SECONDS سرد می‌شود — اما «ترجیح» است، نه بلوک: اگر همه سرد بودند باز تلاش می‌شود.</p>
+      <div class="rv">
+        <div class="codebox has-badge"><span class="nobadge">NO KEY NEEDED</span><span class="c1"># مدل‌های رایگان — بدون هیچ کلیدی</span>
+curl http://localhost:8080/v1/chat/completions \
+  <span class="k">-H</span> <span class="s">"Authorization: Bearer sk-omni"</span> \
+  <span class="k">-H</span> <span class="s">"Content-Type: application/json"</span> \
+  <span class="k">-d</span> <span class="s">'{
+    "model": <span class="n">"oc/big-pickle"</span>,
+    "messages": [{"role":"user","content":"hi"}]
+  }'</span>
+
+<span class="c1"># یا کدنویسی ایجنتی با مدل‌های free</span>
+<span class="s">"model": <span class="n">"oc/nemotron-3-ultra-free"</span></span>
+<span class="s">"model": <span class="n">"oc/mimo-v2.5-free"</span></span>
+
+<span class="c1"># مدل‌های پولی zen؟ فقط کلید بگذار:</span>
+<span class="c1"># OPENCODE_API_KEY=...  →  oc/glm-5.3 کار می‌کند</span></div>
+        <p class="small" style="margin-top:.9rem;color:var(--dim);font-size:.83rem">فهرست مدل‌های رایگان رایگانِ zen به‌مرور تغییر می‌کند — OmniRouter هر ۶۰ ثانیه خودش تازه می‌کند؛ هیچ هاردکدی در کار نیست.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= FEATURES (BENTO) ================= -->
+<!-- ═══════════ TOKEN SAVER ═══════════ -->
+<section id="saver">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="kicker">RTK Token Saver</span>
+      <h2>هر درخواست، <span class="grad">۲۰ تا ۴۰٪</span> ارزان‌تر</h2>
+      <p>خروجی ابزارهایی مثل git diff و grep و ls و لاگ‌های طولانی، معمولاً ۳۰ تا ۵۰٪ بودجه‌ی پرامپت ایجنتی را می‌سوزانند. Token Saver داخلی OmniRouter — بر اساس ایده‌ی RTK در 9router — آن‌ها را قبل از رسیدن به مدل فشرده می‌کند: تشخیص خودکار، بدون تنظیمات و safe-by-design.</p>
+    </div>
+    <div class="grid g-auto rv">
+      <div class="card"><div class="ico">📄</div><h3>git-diff</h3><p>هانک‌ها حذف می‌شوند؛ فهرست فایل‌ها و آمار +/− برای هر فایل می‌ماند. یک دیف ۵۰هزار کاراکتری به چند صد بایت خلاصه می‌شود.</p></div>
+      <div class="card"><div class="ico c">🔍</div><h3>grep و لاگ‌ها</h3><p>خطوط تکراری دی‌دوپ می‌شوند، سقف پاسخ برای هر فایل اعمال می‌شود و تکرارها به شکل ×N جمع می‌شوند؛ خروجی ده‌ها برابر کوچک‌تر می‌شود.</p></div>
+      <div class="card"><div class="ico g">📁</div><h3>find و ls و tree</h3><p>فهرست‌های طولانی مسیرها به شمارش فایل و پوشه به‌علاوه‌ی نمونه‌ی مسیرهای اول فشرده می‌شوند؛ مدل تصویر درستی از ساختار می‌گیرد.</p></div>
+      <div class="card"><div class="ico a">✂️</div><h3>smart-truncate</h3><p>متن عمومی بزرگ؟ سر و دم محتوای مهم نگه داشته می‌شود و بخش میانی با نشانگر حذف علامت‌گذاری می‌شود.</p></div>
+      <div class="card"><div class="ico r">🛡️</div><h3>امنیت تضمینی</h3><p>اگر فیلتری خطا بدهد یا خروجی بزرگ‌تر شود، بی‌سروصدا متن اصلی می‌رود — خطای فشرده‌سازی هیچ‌وقت درخواست را نمی‌شکند.</p></div>
+      <div class="card"><div class="ico">🐴</div><h3>Caveman و Ponytail</h3><p>حالت‌های خروجی: پاسخ کوتاه و فنی با Caveman؛ کدنویسی YAGNI در سه سطح Lite و Full و Ultra با Ponytail. روی RTK سوار می‌شوند.</p></div>
+    </div>
+    <div class="rv" style="margin-top:1.6rem">
+      <div class="codebox" style="max-width:760px;margin-inline:auto"><span class="c1"># دورزدن برای یک درخواستِ خاص (مثل 9router)</span>
+<span class="fn">X-Omni-Token-Saver</span>: <span class="n">off</span>
+
+<span class="c1"># حالت خروجی لحظه‌ای</span>
+<span class="fn">X-Omni-Prompt-Mode</span>: <span class="n">caveman</span>   <span class="c1"># | ponytail-full | off</span>
+
+<span class="c1"># تنظیم کلی در داشبورد → Token Saver، یا env:</span>
+<span class="fn">RTK</span>=on <span class="fn">PROMPT_MODE</span>=off</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ COMBOS ═══════════ -->
+<section class="band" id="combos">
+  <div class="wrap">
+    <div class="split">
+      <div class="rv">
+        <span class="kicker">Custom Combos</span>
+        <h2>زنجیره‌ی fallback<br>به <span class="grad">نام خودت</span></h2>
+        <p style="margin-top:1rem">مثل 9router، کمبوهای نام‌دار بساز: اشتراک گران → ارزان → رایگان. هر گام که شکست یا سهمیه‌اش تمام شد، بعدی همین‌طور بی‌سروصدا جواب می‌دهد. مدل‌های <span class="mono">auto</span> هم خودشان همین زنجیره‌ی هوشمند را دارند.</p>
+        <ul class="check-list">
+          <li>تعریف از داشبورد یا مستقیم از env با <span class="mono">COMBOS</span></li>
+          <li>مصرف مثل یک مدل معمولی: <span class="mono">"model": "combo:my-stack"</span></li>
+          <li>کمبوی آماده‌ی <span class="mono">free-stack</span> در نصب تازه: qwen → gemini → OpenCode free</li>
+          <li>اجتماع با سهمیه‌ی کلید و allowlist هر مدل</li>
+        </ul>
+      </div>
+      <div class="rv">
+        <div class="codebox"><span class="c1"># داشبورد → کمبوها → «free-stack»</span>
+<span class="fn">1.</span> qwen/qwen3.8-max        <span class="c1"># قوی‌ترین برای ایجنت</span>
+<span class="fn">2.</span> gemini/gemini-3.6-flash <span class="c1"># مهمان، بی‌توکن</span>
+<span class="fn">3.</span> oc/big-pickle            <span class="c1"># رایگان، بی‌کلید</span>
+
+<span class="c1"># بعد در هر کلاینتی:</span>
+{ <span class="s">"model"</span>: <span class="n">"combo:free-stack"</span> }
+
+<span class="c1"># نتیجه: کدنویسی که هیچ‌وقت نمی‌ایستد — $0</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FEATURES BENTO ═══════════ -->
 <section id="features">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">Features</div>
-      <h2>هرچیزی که از یک API واقعی انتظار داری</h2>
-      <p>نه پروکسی خام، نه اسکرپ شکننده — یک لایه‌ی روتر کامل روی چهار بریج مهندسی‌شده.</p>
+    <div class="sec-head rv">
+      <span class="kicker">Everything Included</span>
+      <h2>هر چیزی که از یک روتر <span class="grad">انتظار داری</span></h2>
+      <p>همه‌ی قابلیت‌های 9router که روی بریج‌های وب معنا دارند، به‌علاوه‌ی چیزهایی که فقط OmniRouter دارد: بریج‌های واقعی وب با PoW دیپ‌سیک، کشف زنده‌ی مدل گوگل و تشخیص ابزار خودکار.</p>
     </div>
-    <div class="bento">
-      <div class="glass b-card b-wide b-glow reveal">
-        <div class="b-ico i1">🔌</div>
-        <h3>یک درگاه، دو پروتکل کامل</h3>
-        <p><code>/v1/chat/completions</code> سازگار با OpenAI و <code>/v1/messages</code> سازگار با Anthropic — همراه <code>/v1/messages/count_tokens</code> و <code>/v1/models</code> زنده. استریم SSE واقعاً افزایشی است (نه re-parse کل بافر) و بلوک‌های <b>thinking</b> هم می‌آیند.</p>
-      </div>
-      <div class="glass b-card b-wide reveal d1r">
-        <div class="b-ico i2">🛠️</div>
-        <h3>Tool Calling برای ایجنت‌ها</h3>
-        <p>چرخه‌ی کامل <b>R1→R2</b> برای <b>Hermes، OpenCode و Cline</b>: تعریف ابزار → فراخوانی <code>tool_calls</code> با JSON معتبر → نتیجه → پاسخ نهایی. روی هر چهار بریج، با اثبات زنده.</p>
-      </div>
-      <div class="glass b-card reveal d2r">
-        <div class="b-ico i3">🚦</div>
-        <h3>Failover خودکار</h3>
-        <p>مدل <code>auto</code> روی زنجیره‌ی قابل‌تنظیم می‌چرخد؛ خطای 401/403/429/5xx قبل از اولین بایت استریم → پروایدر بعدی.</p>
-      </div>
-      <div class="glass b-card reveal d3r">
-        <div class="b-ico i4">📊</div>
-        <h3>آمار مصرف واقعی</h3>
-        <p>توکن ورودی/خروجی واقعی هر درخواست، نمودار ۴۸ ساعته، تفکیک per-provider / per-model / per-key.</p>
-        <svg class="spark" viewBox="0 0 200 56" preserveAspectRatio="none"><polyline fill="none" stroke="#22d3ee" stroke-width="2.5" points="0,44 22,40 44,46 66,30 88,34 110,18 132,26 154,12 176,20 200,8"/><polyline fill="rgba(34,211,238,.09)" stroke="none" points="0,44 22,40 44,46 66,30 88,34 110,18 132,26 154,12 176,20 200,8 200,56 0,56"/></svg>
-      </div>
-      <div class="glass b-card reveal d4r">
-        <div class="b-ico i5">🎭</div>
-        <h3>Alias مدل‌ها</h3>
-        <p><code>gpt-4o</code> را به <code>qwen3.8-max</code> وصل کن؛ کلاینت‌های یک‌دست، بی‌دردسر روی وبِ رایگان.</p>
-      </div>
-      <div class="glass b-card reveal">
-        <div class="b-ico i6">🔑</div>
-        <h3>کلیدهای مجازی</h3>
-        <p>چند کلید <code>sk-</code> با سهمیه‌ی درخواست و لیست مدلِ مجاز per-key — مناسب اشتراک با تیم.</p>
-      </div>
-      <div class="glass b-card reveal d1r">
-        <span class="tag-new">v1.1</span>
-        <div class="b-ico i1">🎛️</div>
-        <h3>داشبورد فارسی RTL</h3>
-        <p>KPI، نمودار Canvas، پلی‌گراند چت با thinking، ویرایشگر alias و لاگ زنده — همه embed داخل باینری.</p>
-      </div>
-      <div class="glass b-card reveal d2r">
-        <div class="b-ico i2">➕</div>
-        <h3>پروایدر دلخواه</h3>
-        <p>هر API سازگار با OpenAI: پری‌ستِ <b>Gemini AI Studio</b>، <b>OpenRouter</b>، <b>Groq</b>، <b>Ollama</b>، <b>LM Studio</b>…</p>
-      </div>
-      <div class="glass b-card reveal d3r">
-        <div class="b-ico i3">📦</div>
-        <h3>تک‌باینری، همه‌جا</h3>
-        <p>Go خالص، CGO صفر — ویندوز/لینوکس/مک (amd64+arm64) و داکر. <code>./start.sh</code> و تمام.</p>
-      </div>
+    <div class="grid g-auto rv">
+      <div class="card"><div class="ico">⇄</div><h3>Failover بین پروایدرها</h3><p>خطای ۴۲۹ یا ۴۰۱ یا ۵xx؟ کاندیدای بعدی قبل از اولین بایت استریم وارد می‌شود. پروایدرِ تازه‌خطاکار کوتاه به نیمکت می‌نشیند (cooldown) تا ترجیح سلامت حفظ شود.</p></div>
+      <div class="card"><div class="ico c">🔁</div><h3>دو پروتکل، یک روتر</h3><p><span class="mono">/v1/chat/completions</span> و <span class="mono">/v1/messages</span> — ترجمه‌ی کامل OpenAI ⇄ Anthropic با بلوک‌های thinking و tool-calling در هر دو سو.</p></div>
+      <div class="card"><div class="ico g">📊</div><h3>آمار و لاگ زنده</h3><p>توکن واقعی هر درخواست (استخراج usage از JSON و دم SSE)، باکت ساعتی ۴۸گانه، per-provider/model/key، لاگ حلقه‌ای ۵۰۰تایی.</p></div>
+      <div class="card"><div class="ico a">🔑</div><h3>کلیدهای مجازی</h3><p>کلیدهای <span class="mono">sk-</span> با سهمیه‌ی درخواست، allowlist مدل (<span class="mono">qwen/*</span>) و مدیریت کامل از داشبورد — توکن‌های وب هیچ‌وقت به کلاینت نمی‌رسند.</p></div>
+      <div class="card"><div class="ico">🏷️</div><h3>Alias مدل</h3><p>هر نامی → هر مدل آپستریم. <span class="mono">"glm"</span> را به <span class="mono">glm-5.3</span> مپ کن؛ کلاینت‌ها بی‌تغییر می‌مانند و جابه‌جایی مدل یک کلیک است.</p></div>
+      <div class="card"><div class="ico c">🧩</div><h3>پروایدر سفارشی</h3><p>هر API سازگار OpenAI را وصل کن: از Gemini AI Studio و OpenRouter و Groq گرفته تا Ollama و LM Studio — با پری‌ست آماده و fetch خودکار مدل‌ها.</p></div>
+      <div class="card"><div class="ico g">🧮</div><h3>count_tokens محلی</h3><p><span class="mono">/v1/messages/count_tokens</span> بدون رفت‌وبرگشت به آپستریم جواب می‌دهد — برای بودجه‌بندی کانتکست کلاینت‌ها.</p></div>
+      <div class="card"><div class="ico a">🖥️</div><h3>داشبورد فارسی</h3><p>نمای کلی با نمودار ۴۸ساعته، پروایدرها، Token Saver، کمبوها، کلیدها، پلی‌گراند استریم با نمایش thinking و لاگ زنده — همه RTL.</p></div>
+      <div class="card"><div class="ico r">📦</div><h3>یک فایل، هرجا</h3><p>تک‌باینری Go بدون وابستگی برای ویندوز/لینوکس/مک (amd64+arm64)، <span class="mono">start.sh</span> و <span class="mono">start.bat</span>، docker-compose آماده.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ================= PROVIDERS ================= -->
-<section id="providers">
+<!-- ═══════════ START ═══════════ -->
+<section class="band" id="start">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">Providers</div>
-      <h2>چهار بریج داخلی + هر API دیگری</h2>
-      <p>هر بریج، سال‌ها تجربه‌ی مهندسی معکوسِ پایدار را به ارث برده — مدل‌ها به‌صورت زنده از خود سرویس کشف می‌شوند، نه هاردکد.</p>
+    <div class="sec-head rv">
+      <span class="kicker">Quick Start</span>
+      <h2>سه قدم تا <span class="grad">اولین پاسخ</span></h2>
+      <p>بدون Node، بدون Python، بدون Docker. باینری را بگیر، اجرا کن، از داشبورد کلید بگیر — تمام.</p>
     </div>
-    <div class="prov-grid">
-      <div class="glass prov reveal"><div class="prov-top"><div class="prov-logo" style="background:rgba(163,230,53,.12);color:var(--lime)">Q</div><div><h3>Qwen</h3><small>chat.qwen.ai</small></div></div><p>مهمان کار می‌کند؛ روی IP دیتاسنتر ابزار <b>qwen-bx</b> جلسه‌ی تمیز می‌گیرد. پول چند-اکانت با QWEN_TOKENS.</p><span class="pill pl-green">مهمان ✓ · Pool ✓</span></div>
-      <div class="glass prov reveal d1r"><div class="prov-top"><div class="prov-logo" style="background:rgba(139,92,246,.15);color:#c4b5fd">Z</div><div><h3>GLM</h3><small>chat.z.ai</small></div></div><p>مهمان بی‌دردسر؛ توکن دستگاه برای کپچا به‌صورت خودکار مدیریت می‌شود.</p><span class="pill pl-green">مهمان ✓</span></div>
-      <div class="glass prov reveal d2r"><div class="prov-top"><div class="prov-logo" style="background:rgba(34,211,238,.12);color:var(--cyan)">D</div><div><h3>DeepSeek</h3><small>chat.deepseek.com</small></div></div><p>اثبات کار (PoW) با اجرای wasm رسمی داخل <b>wazero</b> — بدون CGO. اکانت لازم است؛ ابزار <b>ds-login</b> توکن می‌گیرد.</p><span class="pill pl-amber">اکانت لازم</span></div>
-      <div class="glass prov reveal d3r"><div class="prov-top"><div class="prov-logo" style="background:rgba(232,121,249,.13);color:var(--magenta)">G</div><div><h3>Gemini</h3><small>gemini.google.com</small></div></div><p><b>مهمان بدون هیچ کوکی‌ای جواب می‌دهد</b> (اثبات زنده)، ویژن واقعی، چرخش خودکار PSIDTS و کشف زنده‌ی مدل‌ها.</p><span class="pill pl-green">مهمان ✓ · ویژن ✓</span></div>
-      <div class="glass prov reveal d4r"><div class="prov-top"><div class="prov-logo" style="background:rgba(251,191,36,.13);color:var(--amber)">＋</div><div><h3>هر API دلخواه</h3><small>openai-compatible</small></div></div><p>از داشبورد با پری‌ست اضافه کن؛ همان failover، آمار و alias روی آن‌ها هم فعال است.</p><span class="pill pl-violet">پری‌ست آماده</span></div>
-      <div class="glass prov reveal d4r"><div class="prov-top"><div class="prov-logo" style="background:rgba(96,165,250,.14);color:#93c5fd">auto</div><div><h3>زنجیره‌ی auto</h3><small>AUTO_CHAIN=…</small></div></div><p>ترتیب دلخواه خودت را بگذار؛ خطا → بعدی. سردشدن هوشمند، تلاش مجدد هر پروایدر.</p><span class="pill pl-cyan">قابل‌تنظیم</span></div>
-    </div>
-  </div>
-</section>
-<!-- ================= QUICK START ================= -->
-<section id="start">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">Quick Start</div>
-      <h2>۳۰ ثانیه تا اولین پاسخ</h2>
-      <p>باینری آماده را از Releases بگیر، اجرا کن، کلید را از داشبورد بردار — تمام.</p>
-    </div>
-    <div class="steps">
-      <div class="glass step reveal"><span class="n">۱</span>
+    <div class="steps rv">
+      <div class="step card">
         <h3>دانلود و اجرا</h3>
-        <p>از صفحه‌ی Releases آخرین بسته‌ی پلتفرم خودت را بردار و اجرا کن. اسکریپت start، اولین بار .env را هم می‌سازد.</p>
-        <div class="codebox"><button class="copy">کپی</button><span class="cm"># Linux / macOS</span>
-tar xzf omnirouter-linux-amd64.tar.gz
-./start.sh
-
-<span class="cm"># Windows — start.bat را اجرا کن</span>
-<span class="cm"># Docker — docker compose up -d</span></div>
+        <p style="margin-bottom:.7rem">از Releases بگیر یا بساز:</p>
+        <div class="codebox">git clone https://github.com/Godde3s/omnirouter
+cd omnirouter && go build -o omnirouter .
+./omnirouter        <span class="c1"># یا start.bat در ویندوز</span></div>
       </div>
-      <div class="glass step reveal d1r"><span class="n">۲</span>
-        <h3>اعتبار بگذار (اختیاری!)</h3>
-        <p>Gemini و GLM و Qwen مهمان کار می‌کنند. برای سهمیه‌ی کامل: توکن‌ها را در .env بگذار یا از ابزارهای لاگین استفاده کن.</p>
-        <div class="codebox"><button class="copy">کپی</button><span class="cm"># .env — همه اختیاری به‌جز DeepSeek</span>
-<span class="kw">QWEN_TOKENS</span>=<span class="st">token1,token2</span>
-<span class="kw">GEMINI_COOKIES</span>=<span class="st">__Secure-1PSID=…</span>
-<span class="kw">DEEPSEEK_TOKENS</span>=<span class="st">…</span>  <span class="cm"># ./ds-login</span></div>
+      <div class="step card">
+        <h3>داشبورد و کلید</h3>
+        <p style="margin-bottom:.7rem"><span class="mono">localhost:8080</span> را باز کن (رمز: <span class="mono">ADMIN_PASSWORD</span>). کلید <span class="mono">sk-</span> آماده است؛ توکن‌های وب را در <span class="mono">.env</span> بگذار.</p>
+        <div class="codebox"><span class="c1"># .env — همه اختیاری</span>
+QWEN_TOKEN=…
+DEEPSEEK_TOKENS=…
+GEMINI_COOKIES=…   <span class="c1"># خالی = مهمان</span>
+OPENCODE_API_KEY=… <span class="c1"># فقط برای مدل‌های پولی zen</span></div>
       </div>
-      <div class="glass step reveal d2r"><span class="n">۳</span>
-        <h3>کلید بگیر، وصل شو</h3>
-        <p>داشبورد را باز کن، کلید <b>sk-</b> را بردار و در هر کلاینتی بگذار. مدلِ <b>auto</b> خودش بهترین مسیر را انتخاب می‌کند.</p>
-        <div class="codebox"><button class="copy">کپی</button><span class="fn">curl</span> http://localhost:8080/v1/chat/completions \
-  -H <span class="st">"Authorization: Bearer sk-omni-…"</span> \
-  -d <span class="st">'{"model":"auto","messages":[…]}'</span></div>
+      <div class="step card">
+        <h3>به هر کلاینتی وصل کن</h3>
+        <p style="margin-bottom:.7rem">Endpoint را بده، مدل بگو — یا <span class="mono">auto</span> بگذار:</p>
+        <div class="codebox">Base URL: http://localhost:8080/v1
+API Key:  sk-… (از داشبورد)
+Model:    auto  <span class="c1"># یا combo:free-stack</span></div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- ================= CONNECT AGENTS ================= -->
+<!-- ═══════════ CONNECT (tabs) ═══════════ -->
 <section id="connect">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">Agent Ready</div>
-      <h2>OpenCode، Cline، Claude Code، Hermes…</h2>
-      <p>هر کلاینتی که OpenAI یا Anthropic حرف می‌زند، یک‌جا به همه‌ی مدل‌ها وصل می‌شود — با Tool Calling کامل.</p>
+    <div class="sec-head rv">
+      <span class="kicker">Bring Your Own Agent</span>
+      <h2>اتصال <span class="grad">همه‌ی کلاینت‌ها</span></h2>
+      <p>هر ابزاری که OpenAI یا Anthropic حرف می‌زند، با OmniRouter حرف می‌زند. اسنیپت را کپی کن، endpoint و کلید را بگذار، تمام.</p>
     </div>
-    <div class="tabs reveal">
-      <button class="tab on" data-pane="p-opencode">OpenCode</button>
-      <button class="tab" data-pane="p-cline">Cline</button>
-      <button class="tab" data-pane="p-claude">Claude Code</button>
-      <button class="tab" data-pane="p-hermes">Hermes Agent</button>
-      <button class="tab" data-pane="p-any">هر کلاینت دیگری</button>
-    </div>
-
-    <div class="tab-pane on" id="p-opencode">
-      <div class="pane-grid">
-        <div class="glass pane-info">
-          <h3>OpenCode</h3>
-          <p>فایل <code>opencode.json</code> پروژه را بساز و پروایدر را معرفی کن. مدل <b>auto</b> یا هر مدلی از <code>/v1/models</code>.</p>
-          <ul>
-            <li>پروتکل <code>openai-compatible</code> — استریم و ابزارها پشتیبانی می‌شوند</li>
-            <li>برای حالت Anthropic، <code>baseURL</code> را روی ریشه بگذار و <code>/v1/messages</code> استفاده می‌شود</li>
-            <li>کلید را از داشبورد بگیر: <code>sk-omni-…</code></li>
-          </ul>
+    <div class="rv">
+      <div class="tabs" role="tablist">
+        <div class="tab-list">
+          <button class="tab on" data-t="t-openc">OpenCode</button>
+          <button class="tab" data-t="t-cline">Cline</button>
+          <button class="tab" data-t="t-cc">Claude Code</button>
+          <button class="tab" data-t="t-codex">Codex CLI</button>
+          <button class="tab" data-t="t-cursor">Cursor</button>
+          <button class="tab" data-t="t-hermes">Hermes</button>
         </div>
-        <div class="codebox"><button class="copy">کپی</button>{
-  <span class="st">"$schema"</span>: <span class="st">"https://opencode.ai/config.json"</span>,
-  <span class="st">"provider"</span>: {
-    <span class="st">"omnirouter"</span>: {
-      <span class="st">"npm"</span>: <span class="st">"@ai-sdk/openai-compatible"</span>,
-      <span class="st">"options"</span>: {
-        <span class="st">"baseURL"</span>: <span class="st">"http://localhost:8080/v1"</span>,
-        <span class="st">"apiKey"</span>: <span class="st">"sk-omni-…"</span>
-      },
-      <span class="st">"models"</span>: {
-        <span class="st">"auto"</span>: {},
-        <span class="st">"qwen/qwen3.8-max"</span>: {},
-        <span class="st">"gemini/gemini-3.6-flash"</span>: {}
-      }
+        <div class="tabpane on" id="t-openc">
+          <p style="margin-bottom:.9rem">در <span class="mono">~/.config/opencode/opencode.json</span> — مدل‌های <span class="mono">oc/*</span> هیچ کلید بیرونی نمی‌خواهند:</p>
+          <div class="codebox">{
+  <span class="s">"provider"</span>: {
+    <span class="s">"omni"</span>: {
+      <span class="s">"npm"</span>: <span class="n">"@ai-sdk/openai-compatible"</span>,
+      <span class="s">"name"</span>: <span class="n">"OmniRouter"</span>,
+      <span class="s">"options"</span>: { <span class="s">"baseURL"</span>: <span class="n">"http://localhost:8080/v1"</span>, <span class="s">"apiKey"</span>: <span class="n">"sk-omni"</span> },
+      <span class="s">"models"</span>: { <span class="s">"oc/big-pickle"</span>: {}, <span class="s">"qwen/qwen3.8-max"</span>: {}, <span class="s">"auto"</span>: {} }
     }
   }
 }</div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="p-cline">
-      <div class="pane-grid">
-        <div class="glass pane-info">
-          <h3>Cline (VS Code)</h3>
-          <p>در تنظیمات Cline یکی از دو حالت را انتخاب کن — هر دو کامل تست شده‌اند:</p>
-          <ul>
-            <li>API Provider: <code>OpenAI Compatible</code> — Base URL: <code>http://localhost:8080/v1</code></li>
-            <li>یا Provider: <code>Anthropic</code> — خودش <code>/v1/messages</code> می‌زند</li>
-            <li>Model ID: <code>auto</code> برای failover خودکار</li>
-          </ul>
         </div>
-        <div class="codebox"><button class="copy">کپی</button><span class="cm"># OpenAI Compatible</span>
-Base URL:  http://localhost:8080/v1
-API Key:   sk-omni-…
-Model ID:  auto
-
-<span class="cm"># Anthropic Compatible</span>
-Base URL:  http://localhost:8080
-API Key:   sk-omni-…
-Model ID:  qwen/qwen3.8-max</div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="p-claude">
-      <div class="pane-grid">
-        <div class="glass pane-info">
-          <h3>Claude Code</h3>
-          <p>با دو متغیر محیطی، کل Claude Code روی وبِ رایگان می‌چرخد — بلوک‌های thinking هم واقعی پاس می‌شوند.</p>
-          <ul>
-            <li><code>ANTHROPIC_BASE_URL</code> به ریشه‌ی روتر اشاره می‌کند (بدون /v1)</li>
-            <li><code>ANTHROPIC_AUTH_TOKEN</code> = کلید sk- داشبورد</li>
-            <li><code>/v1/messages/count_tokens</code> هم پاسخ می‌دهد</li>
-          </ul>
+        <div class="tabpane" id="t-cline">
+          <p style="margin-bottom:.9rem">تنظیمات Cline → API Provider:</p>
+          <div class="codebox">Provider:   <span class="n">OpenAI Compatible</span>
+Base URL:   <span class="n">http://localhost:8080/v1</span>
+API Key:    <span class="n">sk-omni</span>   <span class="c1">(از داشبورد)</span>
+Model:      <span class="n">qwen/qwen3.8-max</span>  <span class="c1"># یا combo:free-stack</span></div>
+          <p class="small" style="color:var(--dim);font-size:.83rem">برای حالت Anthropic در Cline، همان Base URL با <span class="mono">/v1/messages</span> و کلید sk- کار می‌کند.</p>
         </div>
-        <div class="codebox"><button class="copy">کپی</button><span class="kw">export</span> ANTHROPIC_BASE_URL=<span class="st">http://localhost:8080</span>
-<span class="kw">export</span> ANTHROPIC_AUTH_TOKEN=<span class="st">sk-omni-…</span>
-
-<span class="cm"># سپس عادی اجرا کن:</span>
-claude <span class="st">"این ریپو رو بررسی کن و تست بنویس"</span></div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="p-hermes">
-      <div class="pane-grid">
-        <div class="glass pane-info">
-          <h3>Hermes Agent</h3>
-          <p>Hermes چرخه‌ی کامل tool-calling می‌زند؛ روتر هم R1→R2 را در تمام بریج‌ها پاس می‌دهد (اثبات زنده با <code>get_weather</code>).</p>
-          <ul>
-            <li>OpenAI base: <code>http://localhost:8080/v1</code> + کلید sk-</li>
-            <li>برای reasoning مدل‌ها، بلوک thinking در Anthropic جدا می‌آید</li>
-            <li>AGENT_MODE=1 در .env فعال بماند</li>
-          </ul>
+        <div class="tabpane" id="t-cc">
+          <p style="margin-bottom:.9rem">Claude Code با پروتکل Anthropic وصل می‌شود:</p>
+          <div class="codebox"><span class="fn">export</span> ANTHROPIC_BASE_URL=<span class="n">http://localhost:8080</span>
+<span class="fn">export</span> ANTHROPIC_API_KEY=<span class="n">sk-omni</span>
+<span class="fn">export</span> ANTHROPIC_MODEL=<span class="n">qwen/qwen3.8-max</span>
+claude <span class="s">"سلام!"</span></div>
         </div>
-        <div class="codebox"><button class="copy">کپی</button><span class="kw">export</span> OPENAI_BASE_URL=<span class="st">http://localhost:8080/v1</span>
-<span class="kw">export</span> OPENAI_API_KEY=<span class="st">sk-omni-…</span>
-<span class="kw">export</span> MODEL=<span class="st">qwen/qwen3.8-max</span></div>
-      </div>
-    </div>
+        <div class="tabpane" id="t-codex">
+          <p style="margin-bottom:.9rem">در <span class="mono">~/.codex/config.toml</span>:</p>
+          <div class="codebox">[model_providers.omni]
+name = <span class="s">"OmniRouter"</span>
+base_url = <span class="s">"http://localhost:8080/v1"</span>
+env_key = <span class="s">"OMNI_API_KEY"</span>
 
-    <div class="tab-pane" id="p-any">
-      <div class="pane-grid">
-        <div class="glass pane-info">
-          <h3>هر کلاینت دیگری</h3>
-          <p>هر نرم‌افزاری که «OpenAI-compatible» یا «Anthropic-compatible» دارد — از Dify و LobeChat تا اسکریپت‌های خودت.</p>
-          <ul>
-            <li>Base URL: <code>http://localhost:8080/v1</code> (OpenAI) یا ریشه (Anthropic)</li>
-            <li>کلید از داشبورد — چند کلید با سهمیه‌ی جدا بساز</li>
-            <li>مدل‌های زنده: <code>GET /v1/models</code></li>
-          </ul>
+model = <span class="n">"auto"</span>
+model_provider = <span class="s">"omni"</span></div>
         </div>
-        <div class="codebox"><button class="copy">کپی</button><span class="cm"># کشف زنده‌ی مدل‌ها</span>
-<span class="fn">curl</span> http://localhost:8080/v1/models -H <span class="st">"Authorization: Bearer sk-omni-…"</span>
-
-<span class="cm"># شمارش توکن (Anthropic parity)</span>
-<span class="fn">curl</span> http://localhost:8080/v1/messages/count_tokens \
-  -d <span class="st">'{"model":"auto","messages":[…]}'</span></div>
+        <div class="tabpane" id="t-cursor">
+          <p style="margin-bottom:.9rem">Cursor Settings → Models → OpenAI API Key → Override Base URL:</p>
+          <div class="codebox">Base URL:  <span class="n">http://localhost:8080/v1</span>
+API Key:   <span class="n">sk-omni</span>
+Model:     <span class="n">oc/big-pickle</span>  <span class="c1"># یا هر مدل کاتالوگ</span></div>
+        </div>
+        <div class="tabpane" id="t-hermes">
+          <p style="margin-bottom:.9rem">Hermes با فرمت OpenAI و tool-calling کامل (تست‌شده زنده با R1→R2):</p>
+          <div class="codebox">endpoint: <span class="n">http://localhost:8080/v1</span>
+api_key:  <span class="n">sk-omni</span>
+model:    <span class="n">qwen/qwen3.8-max</span>
+tools:    <span class="n">true</span>   <span class="c1"># فراخوانی ابزار اثبات‌شده</span></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= CHANGELOG ================= -->
-<section id="changelog">
+<!-- ═══════════ PARITY ═══════════ -->
+<section class="band" id="parity">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">Changelog</div>
-      <h2>از v1.0.0 تا امروز</h2>
-      <p>مسیر رشد روتر — هر نسخه با تست واقعی (smoke + لایو) اثبات شده.</p>
+    <div class="sec-head rv">
+      <span class="kicker">9router Parity</span>
+      <h2>قابلیت‌های 9router، <span class="grad">تک‌به‌تک</span></h2>
+      <p>OmniRouter الگوی 9router را جدی می‌گیرد — هر قابلیتی که روی معماری بریج-وبِ ما معنا داشته، پیاده شده است.</p>
     </div>
-    <div class="ver-grid">
-      <div class="glass ver ver-hot reveal">
-        <div class="ver-head"><span class="ver-tag vt-lime">v1.1.1</span><span class="ver-date">امروز</span></div>
-        <ul>
-          <li><b>فیکس استاندارد OpenAI:</b> حذفِ فیلد <b>stream</b> حالا JSON برمی‌گرداند، نه SSE — سازگاری کامل با کلاینت‌هایی که فیلد را نمی‌فرستند</li>
-          <li>همان فیکس به هر ۴ ریپوی بریج هم سینک شد (qwen v1.0.3، glm v1.0.3، gemini v1.0.2)</li>
-          <li>چک رگرسیون جدید در smoke (۳۴/۳۴ سبز)</li>
-        </ul>
-      </div>
-      <div class="glass ver reveal d1r">
-        <div class="ver-head"><span class="ver-tag vt-violet">v1.1.0</span><span class="ver-date">نسخه‌ی بزرگ</span></div>
-        <ul>
-          <li><b>برج Gemini</b> به‌عنوان چهارمین پروایدر داخلی — مهمان بدون کوکی، ویژن واقعی، heartbeat خودکار PSIDTS</li>
-          <li><b>آمار مصرف واقعی:</b> توکن هر درخواست، نمودار ۴۸ ساعته، تفکیک کامل</li>
-          <li><b>Alias</b> عمومی→آپستریم با نمایش در کاتالوگ</li>
-          <li><b>سهمیه + Allowlist</b> per-key (429/403 بامعنا)</li>
-          <li>Retry هر پروایدر + cooldown «ترجیحی»، <code>/v1/messages/count_tokens</code></li>
-          <li>داشبورد v2: KPI، نمودار Canvas، پلی‌گراند استریم با thinking</li>
-        </ul>
-      </div>
-      <div class="glass ver reveal d2r">
-        <div class="ver-head"><span class="ver-tag vt-cyan">v1.0.0</span><span class="ver-date">تولد روتر</span></div>
-        <ul>
-          <li>روتر یکپارچه روی ۳ بریج (Qwen / GLM / DeepSeek) با embed کامل</li>
-          <li>دو پروتکل OpenAI + Anthropic با SSE و tool calling</li>
-          <li>مدل auto با failover، پول چند-اکانت با cooldown</li>
-          <li>داشبورد فارسی RTL + مدیریت کلید + افزودن پروایدر</li>
-          <li>Release CI برای ۵ پلتفرم + ابزارهای ds-login و qwen-bx</li>
-        </ul>
-      </div>
+    <div class="table-scroll rv">
+      <table class="tbl">
+        <thead><tr><th>قابلیت 9router</th><th>در OmniRouter</th><th>توضیح</th></tr></thead>
+        <tbody>
+          <tr><td><b>OpenCode Free (no auth)</b></td><td><span class="tag g">✓ پروایدر oc</span></td><td>همان مسیر zen: بدون کلید + fetch خودکار مدل‌ها + کلید اختیاری برای مدل‌های پولی</td></tr>
+          <tr><td><b>RTK Token Saver</b></td><td><span class="tag g">✓ داخلی</span></td><td>فشرده‌سازی tool_result با فیلترهای auto-detect؛ پیش‌فرض روشن + هدر bypass</td></tr>
+          <tr><td><b>Headroom Token Saver</b></td><td><span class="tag a">ساده‌شده</span></td><td>حالت‌های خروجی Caveman/Ponytail داخلی‌اند؛ کامپرسور خارجی لازم نیست</td></tr>
+          <tr><td><b>Caveman / Ponytail</b></td><td><span class="tag g">✓</span></td><td>پرامپت‌مودها از داشبورد یا هدر <span class="mono">X-Omni-Prompt-Mode</span></td></tr>
+          <tr><td><b>Custom Combos</b></td><td><span class="tag g">✓</span></td><td>زنجیره‌های نام‌دار <span class="mono">combo:*</span> با fallback ترتیبی</td></tr>
+          <tr><td><b>Smart Fallback</b></td><td><span class="tag g">✓</span></td><td>زنجیره‌ی auto + retry هر پروایدر + cooldown سلامت‌محور</td></tr>
+          <tr><td><b>Format Translation</b></td><td><span class="tag g">✓</span></td><td>OpenAI ⇄ Anthropic ⇄ فرمت‌های وب هر بریج (Goole/PoW/…)</td></tr>
+          <tr><td><b>Quota Tracking</b></td><td><span class="tag g">✓</span></td><td>آمار توکن واقعی per key/provider/model + باکت ساعتی + سهمیه کلید</td></tr>
+          <tr><td><b>Multi-Account</b></td><td><span class="tag g">✓</span></td><td>پول اکانت/توکن در هر بریج با چرخش و cooldown ۴۲۹</td></tr>
+          <tr><td><b>Auto Token Refresh</b></td><td><span class="tag g">✓</span></td><td>هارت‌بیت PSIDTS گوگل، PoW خودکار دیپ‌سیک، bx کوان</td></tr>
+          <tr><td><b>Request Logging</b></td><td><span class="tag g">✓</span></td><td>لاگ زنده با تأخیر/توکن/بایت‌های صرفه‌جویی‌شده RTK</td></tr>
+          <tr><td><b>Usage Analytics</b></td><td><span class="tag g">✓</span></td><td>نمودار ۴۸ساعته و جدول مدل‌های پرکاربرد در داشبورد</td></tr>
+          <tr><td><b>Virtual API Keys</b></td><td><span class="tag g">✓</span></td><td>کلیدهای sk- با سهمیه و allowlist — توکن وب هرگز به کلاینت نمی‌رسد</td></tr>
+          <tr><td><b>Deploy Anywhere</b></td><td><span class="tag g">✓</span></td><td>تک‌باینری Win/Linux/Mac + Docker؛ صفحه‌ی وب روتر هم روی GitHub Pages است</td></tr>
+          <tr><td><b>Count Tokens</b></td><td><span class="tag g">✓</span></td><td><span class="mono">/v1/messages/count_tokens</span> محلی</td></tr>
+          <tr><td><b>Cloud Sync</b></td><td><span class="no">—</span></td><td>فایل <span class="mono">omnirouter.json</span> را خودت سینک کن؛ سرویس ابری نمی‌خواهیم</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
 
-<!-- ================= MODELS ================= -->
+<!-- ═══════════ MODELS ═══════════ -->
 <section id="models">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">Which Model?</div>
-      <h2>کدام مدل برای ایجنت‌ها؟</h2>
-      <p>نتیجه‌ی تست‌های زنده‌ی مکرر با چرخه‌ی کامل tool-calling روی همین روتر — برای کار کدنویسی و ایجنت.</p>
+    <div class="sec-head rv">
+      <span class="kicker">Model Rankings</span>
+      <h2>کدام مدل برای <span class="grad">ایجنت</span>؟</h2>
+      <p>جمع‌بندی تست‌های زنده‌ی خودمان روی همین روتر — کدنویسی، tool-calling و پایداری مهمان.</p>
     </div>
-    <div class="model-grid">
-      <div class="glass model reveal"><div class="medal">🥇</div><h3>qwen/qwen3.8-max</h3><span class="score">قوی‌ترین · کد و ابزار</span><div class="meter m1"><i data-w="96%"></i></div><p>بهترین کیفیت برای OpenCode و Hermes؛ چرخه‌ی کامل ابزارها با اثبات زنده در چند سشن.</p></div>
-      <div class="glass model reveal d1r"><div class="medal">🥈</div><h3>gemini/gemini-3.6-flash</h3><span class="score">پایدارترین مهمان</span><div class="meter m2"><i data-w="84%"></i></div><p>بدون هیچ اعتباری جواب می‌دهد؛ سرعت خوب؛ انتخاب اولِ زنجیره‌ی پشتیبان.</p></div>
-      <div class="glass model reveal d2r"><div class="medal">🥉</div><h3>ds/deepseek-chat</h3><span class="score">استدلال قوی</span><div class="meter m3"><i data-w="80%"></i></div><p>خیلی خوب در تحلیل و کد؛ نیازمند اکانت (ds-login) — PoW رسمی داخل روتر.</p></div>
-      <div class="glass model reveal d3r"><div class="medal">🛡️</div><h3>glm/GLM-5.1</h3><span class="score">پشتیبان مطمئن</span><div class="meter m4"><i data-w="74%"></i></div><p>مهمان و بی‌دردسر؛ عضو پایانی زنجیره‌ی auto برای پوشش خطاها.</p></div>
+    <div class="grid g-auto rv">
+      <div class="card">
+        <div class="ico">🥇</div><h3>qwen3.8-max <span class="tag v">ایجنت</span></h3>
+        <p>قوی‌ترین برای کدنویسی و tool-calling — R1→R2 کامل زنده اثبات شده. <span class="tag a">توکن می‌خواهد</span></p>
+        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۹۶٪</span></div><div class="bar"><div class="fill" data-w="96"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ico">🥈</div><h3>glm-5.3 <span class="tag c">جدید</span></h3>
+        <p>پرچم‌دار تازه‌ی Z.AI — زنده در کاتالوگ. نسخه‌ی سریع <strong><span class="mono">glm-5.3-flash</span></strong> هم برای چت و ایجنت‌های سبک.</p>
+        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۹۲٪</span></div><div class="bar"><div class="fill" data-w="92"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ico">🥉</div><h3>gemini-3.6-flash <span class="tag g">مهمان</span></h3>
+        <p>پایدارترین حالت بی‌توکن (guest از گوگل) — fallback اولِ هر کمبو؛ vision واقعی هم دارد.</p>
+        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۸۶٪</span></div><div class="bar"><div class="fill" data-w="86"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ico">🛡️</div><h3>deepseek-chat <span class="tag v">PoW</span></h3>
+        <p>استدلال قوی با PoW خودکار (wasm رسمی داخل باینری) — بدون سرویس بیرونی.</p>
+        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۸۸٪</span></div><div class="bar"><div class="fill" data-w="88"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ico">🆓</div><h3>oc/big-pickle <span class="tag g">بدون کلید</span></h3>
+        <p>رایگانِ zen برای شروع صفر تا صد؛ همراه <span class="mono">nemotron-3-ultra-free</span> و <span class="mono">mimo-v2.5-free</span>.</p>
+        <div class="meter"><div class="lbl"><span>کیفیت ایجنتی</span><span>۷۴٪</span></div><div class="bar"><div class="fill" data-w="74"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ico">➕</div><h3>هر مدل دیگری</h3>
+        <p>پروایدر سفارشی اضافه کن (AI Studio، OpenRouter، Groq، Ollama) — بقیه‌ی مسیر یکی است.</p>
+        <div class="meter"><div class="lbl"><span>انعطاف</span><span>∞</span></div><div class="bar"><div class="fill" data-w="100"></div></div></div>
+      </div>
     </div>
-    <p class="reveal" style="text-align:center;color:var(--dim);font-size:.85rem;margin-top:22px">نام‌ها را هاردکد نکرده‌ایم — کاتالوگ به‌صورت زنده از <code style="font-family:var(--mono);color:var(--cyan)">/v1/models</code> هر پروایدر کشف می‌شود.</p>
   </div>
 </section>
 
-<!-- ================= FAQ ================= -->
+<!-- ═══════════ CHANGELOG ═══════════ -->
+<section class="band" id="changelog">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="kicker">Changelog</span>
+      <h2>از v1.0 تا <span class="grad">v1.2.0</span></h2>
+    </div>
+    <div class="grid g-2 rv">
+      <div class="card ver">
+        <h3>v1.2.0 <span class="num">— 2026-09</span> <span class="tag g">فعلی</span></h3>
+        <ul>
+          <li><strong>پروایدر OpenCode Zen (oc)</strong> — مدل‌های رایگان بدون کلید، fetch خودکار، Anthropic ترجمه‌شده، کلید اختیاری برای zen پولی</li>
+          <li><strong>RTK Token Saver</strong> — فشرده‌سازی خودکار tool_result (git-diff/grep/file-list/dedup/smart-truncate) + آمار بایت صرفه‌جویی‌شده</li>
+          <li><strong>کمبوهای نام‌دار</strong> — combo:* با fallback ترتیبی + کمبوی آماده‌ی free-stack</li>
+          <li><strong>حالت‌های پرامپت</strong> — Caveman و Ponytail Lite/Full/Ultra + هدرهای X-Omni-Token-Saver / X-Omni-Prompt-Mode</li>
+          <li><strong>GLM 5.3</strong> — نام‌گذاری جدید پرچم‌دار Z.AI در کاتالوگ و fallback‌ها</li>
+          <li><strong>داشبورد ۲.۰</strong> — چیدمان حرفه‌ای با سایدبار، Token Saver، کمبوها و پلی‌گراند جدید</li>
+          <li>فیکس health-check بریج‌ها (احراز هویت fetch مدل‌ها)</li>
+        </ul>
+      </div>
+      <div class="card ver">
+        <h3>v1.1.0 → v1.1.1 <span class="num">— 2026-09</span></h3>
+        <ul>
+          <li>بریج Gemini مهمان (بدون کوکی، اثبات زنده PONG) + هارت‌بیت PSIDTS</li>
+          <li>آمار مصرف واقعی، alias هر پروایدر، سهمیه و allowlist کلید</li>
+          <li><strong>فیکس مهم:</strong> stream پیش‌فرض false طبق مشخصات OpenAI (کلاینت‌هایی مثل OpenCode که stream نمی‌فرستند JSON می‌گرفتند نه SSE)</li>
+          <li>پلی‌گراند استریم با thinking + ویرایشگر alias</li>
+        </ul>
+      </div>
+      <div class="card ver">
+        <h3>v1.0.0 <span class="num">— 2026-08</span></h3>
+        <ul>
+          <li>هسته‌ی روتر: کاتالوگ زنده، resolve سه‌فرمی، failover بین ۴ بریج وب</li>
+          <li>برنج DeepSeek با PoW واقعی (wasm رسمی داخل wazero — بدون CGO)</li>
+          <li>داشبورد فارسی RTL + کلیدهای sk- + start.sh/.bat</li>
+        </ul>
+      </div>
+      <div class="card ver">
+        <h3>نقشه‌ی راه</h3>
+        <ul>
+          <li>ذخیره‌سازی تنظیمات saver/combos از داشبورد به فایل (الان runtime)</li>
+          <li>پشتیبانی صدا (STT/TTS) برای پروایدرهای self-hosted</li>
+          <li>سینک تنظیمات بین دستگاه‌ها</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FAQ ═══════════ -->
 <section id="faq">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="kicker">FAQ</div>
-      <h2>سوالات پرتکرار</h2>
+    <div class="sec-head rv">
+      <span class="kicker">FAQ</span>
+      <h2>سؤال‌های <span class="grad">پرتکرار</span></h2>
     </div>
-    <div class="faq reveal">
-      <div class="glass q"><button>واقعاً رایگان است؟ چه چیزی را «وب‌به‌API» می‌گویید؟<span class="pm">＋</span></button>
-        <div class="a"><p>بله. روتر به جای کلیدهای رسمی، از نسخه‌ی وبِ رایگان چت‌بات‌ها (chat.qwen.ai، chat.z.ai، chat.deepseek.com، gemini.google.com) استفاده می‌کند و آن‌ها را به API استاندارد تبدیل می‌کند. کیفیت پاسخ همان مدل وب است — با پروتکل کامل API: استریم، ابزارها، آمار.</p></div></div>
-      <div class="glass q"><button>روی VPS یا سرور هم کار می‌کند؟<span class="pm">＋</span></button>
-        <div class="a"><p>Gemini مهمان از IP دیتاسنتر هم پاسخ داد (اثبات زنده در توسعه). Qwen مهمان روی IPهای دیتاسنتر محدود است — ابزار qwen-bx یک جلسه‌ی تمیز از مرورگر headless می‌گیرد. DeepSeek همیشه نیاز به توکن اکانت دارد (ds-login).</p></div></div>
-      <div class="glass q"><button>با ۹router چه فرقی دارد؟<span class="pm">＋</span></button>
-        <div class="a"><p>۹router روی APIهای رسمی/OAuth تمرکز دارد؛ OmniRouter همان تجربه‌ی روتر (کلید، آمار، alias، failover، داشبورد) را اما روی وبِ رایگان مدل‌ها می‌آورد و هر API دلخواه را هم کنارشان می‌پذیرد. تک‌باینری است، نیازی به دیتابیس و Node ندارد و داشبورد فارسی دارد.</p></div></div>
-      <div class="glass q"><button>مدل‌ها هاردکد هستند؟<span class="pm">＋</span></button>
-        <div class="a"><p>نه. کاتالوگ مدل‌ها با TTL کوتاه از خود سرویس‌ها کشف زنده می‌شود؛ اگر سرویس مدل جدیدی اضافه کند، روتر خودش می‌بیند. نام‌های نمایشی alias هم می‌پذیرند.</p></div></div>
-      <div class="glass q"><button>امنیتش چطور است؟<span class="pm">＋</span></button>
-        <div class="a"><p>کلاینت‌ها فقط با کلیدهای sk- داشبورد وارد می‌شوند؛ هر کلید سهمیه و لیست مدل مجاز دارد. بین هسته‌ی روتر و بریج‌ها توکن داخلی (AUTH_TOKEN) رد و بدل می‌شود و داشبورد با رمز ADMIN_PASSWORD محافظت می‌شود. همه‌چیز لوکال اجرا می‌شود.</p></div></div>
-      <div class="glass q"><button>چطور از Releases شروع کنم؟<span class="pm">＋</span></button>
-        <div class="a"><p>از بخش Quick Start همین صفحه — سه مرحله: دانلود بسته‌ی پلتفرم، اجرای start.sh / start.bat (یا داکر)، برداشتن کلید از داشبورد روی پورت 8080.</p></div></div>
-      <div class="glass q"><button>ملاحظات قانونی؟<span class="pm">＋</span></button>
-        <div class="a"><p>این پروژه آموزشی است و رابط کاربری وب سرویس‌ها را طبق رفتار عمومی آن‌ها استفاده می‌کند؛ مسئولیت رعایت شرایط سرویس‌ها با کاربر است. برای کار تجاری، APIهای رسمی را به‌عنوان پروایدر سفارشی اضافه کنید.</p></div></div>
+    <div class="faq rv">
+      <details>
+        <summary>واقعاً بدون هیچ کلیدی می‌شود کدنویسی کرد؟</summary>
+        <div class="a">بله — دو مسیر بدون کلید داریم: <strong>Gemini مهمان</strong> (برای بریج gemini هیچ کوکی‌ای لازم نیست؛ در تست‌های ما از IP دیتاسنتر هم جواب داد) و <strong>مدل‌های رایگان OpenCode Zen</strong> از طریق پروایدر <span class="mono">oc</span> که فقط یک شناسه‌ی نشست تصادفی می‌خواهد که روتر خودش می‌سازد. کمبوی آماده‌ی <span class="mono">combo:free-stack</span> همین‌ها را پشت هم می‌چیند.</div>
+      </details>
+      <details>
+        <summary>سهمیه‌ی رایگان zen تمام می‌شود چه؟</summary>
+        <div class="a">اگر در زنجیره‌ی auto یا کمبو، بعد از <span class="mono">oc/*</span> یک گام دیگر باشد، روتر خودش می‌رود بعدی. خطای <span class="mono">FreeUsageLimitError</span> مثل هر ۴۲۹ دیگری retryable است و failover را فعال می‌کند. برای سهمیه‌ی بیشتر zen می‌توانی <span class="mono">OPENCODE_API_KEY</span> بگذاری تا مدل‌های پولی (مثل <span class="mono">oc/glm-5.3</span>) هم باز شوند.</div>
+      </details>
+      <details>
+        <summary>RTK چطور مطمئن می‌شود چیزی مهم از دست نمی‌رود؟</summary>
+        <div class="a">فیلترها ساختار محتوای ابزار را می‌شناسند: دیف، وضعیت گیت، grep و فهرست مسیرها. فقط بخش‌های تکراری و حجمی خلاصه می‌شوند — آمار مثبت و منفی، مسیرها و خطوط یکتا سر جایشان می‌مانند. اگر فیلتر مطمئن نباشد یا خروجی بزرگ‌تر از ورودی شود، متن اصلی دست‌نخورده می‌رود. با هدر <span class="mono">X-Omni-Token-Saver: off</span> هم برای هر درخواست می‌توانی کلاً خاموشش کنی.</div>
+      </details>
+      <details>
+        <summary>توکن‌های وبم کجا می‌روند؟ امن است؟</summary>
+        <div class="a">توکن‌ها فقط در <span class="mono">.env</span> یا استور محلی خودت می‌مانند و بین روتر و سایت ارائه‌دهنده رد و بدل می‌شوند. کلاینت‌ها فقط کلیدهای <span class="mono">sk-</span> مجازیِ خود روتر را می‌بینند. هیچ چیزی به هیچ سروری غیر از خود ارائه‌دهنده‌ها ارسال نمی‌شود — همه‌چیز تک‌باینری محلی است.</div>
+      </details>
+      <details>
+        <summary>فرق OmniRouter با گذاشتن مستقیم بریج‌ها کنار هم؟</summary>
+        <div class="a">بریج‌های تکی هرکدام یک پورت، یک فرمت و یک توکن دارند. OmniRouter همه را پشت یک endpoint استاندارد می‌گذارد: یک کلید برای همه، resolve خودکار مدل، failover بین سرویس‌ها، سهمیه و آمار یکپارچه، و Token Saver که روی همه اعمال می‌شود — چیزی که با N بریج مجزا عملاً ممکن نیست.</div>
+      </details>
+      <details>
+        <summary>روی ویندوز چطور اجرا کنم؟</summary>
+        <div class="a">از Releases پکیج <span class="mono">windows-amd64.zip</span> را بگیر، extract کن و <span class="mono">start.bat</span> را بزن — اولین اجرا <span class="mono">.env</span> می‌سازد و راهنما نشان می‌دهد. باینری‌های macOS (اینتل/ARM) و لینوکس (amd64/ARM64) هم در همان ریلیز هستند.</div>
+      </details>
     </div>
   </div>
 </section>
 
-<!-- ================= FOOTER ================= -->
+<!-- ═══════════ CTA + FOOTER ═══════════ -->
 <footer>
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="logo" href="#top" style="margin-bottom:16px"><span class="orb">🌐</span> OmniRouter</a>
-        <p class="foot-desc">یک روتر برای همه‌ی مدل‌ها — وبِ رایگانِ چت‌بات‌ها + هر API دلخواه، پشت یک درگاه استاندارد.</p>
+        <a class="logo" href="#top" style="font-size:1.25rem">🌐 <span class="g">OmniRouter</span></a>
+        <p style="margin-top:.7rem;max-width:340px;font-size:.9rem">یک روتر برای همه‌ی مدل‌ها. بریج‌های واقعی وب + هر API سازگار OpenAI، با failover و Token Saver — تک‌باینری، متن‌باز.</p>
+        <div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap">
+          <span class="chip">v1.2.0</span><span class="chip">Go 1.25</span><span class="chip">MIT</span>
+        </div>
       </div>
-      <div><h4>پروژه</h4>
-        <a href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub اصلی</a>
-        <a href="https://github.com/Godde3s/omnirouter/releases" target="_blank" rel="noopener">Releases</a>
-        <a href="https://github.com/Godde3s/omnirouter/blob/main/README.md" target="_blank" rel="noopener">README</a>
+      <div>
+        <h4>سند</h4>
+        <a href="#start">شروع سریع</a>
+        <a href="#connect">اتصال کلاینت‌ها</a>
+        <a href="#parity">برابری با 9router</a>
+        <a href="#changelog">تغییرات نسخه‌ها</a>
       </div>
-      <div><h4>بریج‌ها</h4>
-        <a href="https://github.com/Godde3s/qwen-free-api" target="_blank" rel="noopener">qwen-free-api</a>
-        <a href="https://github.com/Godde3s/glm-free-api" target="_blank" rel="noopener">glm-free-api</a>
-        <a href="https://github.com/Godde3s/deepseek-free-api" target="_blank" rel="noopener">deepseek-free-api</a>
-        <a href="https://github.com/Godde3s/gemini-free-api" target="_blank" rel="noopener">gemini-free-api</a>
-      </div>
-      <div><h4>اینجا در صفحه</h4>
-        <a href="#features">امکانات</a><a href="#start">شروع سریع</a><a href="#connect">اتصال ایجنت‌ها</a><a href="#changelog">تغییرات</a><a href="#faq">سوالات</a>
+      <div>
+        <h4>لینک‌ها</h4>
+        <a href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub — omnirouter ↗</a>
+        <a href="https://github.com/Godde3s/omnirouter/releases" target="_blank" rel="noopener">Releases ↗</a>
+        <a href="https://github.com/decolua/9router" target="_blank" rel="noopener">الهام‌گرفته از 9router ↗</a>
+        <a href="https://opencode.ai/zen" target="_blank" rel="noopener">OpenCode Zen ↗</a>
       </div>
     </div>
-    <div class="disclaimer">⚠️ پروژه‌ای آموزشی و غیررسمی؛ وابسته به هیچ شرکتی نیست. استفاده‌ی مسئولانه از سرویس‌ها بر عهده‌ی کاربر است. برای تولید، API رسمی را به‌عنوان پروایدر سفارشی وصل کنید.</div>
-    <div class="copyright">ساخته‌شده با ♥ و Go — الهام‌گرفته از تجربه‌ی روترهای مدرن · OmniRouter v1.1.1</div>
+    <div class="copy">
+      <span>ساخته‌شده با ❤ برای کدنویسیِ رایگان — ۲۰۲۶</span>
+      <span class="mono" style="direction:ltr">godde3s.github.io/omnirouter</span>
+    </div>
   </div>
 </footer>
+
 <script>
-// ---------- burger / mobile menu ----------
-const burger = document.getElementById('burger');
-const mmenu = document.getElementById('mobileMenu');
-burger.addEventListener('click', e => {
-  e.stopPropagation();
-  const open = mmenu.classList.toggle('open');
-  burger.classList.toggle('open', open);
-  burger.setAttribute('aria-expanded', open);
-});
-mmenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-  mmenu.classList.remove('open'); burger.classList.remove('open');
-  burger.setAttribute('aria-expanded', 'false');
-}));
-document.addEventListener('click', e => {
-  if (mmenu.classList.contains('open') && !mmenu.contains(e.target) && e.target !== burger) {
-    mmenu.classList.remove('open'); burger.classList.remove('open');
+/* RTL pages anchor overflow boxes at the right edge — force LTR start */
+(function(){
+  var fix=function(){document.querySelectorAll('.codebox,.table-scroll,.term-body').forEach(function(b){b.scrollLeft=0})};
+  fix();setTimeout(fix,400);window.addEventListener('load',fix);
+})();
+
+/* ticker duplicate for seamless loop */
+(function(){
+  var t=document.getElementById('ticker-track');
+  t.innerHTML+=t.innerHTML;
+})();
+
+/* typing terminal */
+(function(){
+  var el=document.getElementById('term');
+  if(!el)return;
+  var lines=[
+    ['cm','# شروع روتر — همه‌ی بریج‌ها داخلی'],
+    ['','# ./omnirouter'],
+    ['vi','🌐 OmniRouter v1.2.0 — یک روتر برای همه‌ی مدل‌ها'],
+    ['ok','✓ qwen ✓ glm-5.3 ✓ deepseek ✓ gemini ✓ opencore(oc) — 77 مدل'],
+    ['am','🔑 Client API Key: sk-omni-****  ·  Dashboard: :8080'],
+    ['cm','# بدون کلید — مدل رایگان OpenCode Zen'],
+    ['','$ curl localhost:8080/v1/chat/completions \\'],
+    ['','    -d \'{"model":"oc/big-pickle","messages":[…]}\''],
+    ['ok','{"content":"COMBO-OK","usage":{"total_tokens":2}}  ← $0'],
+    ['cm','# یا کمبوی آماده — fallback خودکار'],
+    ['','"model": "combo:free-stack"  →  qwen → gemini → oc'],
+  ];
+  var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function renderAll(){
+    el.innerHTML=lines.map(function(l){return '<span class="'+l[0]+'">'+esc(l[1])+'</span>'}).join('\n');
   }
-});
-
-// ---------- navbar scroll ----------
-const nav = document.getElementById('nav');
-addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 30), {passive:true});
-
-// ---------- reveal on scroll ----------
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-}), {threshold:.12});
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-// ---------- meter fill ----------
-const mio = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) { e.target.style.width = e.target.dataset.w; mio.unobserve(e.target); }
-}), {threshold:.4});
-document.querySelectorAll('.meter i').forEach(el => mio.observe(el));
-
-// ---------- ticker duplication (seamless loop) ----------
-const track = document.getElementById('tickerTrack');
-track.innerHTML += track.innerHTML;
-
-// ---------- terminal typing demo ----------
-const term = document.getElementById('term');
-const script = [
-  {t:'cmd', s:'$ curl http://localhost:8080/v1/chat/completions \\\n    -H "Authorization: Bearer sk-omni-…" \\\n    -d \'{"model":"auto","stream":true,\n        "messages":[{"role":"user","content":"سلام!"}]}\'\n\n'},
-  {t:'evt', s:'◆ resolve auto → qwen/qwen3.8-max  (healthy)\n\n'},
-  {t:'ok',  s:'data: {"delta":"سَلام! "}'},
-  {t:'ok',  s:'data: {"delta":"چطور می‌تونم کمک کنم؟"}'},
-  {t:'ok',  s:'data: {"delta":"🚀"}\n\n'},
-  {t:'evt', s:'◆ usage: in=12 out=9  ·  latency=1.24s  ·  usage recorded\n'},
-  {t:'ok',  s:'data: [DONE]\n\n'},
-  {t:'dim', s:'# یک کلید · چهار پروایدر · failover خودکار\n'}
-];
-const cls = {cmd:'t-cmd', evt:'t-evt', ok:'t-ok', dim:'t-dim'};
-let li = 0;
-function typeLine() {
-  if (li >= script.length) {
-    const c = document.createElement('span'); c.className = 'cursor'; term.appendChild(c);
-    setTimeout(() => { term.innerHTML = ''; li = 0; typeLine(); }, 9000);
-    return;
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+  if(reduced){renderAll();return}
+  var li=0,ci=0,out='';
+  function tick(){
+    if(li>=lines.length){el.innerHTML=out+'<span class="cursor"></span>';return}
+    var cls=lines[li][0],txt=lines[li][1];
+    ci+=1+(txt.length>60?2:1);
+    var part=esc(txt.slice(0,ci));
+    var cur=out+'<span class="'+cls+'">'+part+'</span><span class="cursor"></span>';
+    el.innerHTML=cur;
+    if(ci>=txt.length){out+='<span class="'+cls+'">'+esc(txt)+'</span>\n';li++;ci=0;setTimeout(tick,txt===''?60:220)}
+    else setTimeout(tick,14);
   }
-  const line = script[li];
-  const span = document.createElement('span');
-  span.className = cls[line.t]; term.appendChild(span);
-  let ci = 0;
-  const speed = line.t === 'cmd' ? 16 : 55;
-  (function tick() {
-    if (ci < line.s.length) {
-      span.textContent += line.s[ci++];
-      setTimeout(tick, speed + Math.random()*30);
-    } else { li++; setTimeout(typeLine, line.t === 'cmd' ? 350 : 220); }
-  })();
-}
-const tio = new IntersectionObserver(es => {
-  if (es[0].isIntersecting) { typeLine(); tio.disconnect(); }
-}, {threshold:.3});
-tio.observe(term);
+  tick();
+})();
 
-// ---------- tabs ----------
-document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-  document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('on'));
-  b.classList.add('on');
-  document.getElementById(b.dataset.pane).classList.add('on');
-}));
+/* reveal on scroll (with safety fallbacks) */
+(function(){
+  var els=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){els.forEach(function(n){n.classList.add('in')});return}
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(n){io.observe(n)});
+  /* belt & suspenders: anything still hidden after 6s becomes visible */
+  setTimeout(function(){els.forEach(function(n){n.classList.add('in')})},4500);
+})();
 
-// ---------- faq accordion ----------
-document.querySelectorAll('.q > button').forEach(b => b.addEventListener('click', () => {
-  const q = b.parentElement, a = q.querySelector('.a'), open = q.classList.contains('open');
-  document.querySelectorAll('.q.open').forEach(o => { o.classList.remove('open'); o.querySelector('.a').style.maxHeight = 0; });
-  if (!open) { q.classList.add('open'); a.style.maxHeight = a.scrollHeight + 'px'; }
-}));
+/* meters */
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        var f=e.target;f.style.width=f.dataset.w+'%';io.unobserve(f);
+      }
+    });
+  },{threshold:.4});
+  document.querySelectorAll('.meter .fill').forEach(function(f){io.observe(f)});
+})();
 
-// ---------- copy buttons ----------
-document.querySelectorAll('.copy').forEach(b => b.addEventListener('click', () => {
-  const code = [...b.parentElement.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('');
-  navigator.clipboard.writeText(code).then(() => {
-    b.textContent = 'کپی شد ✓'; setTimeout(() => b.textContent = 'کپی', 1600);
+/* tabs */
+(function(){
+  document.querySelectorAll('.tab').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});
+      document.querySelectorAll('.tabpane').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      var p=document.getElementById(b.dataset.t);if(p)p.classList.add('on');
+    });
   });
-}));
+})();
+
+/* close mobile menu on link click */
+document.querySelectorAll('.m-panel a').forEach(function(a){
+  a.addEventListener('click',function(){document.getElementById('navtoggle').checked=false});
+});
 </script>
 </body>
 </html>

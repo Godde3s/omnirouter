@@ -2,16 +2,16 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-v1.1.1-8b5cf6?style=for-the-badge)](https://github.com/Godde3s/omnirouter/releases)
+[![Version](https://img.shields.io/badge/version-v1.2.0-8b5cf6?style=for-the-badge)](https://github.com/Godde3s/omnirouter/releases)
 [![Go](https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
 [![Platform](https://img.shields.io/badge/platform-win%20%7C%20linux%20%7C%20mac%20%7C%20docker-e879f9?style=for-the-badge)](https://github.com/Godde3s/omnirouter/releases)
 [![License](https://img.shields.io/badge/license-MIT-a3e635?style=for-the-badge)](LICENSE)
 
-### **Qwen · GLM · DeepSeek · Gemini · هر API دیگه — با یک کلید، یک لاگین، یک آدرس**
+### **Qwen · GLM 5.3 · DeepSeek · Gemini · OpenCode (بدون کلید!) · هر API دیگه — با یک کلید، یک لاگین، یک آدرس**
 
 کیفیت واقعی API روی وبِ رایگانِ چت‌بات‌ها + ارائه‌دهنده‌های سفارشی + داشبورد کامل فارسی
 
-`OpenAI API` · `Anthropic API` · `SSE استریم` · `Tool Calling` · `Failover خودکار` · `آمار مصرف` · `Alias مدل` · `سهمیه کلید`
+`OpenAI API` · `Anthropic API` · `OpenCode Free بدون کلید` · `RTK Token Saver` · `کمبوهای fallback` · `SSE استریم` · `Tool Calling` · `Failover خودکار` · `Alias مدل` · `سهمیه کلید`
 
 **→ 🎨 [مستندات کامل، دموی زنده و راهنمای مصور در GitHub Pages](https://godde3s.github.io/omnirouter/) ←**
 
@@ -21,10 +21,11 @@
 
 ---
 
-## 🚀 چه خبره از v1.0.0 تا v1.1.1؟
+## 🚀 چه خبره از v1.0.0 تا v1.2.0؟
 
 | نسخه | چه چیزهایی اضافه/عوض شد |
 |---|---|
+| **v1.2.0** (امروز) | 🆓 **پروایدر OpenCode Zen (`oc`)** — مدل‌های رایگان **بدون هیچ کلیدی** (مثل OpenCode Free در 9router) + fetch خودکار ۷۰+ مدل + کلید اختیاری برای مدل‌های پولی zen · 🚀 **RTK Token Saver** — فشرده‌سازی خودکار خروجی ابزارها (git diff/grep/ls/لاگ) با فیلترهای امن · 🎯 **کمبوهای نام‌دار** — `combo:free-stack` زنجیره‌ی qwen→gemini→oc آماده‌ی نصب تازه · 🐴 **Caveman + Ponytail** (Lite/Full/Ultra) با هدر `X-Omni-Prompt-Mode` · 🏷 **GLM 5.3 و GLM 5.3-Flash** — نام‌گذاری جدید پرچم‌دار Z.AI · 🖥 **داشبورد ۲.۰** با سایدبار حرفه‌ای، Token Saver، کمبوها و پلی‌گراند جدید · 🐞 فیکس health-check بریج‌ها (توکن روی fetch مدل‌ها) |
 | **v1.1.1** (امروز) | 🐞 **فیکس استاندارد OpenAI**: وقتی کلاینت فیلد `stream` را نمی‌فرستد (OpenCode و خیلی‌ها همین‌اند)، حالا **JSON** برمی‌گردد نه SSE — سینک‌شده به هر ۵ ریپو (qwen v1.0.3، glm v1.0.3، gemini v1.0.2) + ۳ چک رگرسیون جدید (smoke 34/34) |
 | **v1.1.0** | 🧬 برج **Gemini** (مهمان بدون کوکی، ویژن، heartbeat خودکار PSIDTS) · 📊 **آمار مصرف واقعی** (توکن هر درخواست، نمودار ۴۸ ساعته) · 🎭 **Alias مدل** (`gpt-4o` → `qwen3.8-max`) · 🔑 **سهمیه + Allowlist** per-key · ⏱ Retry/Cooldown هوشمند · 🔢 `/v1/messages/count_tokens` · 🎛 داشبورد v2 با KPI و پلی‌گراند |
 | **v1.0.0** | 🌱 تولد: روتر یکپارچه روی ۳ بریج، دو پروتکل کامل، failover، داشبورد فارسی، Release CI پنج‌پلتفرمه |
@@ -45,6 +46,10 @@ OmniRouter چهار بریج اثبات‌شده‌ی **qwen-free-api**، **glm-
 | Tool calling کامل (چرخه‌ی R1→R2) برای Hermes/OpenCode/Cline | ✅ |
 | مدل `auto` با زنجیره‌ی failover بین ارائه‌دهنده‌ها | ✅ |
 | **برج Gemini وب** — مهمان بدون کوکی هم کار می‌کند (اثبات زنده) | ✅ |
+| **OpenCode Zen (پروایدر `oc`)** — مدل‌های رایگان **بدون کلید**، fetch خودکار، Anthropic ترجمه‌شده | ✅ v1.2.0 |
+| **RTK Token Saver** — فشرده‌سازی خودکار tool_result (git diff / grep / ls / لاگ) + آمار بایت صرفه‌جویی‌شده | ✅ v1.2.0 |
+| **کمبوهای نام‌دار** — `combo:my-stack` با fallback ترتیبی + کمبوی آماده `free-stack` | ✅ v1.2.0 |
+| **Caveman / Ponytail** — حالت‌های خروجی کم‌مصرف + هدر bypass `X-Omni-Token-Saver: off` | ✅ v1.2.0 |
 | اضافه‌کردن API دلخواه (Gemini AI Studio، OpenRouter، Groq، Ollama، …) از داشبورد | ✅ |
 | **نگاشت مدل (alias)** — مثلاً `gpt-4o` → `qwen3.8-max` برای هر پروایدر | ✅ v1.1.0 |
 | **آمار مصرف زنده**: توکن واقعی هر درخواست، نمودار ۴۸ ساعته، تفکیک پروایدر/مدل | ✅ v1.1.0 |
@@ -96,12 +101,12 @@ client.chat.completions.create(model="auto", messages=[{"role":"user","content":
 | **Qwen** (chat.qwen.ai) | `qwen3.8-max` (پرچم‌دار) · `qwen3.7-plus` | مهمان یا توکن |
 | **Gemini** (gemini.google.com) | `gemini-3.6-flash` · `gemini-3.5-flash-lite` · `gemini-3.1-pro` + کشف زنده | **مهمان بدون کوکی** یا کوکی |
 | **DeepSeek** (chat.deepseek.com) | `deepseek-chat` · `deepseek-reasoner` | توکن الزامی |
-| **GLM** (chat.z.ai) | `GLM-5.1` · `GLM-5` + کشف خودکار | مهمان یا توکن |
+| **GLM** (chat.z.ai) | `glm-5.3` · `glm-5.3-flash` · `glm-5.2` + کشف خودکار | توکن دیوایس |
 | **سفارشی** | هر چیزی که خودت اضافه کنی (مثلاً `gemini-2.5-pro` با کلید رایگان AI Studio) | کلید خودت |
 
 آدرس‌دهی: `auto` (زنجیره) · `qwen/qwen3.8-max` (صریح) · خودِ نام مدل (کاتالوگ مشترک) · **نام عمومی نگاشت‌شده** (مثل `gpt-4o` اگر alias بسازی)
 
-## قابلیت‌های جدید v1.1.0
+## قابلیت‌های جدید v1.1.0+
 
 ### 📊 آمار مصرف (بدون وابستگی خارجی)
 - هر درخواست (استریم یا غیراستریم) از پاسخ آپستریم **توکن واقعی** استخراج می‌شود (`usage` فرمت OpenAI و Anthropic)؛ اگر آپستریم توکن نداد، تخمین می‌زند
@@ -158,7 +163,7 @@ client.chat.completions.create(model="auto", messages=[{"role":"user","content":
 PORT=8080                 # پورت عمومی روتر
 ADMIN_PASSWORD=admin      # رمز داشبورد — عوضش کن!
 ROUTER_KEY=               # کلید اول (خالی = تولید خودکار)
-AUTO_CHAIN=qwen/qwen3.8-max,ds/deepseek-chat,gemini/gemini-3.6-flash,glm/GLM-5.1
+AUTO_CHAIN=qwen/qwen3.8-max,ds/deepseek-chat,gemini/gemini-3.6-flash,glm/glm-5.3,oc/big-pickle
 AGENT_MODE=1              # شیم tool-calling برای ایجنت‌ها
 
 RETRY_PER_PROVIDER=1      # تلاش مجدد هر پروایدر

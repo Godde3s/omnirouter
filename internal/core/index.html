@@ -3,670 +3,639 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OmniRouter — روتر همه‌ی مدل‌ها</title>
+<title>OmniRouter — داشبورد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0b0f17; --bg2:#101725; --card:#151d2e; --card2:#1a2336;
-  --line:#24304a; --txt:#e8edf7; --dim:#8b98b4; --acc:#4f8cff; --acc2:#7c5cff;
-  --ok:#2fd18c; --warn:#ffb02e; --err:#ff5c74; --mono:'Consolas','Menlo',monospace;
+  --bg:#09090f; --bg2:#0e0e17; --panel:#14141f; --panel2:#191926;
+  --line:#23233200; --bord:#242433; --bord2:#2e2e40;
+  --txt:#eceaf6; --mut:#9b98b3; --dim:#6d6a85;
+  --vio:#7c5cff; --cy:#22d3ee; --gr:#34d399; --am:#fbbf24; --rd:#f87171;
+  --grad:linear-gradient(90deg,#7c5cff,#22d3ee);
+  --r:14px; --rs:9px;
+  --mono:'JetBrains Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--txt);font-family:'Vazirmatn','Segoe UI',Tahoma,sans-serif;min-height:100vh}
-.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 60px}
-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 24px rgba(79,140,255,.35)}
-h1{font-size:22px}
-h1 small{color:var(--dim);font-weight:400;font-size:12px;display:block;margin-top:2px}
-.top-actions{margin-inline-start:auto;display:flex;gap:8px;align-items:center}
-.ver{font-size:11px;color:var(--dim);border:1px solid var(--line);padding:3px 10px;border-radius:20px}
-button{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:9px 16px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;transition:.15s}
-button:hover{border-color:var(--acc);transform:translateY(-1px)}
-button.primary{background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;font-weight:700}
-button.primary:disabled{opacity:.5;cursor:wait;transform:none}
-button.danger:hover{border-color:var(--err);color:var(--err)}
-button.sm{padding:5px 10px;font-size:12px;border-radius:8px}
-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
-nav button{border-radius:12px;background:transparent;border:1px solid transparent;color:var(--dim)}
-nav button.on{background:var(--card);border-color:var(--line);color:var(--txt)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:20px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
-.kpi .n{font-size:22px;font-weight:700;font-family:var(--mono);direction:ltr;text-align:right}
-.kpi .l{font-size:11px;color:var(--dim);margin-top:4px}
-.kpi.acc .n{color:var(--acc)} .kpi.ok .n{color:var(--ok)} .kpi.err .n{color:var(--err)} .kpi.warn .n{color:var(--warn)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
-.card h3{font-size:14px;margin-bottom:12px;color:var(--dim);display:flex;align-items:center;gap:8px}
-.card h3 .dot{width:9px;height:9px;border-radius:50%;background:var(--dim)}
-.dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)} .dot.err{background:var(--err)} .dot.warn{background:var(--warn)}
-.pcard{display:flex;flex-direction:column;gap:8px}
-.prow{display:flex;justify-content:space-between;align-items:center;font-size:13px;gap:8px}
-.prow .models{color:var(--dim);font-size:12px}
-.tag{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--bg2);border:1px solid var(--line);color:var(--dim)}
-.tag.ok{color:var(--ok);border-color:rgba(47,209,140,.35)}
-.tag.err{color:var(--err);border-color:rgba(255,92,116,.35)}
-.tag.warn{color:var(--warn);border-color:rgba(255,176,46,.35)}
-.tag.acc{color:#8ab4ff;border-color:rgba(79,140,255,.35)}
-.kbox{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-family:var(--mono);font-size:12px;direction:ltr;text-align:left;overflow-x:auto;white-space:pre;color:#a8c7ff;cursor:pointer;position:relative}
-.kbox:hover{border-color:var(--acc)}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{color:var(--dim);font-weight:400;text-align:right;padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px}
-td{padding:8px 6px;border-bottom:1px solid rgba(36,48,74,.5);vertical-align:middle}
-tr:hover td{background:rgba(79,140,255,.04)}
-.mono{font-family:var(--mono);font-size:12px;direction:ltr;text-align:left}
-.badge{font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(79,140,255,.12);color:#8ab4ff}
-.badge.custom{background:rgba(124,92,255,.14);color:#b9a3ff}
-input,select,textarea{background:var(--bg2);border:1px solid var(--line);color:var(--txt);padding:10px 12px;border-radius:10px;font-family:inherit;font-size:13px;width:100%}
-textarea{resize:vertical;min-height:70px}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc)}
-label{font-size:12px;color:var(--dim);display:block;margin:10px 0 5px}
-.formrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.formrow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.muted{color:var(--dim);font-size:12px;line-height:1.9}
-.section{margin-bottom:26px}
-.hidden{display:none!important}
-.tblwrap{overflow-x:auto}
-#chart{width:100%;height:180px;display:block}
-.alias-row{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
-.alias-row .arrow{color:var(--dim);text-align:center}
-.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:6px}
-.playground{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:900px){.playground{grid-template-columns:1fr}}
-.out{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:220px;max-height:420px;overflow-y:auto;font-size:13px;line-height:1.9;white-space:pre-wrap;word-break:break-word}
-.out .think{color:var(--dim);font-size:12px;border-inline-start:2px solid var(--line);padding-inline-start:10px;margin-bottom:8px;white-space:pre-wrap}
-.login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50}
-.login .box{width:360px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px}
-.login h2{font-size:18px;margin-bottom:6px}
-.login .sub{color:var(--dim);font-size:12px;margin-bottom:16px}
-.login .err{color:var(--err);font-size:12px;margin-top:10px;min-height:16px}
-.modal{position:fixed;inset:0;background:rgba(5,8,14,.72);display:flex;align-items:center;justify-content:center;z-index:60;padding:16px}
-.modal .box{width:560px;max-width:96vw;max-height:88vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
-.modal h3{margin-bottom:12px}
-.modal .actions{display:flex;gap:8px;justify-content:flex-start;margin-top:16px}
-details summary{cursor:pointer;color:var(--dim);font-size:13px;margin:12px 0 6px}
-.code{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--mono);font-size:11.5px;direction:ltr;text-align:left;overflow-x:auto;white-space:pre;color:#9fd0a8;cursor:pointer}
-.code:hover{border-color:var(--acc)}
-.tok-lab{font-size:11px;color:var(--dim);margin-top:8px}
-.pill{font-size:10px;padding:2px 7px;border-radius:14px;margin-inline-start:6px}
+html{overflow-x:clip}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:'Vazirmatn',system-ui,sans-serif;
+  font-size:14px; line-height:1.9; overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+   radial-gradient(600px 400px at 85% -10%, rgba(124,92,255,.14), transparent 60%),
+   radial-gradient(500px 350px at 0% 100%, rgba(34,211,238,.08), transparent 60%);}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#2a2a3c;border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:var(--cy);text-decoration:none}
+code,.mono{font-family:var(--mono);font-size:.86em;direction:ltr;unicode-bidi:embed}
+
+/* ---------- login ---------- */
+#login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+#login .card{width:min(400px,92vw);background:var(--panel);border:1px solid var(--bord);border-radius:18px;padding:40px 34px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+#login .logo{font-size:30px;font-weight:800;margin-bottom:4px}
+#login .logo b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#login p{color:var(--mut);margin:8px 0 24px;font-size:13px}
+#login input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--bord2);background:var(--bg2);color:var(--txt);font:inherit;text-align:center;font-size:15px}
+#login input:focus{outline:none;border-color:var(--vio)}
+#login button{width:100%;margin-top:14px;padding:12px;border:none;border-radius:10px;background:var(--grad);color:#fff;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+#login button:hover{filter:brightness(1.12)}
+#login .err{color:var(--rd);font-size:12.5px;margin-top:10px;min-height:18px}
+
+/* ---------- shell ---------- */
+#app{display:none;position:relative;z-index:1;min-height:100vh}
+.shell{display:flex;min-height:100vh}
+.side{width:234px;flex-shrink:0;background:rgba(14,14,23,.82);backdrop-filter:blur(14px);border-left:1px solid var(--bord);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{padding:22px 20px 18px;border-bottom:1px solid var(--bord)}
+.brand .t{font-size:19px;font-weight:800}
+.brand .t b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand .v{font-size:11px;color:var(--dim);font-family:var(--mono)}
+.nav{padding:12px 10px;display:flex;flex-direction:column;gap:3px;flex:1;overflow-y:auto}
+.nav button{display:flex;align-items:center;gap:11px;width:100%;padding:10.5px 13px;border:none;border-radius:10px;background:transparent;color:var(--mut);font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;text-align:right;transition:.15s}
+.nav button:hover{background:rgba(124,92,255,.09);color:var(--txt)}
+.nav button.on{background:linear-gradient(90deg,rgba(124,92,255,.18),rgba(34,211,238,.08));color:var(--txt);font-weight:600;box-shadow:inset 2.5px 0 0 var(--vio)}
+.nav .ic{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side .foot{padding:14px 18px;border-top:1px solid var(--bord);font-size:11.5px;color:var(--dim)}
+.side .foot .live{display:inline-flex;align-items:center;gap:6px;color:var(--gr)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gr);box-shadow:0 0 8px var(--gr);display:inline-block}
+.dot.red{background:var(--rd);box-shadow:0 0 8px var(--rd)}
+.dot.amber{background:var(--am);box-shadow:0 0 8px var(--am)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:12px;padding:15px 26px;border-bottom:1px solid var(--bord);background:rgba(14,14,23,.6);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20}
+.top h1{font-size:16.5px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:5.5px 13px;border-radius:99px;border:1px solid var(--bord2);background:var(--panel);font-size:12px;color:var(--mut);white-space:nowrap}
+.btn{padding:8px 17px;border-radius:9px;border:1px solid var(--bord2);background:var(--panel2);color:var(--txt);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--vio);background:rgba(124,92,255,.12)}
+.btn.pri{background:var(--grad);border:none;color:#fff}
+.btn.pri:hover{filter:brightness(1.12)}
+.btn.danger{border-color:rgba(248,113,113,.35);color:var(--rd)}
+.btn.danger:hover{background:rgba(248,113,113,.12)}
+.btn.sm{padding:4.5px 11px;font-size:11.5px;border-radius:7px}
+.view{display:none;padding:26px;gap:22px;flex-direction:column;animation:fade .25s ease}
+.view.on{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--panel);border:1px solid var(--bord);border-radius:var(--r);padding:19px 20px}
+.card h3{font-size:13.5px;font-weight:700;color:var(--mut);display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.kpi .n{font-size:26px;font-weight:800;font-family:var(--mono);direction:ltr;text-align:right}
+.kpi .s{font-size:11.5px;color:var(--dim);margin-top:2px}
+.kpi .ic2{float:left;font-size:20px;opacity:.85}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{color:var(--dim);font-weight:600;text-align:right;padding:8px 10px;border-bottom:1px solid var(--bord2);white-space:nowrap}
+td{padding:8.5px 10px;border-bottom:1px solid rgba(36,36,51,.55);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(124,92,255,.045)}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:2.5px 9px;border-radius:99px;font-size:10.5px;font-weight:700}
+.tag.g{background:rgba(52,211,153,.13);color:var(--gr)}
+.tag.r{background:rgba(248,113,113,.13);color:var(--rd)}
+.tag.a{background:rgba(251,191,36,.13);color:var(--am)}
+.tag.v{background:rgba(124,92,255,.14);color:#a78bfa}
+.tag.c{background:rgba(34,211,238,.13);color:var(--cy)}
+.mut{color:var(--mut)} .dim{color:var(--dim)} .small{font-size:11.5px}
+</style>
+<style>
+/* forms + toggles + playground + responsive */
+input[type=text],input[type=number],input[type=password],select,textarea{
+  padding:9px 13px;border-radius:9px;border:1px solid var(--bord2);background:var(--bg2);
+  color:var(--txt);font:inherit;font-size:12.5px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--vio)}
+textarea{resize:vertical;min-height:74px;font-family:var(--mono);font-size:11.5px;direction:ltr;text-align:left}
+label.f{display:block;font-size:11.5px;color:var(--mut);margin:10px 0 5px;font-weight:600}
+.switch{position:relative;display:inline-block;width:42px;height:23px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.sl{position:absolute;cursor:pointer;inset:0;background:#2c2c3e;border-radius:99px;transition:.2s}
+.sl::before{content:'';position:absolute;height:17px;width:17px;left:3px;top:3px;background:#8886a0;border-radius:50%;transition:.2s}
+.switch input:checked + .sl{background:var(--grad)}
+.switch input:checked + .sl::before{transform:translateX(-19px);background:#fff}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.saver-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.saver-hero .big{font-size:22px;font-weight:800;font-family:var(--mono);direction:ltr}
+.play-box{display:grid;grid-template-columns:1fr 1.2fr;gap:16px}
+#pg-out{background:var(--bg2);border:1px solid var(--bord);border-radius:var(--rs);padding:14px;min-height:300px;max-height:460px;overflow-y:auto;font-size:13px;line-height:2;white-space:pre-wrap;word-break:break-word}
+#pg-out .think{color:var(--dim);font-size:12px;border-right:2px solid var(--bord2);padding-right:10px;margin-bottom:8px}
+.combo-chain{display:flex;flex-direction:column;gap:6px}
+.combo-step{display:flex;align-items:center;gap:9px;padding:7px 12px;background:var(--bg2);border:1px solid var(--bord);border-radius:9px;font-family:var(--mono);font-size:11.5px;direction:ltr;justify-content:flex-start}
+.combo-step .num{width:20px;height:20px;border-radius:50%;background:rgba(124,92,255,.18);color:#a78bfa;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex-shrink:0}
+.empty{padding:34px;text-align:center;color:var(--dim);font-size:13px}
+.toast{position:fixed;bottom:22px;left:22px;z-index:200;background:var(--panel2);border:1px solid var(--bord2);border-radius:11px;padding:11px 18px;font-size:13px;box-shadow:0 14px 40px rgba(0,0,0,.5);animation:up .25s ease;max-width:min(420px,90vw)}
+.toast.err{border-color:rgba(248,113,113,.5)}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#burger{display:none}
+@media(max-width:1080px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}.play-box{grid-template-columns:1fr}}
+@media(max-width:860px){
+  .side{position:fixed;right:0;top:0;bottom:0;z-index:60;transform:translateX(100%);transition:transform .25s ease;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+  .side.open{transform:none}
+  #burger{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9px;border:1px solid var(--bord2);background:var(--panel2);color:var(--txt);cursor:pointer;font-size:16px}
+  .g4,.g3,.g2{grid-template-columns:1fr}
+  .view{padding:16px}
+  .top{padding:12px 16px}
+  .top h1{font-size:14.5px}
+  .hide-sm{display:none}
+  table{font-size:11.5px}
+  td,th{padding:7px 7px}
+}
 </style>
 </head>
 <body>
 
-<div id="login" class="login">
-  <div class="box">
-    <h2>🌐 ورود به OmniRouter</h2>
-    <div class="sub">رمز داشبورد همان ADMIN_PASSWORD فایل .env است</div>
-    <input type="password" id="pw" placeholder="رمز داشبورد…" onkeydown="if(event.key==='Enter')doLogin()">
-    <div class="err" id="pwerr"></div>
-    <button class="primary" style="width:100%" onclick="doLogin()">ورود</button>
-  </div>
-</div>
-
-<div class="wrap hidden" id="app">
-<header>
-  <div class="logo">🌐</div>
-  <h1>OmniRouter <small>یک روتر برای همه‌ی مدل‌ها — Qwen · GLM · DeepSeek · Gemini + API سفارشی</small></h1>
-  <div class="top-actions">
-    <span class="ver" id="ver">v—</span>
-    <button class="sm" onclick="loadAll()">↻ نوسازی</button>
-    <button class="sm danger" onclick="logout()">خروج</button>
-  </div>
-</header>
-
-<nav>
-  <button data-tab="overview" class="on" onclick="showTab('overview')">نمای کلی</button>
-  <button data-tab="providers" onclick="showTab('providers')">ارائه‌دهنده‌ها</button>
-  <button data-tab="models" onclick="showTab('models')">مدل‌ها</button>
-  <button data-tab="keys" onclick="showTab('keys')">کلیدها</button>
-  <button data-tab="logs" onclick="showTab('logs')">لاگ‌ها</button>
-  <button data-tab="play" onclick="showTab('play')">پلی‌گراند</button>
-  <button data-tab="help" onclick="showTab('help')">اتصال ابزارها</button>
-</nav>
-
-<!-- ═══ OVERVIEW ═══ -->
-<div class="section" id="tab-overview">
-  <div class="kpis" id="kpis"></div>
-  <div class="grid">
-    <div class="card" style="grid-column:1/-1">
-      <h3>📊 ترافیک ۴۸ ساعت اخیر <span class="tag">درخواست‌ها + توکن</span></h3>
-      <canvas id="chart" height="180"></canvas>
-    </div>
-  </div>
-  <div class="grid" id="provgrid"></div>
-</div>
-
-<!-- ═══ PROVIDERS ═══ -->
-<div class="section hidden" id="tab-providers">
-  <div class="grid" id="provgrid2"></div>
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="login">
   <div class="card">
-    <h3>➕ افزودن / ویرایش ارائه‌دهنده‌ی سفارشی (هر API سازگار OpenAI)</h3>
-    <div class="formrow">
-      <div><label>نام (اسلاگ انگلیسی — آدرس به شکل name/model)</label><input id="cp-name" placeholder="gemini"></div>
-      <div><label>آدرس پایه (Base URL تا /v1)</label><input id="cp-url" dir="ltr" placeholder="https://…/v1"></div>
-    </div>
-    <div class="formrow">
-      <div><label>کلید API آپستریم (اختیاری)</label><input id="cp-key" dir="ltr" placeholder="sk-…"></div>
-      <div><label>مدل‌ها (اختیاری، با ویرگول — خالی = کشف زنده)</label><input id="cp-models" dir="ltr" placeholder="model-a, model-b"></div>
-    </div>
-    <label>پیش‌تنظیم‌ها:</label>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-      <button class="sm" onclick="preset('gemini-aistudio')">✨ Gemini AI Studio</button>
-      <button class="sm" onclick="preset('openrouter')">OpenRouter</button>
-      <button class="sm" onclick="preset('groq')">Groq</button>
-      <button class="sm" onclick="preset('ollama')">Ollama (محلی)</button>
-      <button class="sm" onclick="preset('lmstudio')">LM Studio (محلی)</button>
-    </div>
-    <details>
-      <summary>نگاشت مدل (alias) — نام عمومی → مدل واقعی آپستریم (اختیاری)</summary>
-      <div id="alias-rows"></div>
-      <button class="sm" onclick="addAliasRow('','')">+ ردیف نگاشت</button>
-    </details>
-    <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="primary" onclick="saveProvider()">ذخیره ارائه‌دهنده</button>
-      <span class="muted" id="cp-msg" style="align-self:center"></span>
-    </div>
+    <div class="logo">🌐 <b>OmniRouter</b></div>
+    <p>یک روتر برای همه‌ی مدل‌ها — برای ورود رمز داشبورد (ADMIN_PASSWORD) را بزن</p>
+    <input type="password" id="pw" placeholder="رمز داشبورد" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">ورود به داشبورد</button>
+    <div class="err" id="pw-err"></div>
   </div>
-  <div class="card" style="margin-top:14px">
-    <h3>🔗 نگاشت مدل برای بریج‌های داخلی (qwen / glm / ds / gemini)</h3>
-    <div class="formrow">
-      <div><label>پروایدر</label>
-        <select id="ba-prov" onchange="loadBridgeAliases()">
-          <option value="qwen">qwen</option><option value="glm">glm</option>
-          <option value="ds">ds</option><option value="gemini">gemini</option>
-        </select>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="app"><div class="shell">
+  <aside class="side" id="side">
+    <div class="brand">
+      <div class="t">🌐 <b>OmniRouter</b></div>
+      <div class="v" id="ver">v1.2.0</div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-v="ov" class="on"><span class="ic">◈</span>نمای کلی</button>
+      <button data-v="pr"><span class="ic">⬡</span>پروایدرها</button>
+      <button data-v="sv"><span class="ic">🚀</span>Token Saver</button>
+      <button data-v="cb"><span class="ic">🎯</span>کمبوها</button>
+      <button data-v="ky"><span class="ic">🔑</span>کلیدهای API</button>
+      <button data-v="pg"><span class="ic">▶</span>پلی‌گراند</button>
+      <button data-v="lg"><span class="ic">≡</span>لاگ زنده</button>
+    </nav>
+    <div class="foot">
+      <span class="live"><span class="dot" id="foot-dot"></span><span id="foot-txt">در حال اتصال…</span></span><br>
+      <span class="dim small mono" id="uptime">—</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <button id="burger" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+      <h1 id="vtitle">نمای کلی</h1>
+      <span class="pill hide-sm" id="prov-pill">—</span>
+      <span class="pill"><span class="dot" id="top-dot"></span><span id="top-txt">—</span></span>
+      <button class="btn sm" onclick="loadAll(true);toast('کاتالوگ تازه شد')">⟳ تازه‌سازی</button>
+    </div>
+
+    <!-- ─── OVERVIEW ─── -->
+    <section class="view on" id="v-ov">
+      <div class="grid g4">
+        <div class="card kpi"><span class="ic2">⚡</span><h3>کل درخواست‌ها</h3><div class="n" id="k-req">0</div><div class="s" id="k-err">0 خطا</div></div>
+        <div class="card kpi"><span class="ic2">⇥</span><h3>توکن ورودی</h3><div class="n" id="k-in">0</div><div class="s">prompt tokens</div></div>
+        <div class="card kpi"><span class="ic2">⇤</span><h3>توکن خروجی</h3><div class="n" id="k-out">0</div><div class="s">completion tokens</div></div>
+        <div class="card kpi"><span class="ic2">🚀</span><h3>صرفه‌جویی RTK</h3><div class="n" id="k-sav">0</div><div class="s" id="k-savc">بایت فشرده‌شده</div></div>
       </div>
-      <div style="align-self:end"><button class="sm" onclick="addBAliasRow('','')">+ ردیف</button> <button class="primary sm" onclick="saveBridgeAliases()">ذخیره نگاشت</button></div>
-    </div>
-    <div id="b-alias-rows" style="margin-top:10px"></div>
-    <div class="muted">مثال: <span class="mono">gpt-4o</span> ← <span class="mono">qwen3.8-max</span> — کلاینت‌ها با مدل gpt-4o به strongest مدل qwen می‌رسند.</div>
-  </div>
-</div>
-
-<!-- ═══ MODELS ═══ -->
-<div class="section hidden" id="tab-models">
-  <div class="card">
-    <h3>🧠 کاتالوگ مدل‌ها <span class="tag" id="model-count">—</span>
-      <span style="margin-inline-start:auto;display:flex;gap:8px">
-        <input id="model-filter" placeholder="فیلتر…" style="width:180px;padding:6px 10px" oninput="renderModels()">
-        <button class="sm" onclick="refreshModels()">↻ کشف زنده</button>
-      </span>
-    </h3>
-    <div class="tblwrap"><table id="models-tbl"></table></div>
-    <div class="muted">فرمت <span class="mono">provider/model</span> دقیق‌ترین مسیر است؛ نام خام هم کار می‌کند و «auto» زنجیره‌ی failover را اجرا می‌کند.</div>
-  </div>
-</div>
-
-<!-- ═══ KEYS ═══ -->
-<div class="section hidden" id="tab-keys">
-  <div class="card">
-    <h3>🔑 ساخت کلید جدید</h3>
-    <div class="formrow3">
-      <div><label>نام کلید</label><input id="nk-name" placeholder="opencode-laptop"></div>
-      <div><label>سقف درخواست (0 = بی‌نهایت)</label><input id="nk-max" type="number" min="0" value="0" dir="ltr"></div>
-      <div><label>محدودیت مدل (اختیاری، با ویرگول)</label><input id="nk-models" dir="ltr" placeholder="qwen/*, glm-5"></div>
-    </div>
-    <button class="primary" style="margin-top:12px" onclick="createKey()">ساخت کلید</button>
-    <div id="newkey-out" style="margin-top:10px"></div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <h3>🗝 کلیدهای موجود</h3>
-    <div class="tblwrap"><table id="keys-tbl"></table></div>
-  </div>
-</div>
-
-<!-- ═══ LOGS ═══ -->
-<div class="section hidden" id="tab-logs">
-  <div class="card">
-    <h3>📜 لاگ درخواست‌ها (۵۰۰ مورد آخر)
-      <span style="margin-inline-start:auto"><button class="sm" id="logauto" onclick="toggleLogAuto()">⏸ توقف به‌روزرسانی</button></span>
-    </h3>
-    <div class="tblwrap"><table id="logs-tbl"></table></div>
-  </div>
-</div>
-
-<!-- ═══ PLAYGROUND ═══ -->
-<div class="section hidden" id="tab-play">
-  <div class="playground">
-    <div class="card">
-      <h3>🎛 پارامترها</h3>
-      <label>مدل</label><select id="pg-model"></select>
-      <label>System Prompt (اختیاری)</label>
-      <textarea id="pg-sys" dir="auto" placeholder="تو یک دستیار مفید فارسی‌زبان هستی…"></textarea>
-      <label>پیام کاربر</label>
-      <textarea id="pg-msg" dir="auto" style="min-height:110px" placeholder="سلام! خودت رو معرفی کن"></textarea>
-      <div class="formrow">
-        <div><label>Temperature: <span id="pg-tempv">0.7</span></label>
-          <input type="range" id="pg-temp" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('pg-tempv').textContent=this.value"></div>
-        <div style="align-self:end;display:flex;gap:8px;align-items:center">
-          <input type="checkbox" id="pg-stream" checked style="width:auto"> <span style="font-size:13px">استریم</span>
+      <div class="card">
+        <h3>📊 مصرف ۴۸ ساعت گذشته <span class="dim small">درخواست‌ها</span></h3>
+        <canvas id="chart" height="150" style="width:100%"></canvas>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <h3>🏆 مدل‌های پرکاربرد</h3>
+          <table id="t-models"><thead><tr><th>مدل</th><th>درخواست</th><th>توکن</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="card">
+          <h3>⬡ پروایدرها</h3>
+          <table id="t-prov"><thead><tr><th>پروایدر</th><th>وضعیت</th><th>مدل‌ها</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
-      <button class="primary" style="width:100%;margin-top:12px" id="pg-send" onclick="pgSend()">ارسال ▶</button>
-      <div class="tok-lab" id="pg-stats"></div>
-    </div>
-    <div class="card">
-      <h3>💬 پاسخ مدل</h3>
-      <div class="out" id="pg-out"><span class="muted">پاسخ اینجا استریم می‌شود…</span></div>
-    </div>
-  </div>
-</div>
+    </section>
 
-<!-- ═══ HELP ═══ -->
-<div class="section hidden" id="tab-help">
-  <div class="grid">
-    <div class="card">
-      <h3>🔌 اتصال OpenCode / Cline / Cursor (OpenAI)</h3>
-      <div class="code" onclick="copyCode(this)">OPENAI_API_KEY=sk-…
-OPENAI_BASE_URL=http://localhost:8080/v1
-# مدل: auto  یا  qwen/qwen3.8-max  یا  gemini/gemini-3.6-flash</div>
-    </div>
-    <div class="card">
-      <h3>🤖 اتصال Hermes Agent / Claude Code (Anthropic)</h3>
-      <div class="code" onclick="copyCode(this)">ANTHROPIC_BASE_URL=http://localhost:8080
-ANTHROPIC_API_KEY=sk-…
-ANTHROPIC_MODEL=qwen/qwen3.8-max
-ANTHROPIC_SMALL_FAST_MODEL=gemini/gemini-3.6-flash</div>
-    </div>
-    <div class="card">
-      <h3>🐍 فراخوانی با curl</h3>
-      <div class="code" onclick="copyCode(this)">curl http://localhost:8080/v1/chat/completions \
-  -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
-  -d '{"model":"auto","messages":[{"role":"user","content":"سلام"}],"stream":true}'</div>
-    </div>
-    <div class="card">
-      <h3>⚙️ متغیرهای .env روتر</h3>
-      <div class="muted">
-        <span class="mono">ADMIN_PASSWORD</span> رمز داشبورد ·
-        <span class="mono">ROUTER_KEY</span> کلید اولیه ·
-        <span class="mono">AUTH_TOKEN</span> توکن داخلی بریج‌ها ·
-        <span class="mono">AUTO_CHAIN</span> زنجیره auto مثل <span class="mono">qwen/qwen3.8-max,ds/deepseek-chat</span> ·
-        <span class="mono">RETRY_PER_PROVIDER</span> تلاش مجدد هر پروایدر ·
-        <span class="mono">COOLDOWN_SECONDS</span> زمان سرد شدن پروایدر خطاکار ·
-        <span class="mono">REQUEST_TIMEOUT</span> تایم‌اوت درخواست غیراستریم (ثانیه) ·
-        <span class="mono">GEMINI_COOKIES</span> کوکی‌های Gemini (اختیاری — مهمان هم کار می‌کند) ·
-        <span class="mono">QWEN_TOKENS</span> توکن‌های Qwen ·
-        <span class="mono">GLM_DEVICE_TOKENS</span> توکن‌های GLM ·
-        <span class="mono">DEEPSEEK_TOKENS</span> توکن‌های DeepSeek
+    <!-- ─── PROVIDERS ─── -->
+    <section class="view" id="v-pr">
+      <div class="card">
+        <h3>⬡ پروایدرهای داخلی (بریج‌های وب)</h3>
+        <div class="grid g3" id="bridge-cards"></div>
       </div>
-    </div>
-  </div>
-</div>
+      <div class="card">
+        <h3>＋ پروایدر سفارشی (هر API سازگار OpenAI)</h3>
+        <div class="grid g3">
+          <div><label class="f">نام (پیشوند)</label><input type="text" id="cp-name" placeholder="myapi"></div>
+          <div><label class="f">Base URL</label><input type="text" id="cp-url" placeholder="https://api.example.com/v1" style="direction:ltr;text-align:left"></div>
+          <div><label class="f">API Key</label><input type="text" id="cp-key" placeholder="sk-…" style="direction:ltr;text-align:left"></div>
+        </div>
+        <label class="f">مدل‌ها (هر خط یک مدل یا خالی = fetch خودکار از /v1/models)</label>
+        <textarea id="cp-models" placeholder="gpt-5.2&#10;claude-sonnet-5"></textarea>
+        <div class="row" style="margin-top:12px">
+          <button class="btn pri" onclick="addCustom()">افزودن پروایدر</button>
+          <span class="dim small">پری‌ست‌ها:</span>
+          <button class="btn sm" onclick='preset("gemini","https://generativelanguage.googleapis.com/v1beta/openai")'>✨ Gemini AI Studio</button>
+          <button class="btn sm" onclick='preset("openrouter","https://openrouter.ai/api/v1")'>OpenRouter</button>
+          <button class="btn sm" onclick='preset("groq","https://api.groq.com/openai/v1")'>Groq</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🔗 پروایدرهای سفارشی فعال</h3>
+        <table id="t-custom"><thead><tr><th>نام</th><th>Base URL</th><th>مدل‌ها</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="card">
+        <h3>🏷️ Alias مدل (نام عمومی → مدل آپستریم)</h3>
+        <div class="row">
+          <select id="al-prov" style="width:180px"></select>
+          <input type="text" id="al-from" placeholder="glm" style="width:150px">
+          <span class="dim">→</span>
+          <input type="text" id="al-to" placeholder="glm-5.3" style="width:180px;direction:ltr;text-align:left">
+          <button class="btn" onclick="addAlias()">ثبت Alias</button>
+        </div>
+        <div class="dim small" style="margin-top:8px">مثال: «glm» → «glm-5.3» یعنی هر کلاینتی مدل glm بخواهد، GLM 5.3 برایش می‌رود.</div>
+      </div>
+    </section>
+    <!-- ─── TOKEN SAVER ─── -->
+    <section class="view" id="v-sv">
+      <div class="card saver-hero">
+        <div>
+          <h3 style="margin-bottom:4px">🚀 RTK Token Saver</h3>
+          <div class="mut small" style="max-width:560px">خروجی ابزارها (git diff، grep، ls، tree، لاگ‌ها…) را قبل از رسیدن به مدل فشرده می‌کند — تشخیص خودکار، امن-by-design. مثل 9router به‌صورت پیش‌فرض روشن است.</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="sw-rtk" onchange="setSaver()"><span class="sl"></span></label>
+      </div>
+      <div class="grid g3">
+        <div class="card kpi"><span class="ic2">💾</span><h3>بایت صرفه‌جویی‌شده</h3><div class="n" id="sv-bytes">0</div><div class="s">در این بازه اجرا</div></div>
+        <div class="card kpi"><span class="ic2">🔁</span><h3>درخواست‌های فشرده</h3><div class="n" id="sv-calls">0</div><div class="s">tool_result compressed</div></div>
+        <div class="card kpi"><span class="ic2">🛡️</span><h3>حالت امن</h3><div class="n" style="font-size:17px">همیشه فعال</div><div class="s">اگر فشرده‌سازی خطا بخورد، متن اصلی می‌رود</div></div>
+      </div>
+      <div class="card">
+        <h3>🐴 Prompt Mode — حالت خروجی (Caveman / Ponytail)</h3>
+        <div class="row">
+          <select id="pm-sel" style="width:230px" onchange="setSaver()">
+            <option value="off">خاموش (پیش‌فرض)</option>
+            <option value="caveman">Caveman — پاسخ کوتاه و فنی (تا ۶۵٪ خروجی کمتر)</option>
+            <option value="ponytail-lite">Ponytail Lite</option>
+            <option value="ponytail-full">Ponytail Full — YAGNI کامل</option>
+            <option value="ponytail-ultra">Ponytail Ultra — extremists</option>
+          </select>
+        </div>
+        <div class="dim small" style="margin-top:10px">دورزدن برای یک درخواست: هدر <code class="mono">X-Omni-Token-Saver: off</code> — حالت لحظه‌ای: <code class="mono">X-Omni-Prompt-Mode: caveman</code></div>
+      </div>
+      <div class="card">
+        <h3>🧰 فیلترهای تشخیص خودکار</h3>
+        <div class="grid g3 small mut">
+          <div>📄 <b>git-diff</b> — فهرست فایل + آمار، حذف هانک‌ها</div>
+          <div>📋 <b>git-status</b> — جدول فشرده وضعیت‌ها</div>
+          <div>🔍 <b>grep</b> — دی‌دوپ + سقف per-file</div>
+          <div>📁 <b>find/ls/tree</b> — شمارش و نمونه مسیرها</div>
+          <div>🧹 <b>dedup-log</b> — تکرارها ×N</div>
+          <div>✂️ <b>smart-truncate</b> — سر+دم برای متن عمومی</div>
+        </div>
+      </div>
+    </section>
 
-</div>
+    <!-- ─── COMBOS ─── -->
+    <section class="view" id="v-cb">
+      <div class="card">
+        <h3>🎯 کمبو جدید — زنجیره‌ی fallback نام‌دار</h3>
+        <div class="row">
+          <input type="text" id="cb-name" placeholder="نام کمبو: my-stack" style="width:220px">
+        </div>
+        <label class="f">زنجیره (هر خط یک گام، به ترتیب اولویت)</label>
+        <textarea id="cb-chain" placeholder="qwen/qwen3.8-max&#10;oc/big-pickle&#10;gemini/gemini-3.6-flash"></textarea>
+        <div class="row" style="margin-top:12px">
+          <button class="btn pri" onclick="addCombo()">ساخت کمبو</button>
+          <span class="dim small">بعداً در کلاینت فقط بنویس: <code class="mono">model: "combo:my-stack"</code></span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🎯 کمبوهای فعال</h3>
+        <div id="combo-list" class="grid g2"></div>
+      </div>
+    </section>
+
+    <!-- ─── KEYS ─── -->
+    <section class="view" id="v-ky">
+      <div class="card">
+        <h3>🔑 کلید جدید</h3>
+        <div class="row">
+          <input type="text" id="ky-name" placeholder="نام کلید: cline-laptop" style="width:220px">
+          <input type="number" id="ky-max" placeholder="سقف درخواست (خالی=نامحدود)" style="width:230px">
+          <input type="text" id="ky-allow" placeholder="محدودیت مدل: qwen/*, glm-5.3" style="width:240px;direction:ltr;text-align:left">
+          <button class="btn pri" onclick="addKey()">ساخت کلید</button>
+        </div>
+        <div id="ky-new" class="small" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <h3>🔑 کلیدهای موجود</h3>
+        <table id="t-keys"><thead><tr><th>نام</th><th>کلید</th><th>درخواست</th><th>توکن</th><th>وضعیت</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </section>
+
+    <!-- ─── PLAYGROUND ─── -->
+    <section class="view" id="v-pg">
+      <div class="play-box">
+        <div class="card">
+          <h3>▶ پلی‌گراند استریم</h3>
+          <label class="f">مدل (auto / qwen/qwen3.8-max / oc/big-pickle / combo:free-stack / …)</label>
+          <input type="text" id="pg-model" value="auto" style="direction:ltr;text-align:left">
+          <label class="f">System (اختیاری)</label>
+          <textarea id="pg-sys" style="min-height:52px"></textarea>
+          <label class="f">پیام</label>
+          <textarea id="pg-msg" style="min-height:90px">سلام! در یک خط بگو چه مدل هستی.</textarea>
+          <div class="row" style="margin-top:12px">
+            <button class="btn pri" id="pg-go" onclick="pgRun()">ارسال (SSE)</button>
+            <button class="btn" onclick="pgAbort()">توقف</button>
+          </div>
+          <div class="dim small" style="margin-top:10px">خروجی از <code class="mono">/v1/chat/completions</code> با stream=true — دقیقاً همان چیزی که کلاینت‌ها می‌بینند.</div>
+        </div>
+        <div class="card">
+          <h3>پاسخ</h3>
+          <div id="pg-out"><span class="dim">خروجی اینجا استریم می‌شود…</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── LOGS ─── -->
+    <section class="view" id="v-lg">
+      <div class="card">
+        <h3>≡ لاگ زنده (۵۰۰ درخواست آخر)</h3>
+        <table id="t-logs"><thead><tr><th>زمان</th><th>کلید</th><th>مدل</th><th>پروایدر</th><th>وضعیت</th><th>تأخیر</th><th>توکن</th><th class="hide-sm">RTK</th></tr></thead><tbody></tbody></table>
+      </div>
+    </section>
+
+  </div><!-- /main -->
+</div></div><!-- /app -->
+
+<div id="toasts"></div>
 
 <script>
-// ── state & helpers ─────────────────────────────────────────────────────────
-let TOKEN = localStorage.getItem('omni_token') || '';
-let OV = null;            // overview payload
-let CATALOG = [];         // merged models
-let logTimer = null;
-let pgAbort = null;
+/* ============ helpers ============ */
+const $=id=>document.getElementById(id);
+const fmt=n=>{n=Number(n||0);if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toLocaleString('fa-IR')};
+function toast(msg,err){const t=document.createElement('div');t.className='toast'+(err?' err':'');t.textContent=msg;$('toasts').appendChild(t);setTimeout(()=>t.remove(),3800)}
+async function api(path,opts){const r=await fetch(path,Object.assign({headers:{'Content-Type':'application/json'}},opts||{}));if(r.status===401){showLogin();throw new Error('unauthorized')}return r}
 
-async function api(path, opts = {}) {
-  const h = Object.assign({'Content-Type':'application/json'}, opts.headers || {});
-  if (TOKEN) h['Authorization'] = 'Bearer ' + TOKEN;
-  const res = await fetch(path, Object.assign({}, opts, {headers: h}));
-  if (res.status === 401 && path !== '/admin/login') { showLogin(); throw new Error('unauthorized'); }
-  const txt = await res.text();
-  try { return JSON.parse(txt); } catch { return {raw: txt, status: res.status}; }
-}
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtN = n => (n ?? 0).toLocaleString('en-US');
-const fmtTok = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'K' : fmtN(n);
-const timeStr = t => new Date(t*1000).toLocaleTimeString('fa-IR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-function copyCode(el){ navigator.clipboard.writeText(el.textContent.trim()); const old=el.style.borderColor; el.style.borderColor='#2fd18c'; setTimeout(()=>el.style.borderColor=old, 600); }
-function showLogin(){ document.getElementById('login').style.display='flex'; document.getElementById('app').classList.add('hidden'); }
-function logout(){ TOKEN=''; localStorage.removeItem('omni_token'); api('/admin/logout',{method:'POST'}).catch(()=>{}); showLogin(); }
-
+/* ============ auth ============ */
+function showLogin(){$('login').style.display='flex';$('app').style.display='none'}
+function showApp(){$('login').style.display='none';$('app').style.display='block'}
 async function doLogin(){
-  const pw = document.getElementById('pw').value;
+  const pw=$('pw').value;
+  const r=await fetch('/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+  if(!r.ok){$('pw-err').textContent='رمز اشتباه است';return}
+  $('pw-err').textContent='';showApp();loadAll();
+}
+async function tryResume(){try{const r=await api('/admin/api/overview');if(r.ok){showApp();loadAll()}}catch(e){}}
+
+/* ============ nav ============ */
+const titles={ov:'نمای کلی',pr:'پروایدرها',sv:'Token Saver',cb:'کمبوها',ky:'کلیدهای API',pg:'پلی‌گراند',lg:'لاگ زنده'};
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));$('v-'+b.dataset.v).classList.add('on');
+  $('vtitle').textContent=titles[b.dataset.v];
+  $('side').classList.remove('open');
+  if(b.dataset.v==='sv')loadSaver();if(b.dataset.v==='cb')loadCombos();if(b.dataset.v==='ky')loadKeys();
+});
+
+/* ============ overview ============ */
+let overview=null;
+async function loadAll(refresh){
   try{
-    const r = await fetch('/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
-    const j = await r.json();
-    if(!r.ok){ document.getElementById('pwerr').textContent = j.error || 'رمز اشتباه است'; return; }
-    TOKEN = j.token; localStorage.setItem('omni_token', TOKEN);
-    document.getElementById('login').style.display='none';
-    document.getElementById('app').classList.remove('hidden');
-    loadAll();
-  }catch(e){ document.getElementById('pwerr').textContent='ارتباط برقرار نشد'; }
+    const r=await api('/admin/api/overview'+(refresh?'?refresh=1':''));
+    overview=await r.json();renderOverview();
+  }catch(e){}
 }
-
-// ── tabs ────────────────────────────────────────────────────────────────────
-function showTab(name){
-  document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-  document.getElementById('tab-'+name).classList.remove('hidden');
-  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.tab===name));
-  if(name==='logs') startLogAuto(); else stopLogAuto();
+function renderOverview(){
+  if(!overview)return;
+  const o=overview,st=o.stats||{},sv=o.saver||{};
+  $('ver').textContent='v'+(o.version||'1.2.0');
+  $('k-req').textContent=fmt(st.total_requests);$('k-err').textContent=fmt(st.total_errors)+' خطا';
+  $('k-in').textContent=fmt(st.tokens_in);$('k-out').textContent=fmt(st.tokens_out);
+  $('k-sav').textContent=fmt(sv.saved_bytes);$('k-savc').textContent=fmt(sv.saved_calls)+' درخواست فشرده‌شده';
+  const provs=o.providers||[];
+  const healthy=provs.filter(p=>p.healthy&&p.Enabled).length;
+  const enabled=provs.filter(p=>p.Enabled).length;
+  $('prov-pill').textContent='⬡ '+enabled+' پروایدر فعال · '+provs.reduce((a,p)=>a+(p.Models?p.Models.length:0),0)+' مدل';
+  const ok=healthy>0;
+  $('top-dot').className='dot'+(ok?'':' red');$('top-txt').textContent=ok?'سالم':'قطع';
+  $('foot-dot').className='dot'+(ok?'':' red');$('foot-txt').textContent=healthy+'/'+enabled+' سالم';
+  const up=o.uptime_sec||0;
+  $('uptime').textContent='آپ‌تایم '+Math.floor(up/3600)+'س '+Math.floor(up%3600/60)+'د';
+  // providers table
+  const pb=$('t-prov').querySelector('tbody');pb.innerHTML='';
+  provs.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><b>'+p.ID+'</b><div class="dim small">'+p.Label+'</div></td>'+
+      '<td>'+(p.Enabled?(p.Healthy?'<span class="tag g">سالم</span>':'<span class="tag r">خطا</span>'):'<span class="tag a">خاموش</span>')+'</td>'+
+      '<td class="mono">'+(p.Models?p.Models.length:0)+'</td>';
+    pb.appendChild(tr);
+  });
+  // bridges cards
+  const bc=$('bridge-cards');bc.innerHTML='';
+  provs.filter(p=>p.Kind==='bridge').forEach(p=>{
+    const d=document.createElement('div');d.className='card';d.style.margin='0';
+    d.innerHTML='<div class="row" style="justify-content:space-between"><b>'+p.ID+'</b>'+(p.Healthy?'<span class="tag g">سالم</span>':'<span class="tag r">خطا</span>')+'</div>'+
+      '<div class="dim small" style="margin:6px 0">'+p.Label+'</div>'+
+      '<div class="small">'+(p.Models?p.Models.length:0)+' مدل · '+(p.LastErr?'<span style="color:var(--rd)">'+p.LastErr.slice(0,60)+'</span>':'آماده')+'</div>';
+    bc.appendChild(d);
+  });
+  // models top
+  const models=st.Models||{};
+  const rows=Object.entries(models).sort((a,b)=>b[1].Requests-a[1].Requests).slice(0,8);
+  const mb=$('t-models').querySelector('tbody');mb.innerHTML='';
+  rows.forEach(([m,s])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="mono">'+m+'</td><td>'+fmt(s.Requests)+'</td><td class="dim mono">'+fmt(s.TokensIn)+'/'+fmt(s.TokensOut)+'</td>';
+    mb.appendChild(tr);
+  });
+  // custom
+  const cb=$('t-custom').querySelector('tbody');cb.innerHTML='';
+  (o.custom_raw||[]).forEach(c=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><b>'+c.Name+'</b></td><td class="mono small">'+c.BaseURL+'</td><td class="mono small">'+((c.Models||[]).join(', ')||'—')+'</td>'+
+      '<td><button class="btn sm danger" onclick="delCustom(\''+c.Name+'\')">حذف</button></td>';
+    cb.appendChild(tr);
+  });
+  // alias select
+  const sel=$('al-prov');const cur=sel.value;sel.innerHTML='';
+  provs.forEach(p=>{const op=document.createElement('option');op.value=p.Kind==='custom'?p.ID.slice(8):p.ID;op.textContent=p.ID;sel.appendChild(op)});
+  if(cur)sel.value=cur;
+  drawChart(st.Hourly||[]);
 }
-
-// ── overview ────────────────────────────────────────────────────────────────
-async function loadAll(){
-  try{
-    OV = await api('/admin/api/overview');
-    const cat = await api('/admin/api/models');
-    CATALOG = cat.data || [];
-    document.getElementById('ver').textContent = 'v' + (OV.version || '—');
-    renderKPIs(); renderProviders(); renderModels(); renderKeys(); renderLogs();
-    pgFillModels(); drawChart();
-  }catch(e){ if(String(e).includes('unauthorized')) showLogin(); }
-}
-
-function renderKPIs(){
-  const st = OV.stats || {};
-  const healthy = (OV.providers||[]).filter(p=>p.enabled && p.healthy).length;
-  const enabled = (OV.providers||[]).filter(p=>p.enabled).length;
-  const up = OV.uptime_sec||0;
-  const upTxt = up>86400 ? Math.floor(up/86400)+'روز '+(Math.floor(up%86400/3600))+'ساعت' : up>3600 ? Math.floor(up/3600)+' ساعت' : Math.floor(up/60)+' دقیقه';
-  document.getElementById('kpis').innerHTML = [
-    kpi('درخواست‌ها', fmtN(st.total_requests), 'acc'),
-    kpi('توکن ورودی', fmtTok(st.tokens_in), ''),
-    kpi('توکن خروجی', fmtTok(st.tokens_out), ''),
-    kpi('خطاها', fmtN(st.total_errors), st.total_errors? 'err':'ok'),
-    kpi('پروایدرهای سالم', healthy+' / '+enabled, healthy===enabled?'ok':'warn'),
-    kpi('مدل‌ها', fmtN(CATALOG.length), ''),
-    kpi('کلیدها', fmtN((OV.keys||[]).filter(k=>k.enabled).length), ''),
-    kpi('آپ‌تایم', upTxt, ''),
-  ].join('');
-}
-const kpi = (l,n,cls) => `<div class="kpi ${cls}"><div class="n">${esc(n)}</div><div class="l">${l}</div></div>`;
-
-function provCard(p){
-  const dot = !p.enabled ? '' : p.healthy ? 'ok' : 'err';
-  const tag = !p.enabled ? '<span class="tag">غیرفعال</span>' : p.healthy ? '<span class="tag ok">سالم</span>' : `<span class="tag err">${esc((p.last_error||'خطا').slice(0,42))}</span>`;
-  const kind = p.kind==='bridge' ? '<span class="badge">بریج داخلی</span>' : '<span class="badge custom">سفارشی</span>';
-  return `<div class="card pcard">
-    <div class="prow"><strong>${esc(p.label)}</strong> ${kind} <span style="margin-inline-start:auto"><span class="dot ${dot}"></span>${tag}</span></div>
-    <div class="prow"><span class="models">${(p.models||[]).length} مدل</span><span class="models mono">${esc(p.id)}</span></div>
-    <div class="muted">${(p.models||[]).slice(0,4).map(m=>'<span class="tag">'+esc(m)+'</span>').join(' ')}${(p.models||[]).length>4?' …':''}</div>
-  </div>`;
-}
-function renderProviders(){
-  const ps = OV.providers||[];
-  document.getElementById('provgrid').innerHTML = ps.map(provCard).join('');
-  document.getElementById('provgrid2').innerHTML = ps.map(p => provCard(p) + customActions(p)).join('');
-}
-function customActions(p){
-  if(p.kind!=='custom') return '';
-  const raw = (OV.custom_raw||[]).find(x=>x.name===p.id.replace('custom:','')) || {};
-  return `<div style="display:flex;gap:6px;margin-top:4px">
-    <button class="sm" onclick='editProvider(${JSON.stringify(JSON.stringify(raw))})'>ویرایش</button>
-    <button class="sm" onclick="toggleProvider('${esc(p.id.replace('custom:',''))}', ${!p.enabled})">${p.enabled?'غیرفعال':'فعال'}</button>
-    <button class="sm danger" onclick="delProvider('${esc(p.id.replace('custom:',''))}')">حذف</button>
-  </div>`;
-}
-
-// ── chart (48h) ─────────────────────────────────────────────────────────────
-function drawChart(){
-  const cv = document.getElementById('chart'); if(!cv) return;
-  const st = OV?.stats || {};
-  const hourly = (st.hourly||[]).slice(-48);
-  const dpr = window.devicePixelRatio||1;
-  const W = cv.clientWidth, H = 180;
-  cv.width = W*dpr; cv.height = H*dpr;
-  const ctx = cv.getContext('2d'); ctx.scale(dpr,dpr);
-  ctx.clearRect(0,0,W,H);
-  if(!hourly.length){ ctx.fillStyle='#8b98b4'; ctx.font='12px Vazirmatn'; ctx.fillText('هنوز ترافیکی ثبت نشده — اولین درخواست را بزن!', 16, H/2); return; }
-  const maxR = Math.max(...hourly.map(h=>h.requests), 1);
-  const maxT = Math.max(...hourly.map(h=>h.tokens_in+h.tokens_out), 1);
-  const n = hourly.length, bw = W/n;
-  // bars: requests
+function drawChart(hourly){
+  const c=$('chart');const dpr=window.devicePixelRatio||1;
+  const W=c.clientWidth||600,H=150;c.width=W*dpr;c.height=H*dpr;
+  const x=c.getContext('2d');x.scale(dpr,dpr);x.clearRect(0,0,W,H);
+  if(!hourly.length){x.fillStyle='#6d6a85';x.font='12px Vazirmatn';x.textAlign='center';x.fillText('هنوز درخواستی ثبت نشده',W/2,H/2);return}
+  const max=Math.max(1,...hourly.map(h=>h.Requests));
+  const bw=W/hourly.length;
   hourly.forEach((h,i)=>{
-    const bh = (h.requests/maxR)*(H-40);
-    ctx.fillStyle='rgba(79,140,255,.65)';
-    ctx.fillRect(i*bw+2, H-24-bh, bw-4, bh);
+    const bh=(h.Requests/max)*(H-30);
+    const g=x.createLinearGradient(0,H-bh,0,H);g.addColorStop(0,'rgba(124,92,255,.95)');g.addColorStop(1,'rgba(34,211,238,.35)');
+    x.fillStyle=h.Errors>h.Requests?'rgba(248,113,113,.75)':g;
+    x.beginPath();x.roundRect(i*bw+1,H-bh-8,Math.max(bw-2,2),bh+0,3);x.fill();
   });
-  // line: tokens
-  ctx.beginPath(); ctx.strokeStyle='#7c5cff'; ctx.lineWidth=1.6;
-  hourly.forEach((h,i)=>{
-    const x = i*bw+bw/2, y = H-24-((h.tokens_in+h.tokens_out)/maxT)*(H-40);
-    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  x.fillStyle='#6d6a85';x.font='10px JetBrains Mono';x.textAlign='left';
+  x.fillText('peak '+max+'/h',4,11);
+}
+</script>
+<script>
+/* ============ providers ============ */
+function preset(name,url){$('cp-name').value=name;$('cp-url').value=url;$('cp-models').value='';toast('پری‌ست '+name+' لود شد — کلید را بگذار و ثبت کن')}
+async function addCustom(){
+  const models=$('cp-models').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const r=await api('/admin/api/providers',{method:'POST',body:JSON.stringify({
+    name:$('cp-name').value,base_url:$('cp-url').value,api_key:$('cp-key').value,models,enabled:true})});
+  if(r.ok){toast('پروایدر افزوده شد');loadAll(true)}else toast('خطا در افزودن',true);
+}
+async function delCustom(name){
+  await api('/admin/api/providers?name='+encodeURIComponent(name),{method:'DELETE'});
+  toast('حذف شد');loadAll(true);
+}
+async function addAlias(){
+  const p=$('al-prov').value,from=$('al-from').value.trim(),to=$('al-to').value.trim();
+  if(!from||!to){toast('هر دو فیلد لازم است',true);return}
+  // merge with existing map from custom_raw / current aliases
+  let map={};
+  (overview.custom_raw||[]).forEach(c=>{if(c.Name===p)map=c.ModelMap||{}});
+  (overview.providers||[]).forEach(pp=>{if((pp.Kind==='bridge')&&(pp.ID===p)&&pp.Aliases)map=pp.Aliases});
+  map[from]=to;
+  const r=await api('/admin/api/aliases',{method:'POST',body:JSON.stringify({provider:p,map})});
+  if(r.ok){toast('Alias ثبت شد: '+from+' → '+to);loadAll(true)}else toast('خطا',true);
+}
+
+/* ============ keys ============ */
+async function loadKeys(){
+  try{const r=await api('/admin/api/keys');const d=await r.json();renderKeys(d.keys||[])}catch(e){}
+}
+function renderKeys(keys){
+  const tb=$('t-keys').querySelector('tbody');tb.innerHTML='';
+  keys.forEach(k=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><b>'+k.Name+'</b></td><td class="mono small">'+k.Key.slice(0,14)+'…</td>'+
+      '<td>'+fmt(k.Requests)+(k.MaxRequests?'/'+fmt(k.MaxRequests):'')+'</td>'+
+      '<td class="dim mono small">'+fmt(k.TokensIn)+'/'+fmt(k.TokensOut)+'</td>'+
+      '<td>'+(k.Enabled?'<span class="tag g">فعال</span>':'<span class="tag r">خاموش</span>')+'</td>'+
+      '<td class="row"><button class="btn sm" onclick="copyTxt(\''+k.Key+'\')">کپی</button>'+
+      '<button class="btn sm" onclick="toggleKey(\''+k.Key+'\','+(!k.Enabled)+')">'+(k.Enabled?'خاموش':'روشن')+'</button>'+
+      '<button class="btn sm danger" onclick="delKey(\''+k.Key+'\')">حذف</button></td>';
+    tb.appendChild(tr);
   });
-  ctx.stroke();
-  // axis labels
-  ctx.fillStyle='#8b98b4'; ctx.font='10px Consolas';
-  const first = new Date(hourly[0].hour*1000), last = new Date(hourly[hourly.length-1].hour*1000);
-  ctx.fillText(first.toLocaleDateString('fa-IR',{month:'2-digit',day:'2-digit',hour:'2-digit'})+'', 4, H-8);
-  ctx.fillText(last.toLocaleDateString('fa-IR',{month:'2-digit',day:'2-digit',hour:'2-digit'})+'', W-70, H-8);
-  ctx.fillText('↕ '+fmtN(maxR)+' req', 4, 12); ctx.fillText('─ '+fmtTok(maxT)+' tok', W-90, 12);
 }
+async function addKey(){
+  const allow=$('ky-allow').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const r=await api('/admin/api/keys',{method:'POST',body:JSON.stringify({
+    name:$('ky-name').value||'key',max_requests:Number($('ky-max').value)||0,allowed_models:allow})});
+  const d=await r.json();
+  if(d.key){$('ky-new').innerHTML='<span class="tag v">کلید جدید (فقط یک‌بار نشان داده می‌شود):</span> <code class="mono">'+d.key.Key+'</code> <button class="btn sm" onclick="copyTxt(\''+d.key.Key+'\')">کپی</button>';
+    toast('کلید ساخته شد');loadKeys()}
+}
+async function toggleKey(key,en){await api('/admin/api/keys/toggle',{method:'POST',body:JSON.stringify({key,enabled:en})});loadKeys()}
+async function delKey(key){await api('/admin/api/keys?key='+encodeURIComponent(key),{method:'DELETE'});toast('حذف شد');loadKeys()}
+function copyTxt(t){navigator.clipboard.writeText(t).then(()=>toast('کپی شد'))}
 
-// ── models ──────────────────────────────────────────────────────────────────
-function renderModels(){
-  const f = (document.getElementById('model-filter')?.value||'').toLowerCase();
-  const rows = CATALOG.filter(m => !f || m.id.toLowerCase().includes(f) || String(m.owned_by).toLowerCase().includes(f));
-  document.getElementById('model-count').textContent = CATALOG.length + ' مدل';
-  document.getElementById('models-tbl').innerHTML =
-    '<tr><th>مدل</th><th>ارائه‌دهنده</th><th>نوع</th></tr>' +
-    rows.map(m => `<tr>
-      <td class="mono">${esc(m.id)}</td>
-      <td><span class="badge ${String(m.owned_by).startsWith('custom')?'custom':''}">${esc(m.owned_by)}</span></td>
-      <td class="muted">${m.alias_for ? 'نگاشت → <span class="mono">'+esc(m.alias_for)+'</span>' : 'اصلی'}</td>
-    </tr>`).join('') || '<tr><td colspan="3" class="muted">موردی یافت نشد</td></tr>';
-}
-async function refreshModels(){
-  OV = await api('/admin/api/overview?refresh=1');
-  const cat = await api('/admin/api/models'); CATALOG = cat.data||[];
-  renderKPIs(); renderProviders(); renderModels(); pgFillModels();
-}
-
-// ── keys ────────────────────────────────────────────────────────────────────
-async function createKey(){
-  const body = {
-    name: document.getElementById('nk-name').value || 'key',
-    max_requests: parseInt(document.getElementById('nk-max').value)||0,
-    allowed_models: document.getElementById('nk-models').value.split(',').map(s=>s.trim()).filter(Boolean),
-  };
-  const r = await api('/admin/api/keys',{method:'POST',body:JSON.stringify(body)});
-  if(r.key){
-    document.getElementById('newkey-out').innerHTML =
-      `<div class="kbox" onclick="copyCode(this)">${esc(r.key.key)}<span class="copy">کلیک=کپی</span></div>
-       <div class="muted">این کلید فقط همین یک بار نمایش داده می‌شود — کپی کن!</div>`;
-  }
-  loadAll();
-}
-function renderKeys(){
-  document.getElementById('keys-tbl').innerHTML =
-    '<tr><th>نام</th><th>کلید</th><th>درخواست/سقف</th><th>توکن (ورود/خروج)</th><th>محدودیت</th><th>آخرین مصرف</th><th></th></tr>' +
-    (OV.keys||[]).map(k => `<tr>
-      <td>${esc(k.name)} ${k.enabled?'<span class="tag ok">فعال</span>':'<span class="tag err">خاموش</span>'}</td>
-      <td class="mono">${esc(k.key.slice(0,14))}…</td>
-      <td class="mono">${fmtN(k.requests)}${k.max_requests? ' / '+fmtN(k.max_requests):''}</td>
-      <td class="mono">${fmtTok(k.tokens_in)} / ${fmtTok(k.tokens_out)}</td>
-      <td class="muted">${(k.allowed_models||[]).map(m=>'<span class="tag">'+esc(m)+'</span>').join(' ')||'—'}</td>
-      <td class="muted">${k.last_used_at? timeStr(k.last_used_at):'—'}</td>
-      <td style="white-space:nowrap">
-        <button class="sm" onclick="toggleKey('${esc(k.key)}', ${!k.enabled})">${k.enabled?'خاموش':'روشن'}</button>
-        <button class="sm danger" onclick="delKey('${esc(k.key)}')">حذف</button>
-      </td></tr>`).join('');
-}
-const toggleKey = (k,e) => api('/admin/api/keys/toggle',{method:'POST',body:JSON.stringify({key:k,enabled:e})}).then(loadAll);
-const delKey = k => confirm('این کلید حذف شود؟') && api('/admin/api/keys?key='+encodeURIComponent(k),{method:'DELETE'}).then(loadAll);
-const toggleProvider = (n,e) => api('/admin/api/providers/toggle',{method:'POST',body:JSON.stringify({name:n,enabled:e})}).then(loadAll);
-const delProvider = n => confirm('پروایدر «'+n+'» حذف شود؟') && api('/admin/api/providers?name='+encodeURIComponent(n),{method:'DELETE'}).then(loadAll);
-
-// ── custom provider form ────────────────────────────────────────────────────
-const PRESETS = {
-  'gemini-aistudio': {name:'gemini-aistudio', url:'https://generativelanguage.googleapis.com/v1beta/openai', hint:'کلید از aistudio.google.com — مدل‌ها: gemini-2.5-flash …'},
-  'openrouter': {name:'openrouter', url:'https://openrouter.ai/api/v1', hint:'کلید از openrouter.ai/keys'},
-  'groq': {name:'groq', url:'https://api.groq.com/openai/v1', hint:'کلید از console.groq.com'},
-  'ollama': {name:'ollama', url:'http://localhost:11434/v1', hint:'بدون کلید — Ollama محلی'},
-  'lmstudio': {name:'lmstudio', url:'http://localhost:1234/v1', hint:'بدون کلید — LM Studio محلی'},
-};
-function preset(k){
-  const p = PRESETS[k];
-  document.getElementById('cp-name').value = p.name;
-  document.getElementById('cp-url').value = p.url;
-  document.getElementById('cp-msg').textContent = p.hint;
-}
-function addAliasRow(pub, up){
-  const d = document.createElement('div');
-  d.className='alias-row';
-  d.innerHTML = `<input class="a-pub" dir="ltr" placeholder="نام عمومی (gpt-4o)" value="${esc(pub)}">
-    <span class="arrow">→</span>
-    <input class="a-up" dir="ltr" placeholder="مدل واقعی آپستریم" value="${esc(up)}">
-    <button class="sm danger" onclick="this.parentNode.remove()">×</button>`;
-  (document.getElementById('alias-rows') || document.getElementById('b-alias-rows')).appendChild(d);
-}
-function collectAliases(container){
-  const m = {};
-  document.querySelectorAll('#'+container+' .alias-row').forEach(r=>{
-    const p = r.querySelector('.a-pub').value.trim(), u = r.querySelector('.a-up').value.trim();
-    if(p && u) m[p]=u;
-  });
-  return m;
-}
-async function saveProvider(){
-  const name = document.getElementById('cp-name').value.trim().toLowerCase();
-  const body = {
-    name, base_url: document.getElementById('cp-url').value.trim(),
-    api_key: document.getElementById('cp-key').value.trim(),
-    models: document.getElementById('cp-models').value.split(',').map(s=>s.trim()).filter(Boolean),
-    model_map: collectAliases('alias-rows'),
-  };
-  if(!name || !body.base_url){ document.getElementById('cp-msg').textContent='نام و آدرس الزامی است'; return; }
-  const r = await api('/admin/api/providers',{method:'POST',body:JSON.stringify(body)});
-  document.getElementById('cp-msg').textContent = r.ok ? '✅ ذخیره شد' : ('❌ '+(r.error||'خطا'));
-  loadAll();
-}
-function editProvider(rawJson){
-  const p = JSON.parse(rawJson);
-  document.getElementById('cp-name').value = p.name;
-  document.getElementById('cp-url').value = p.base_url;
-  document.getElementById('cp-key').value = p.api_key || '';
-  document.getElementById('cp-models').value = (p.models||[]).join(', ');
-  document.getElementById('alias-rows').innerHTML='';
-  (p.model_map? Object.entries(p.model_map):[]).forEach(([a,b])=>addAliasRow(a,b));
-  showTab('providers');
-  document.getElementById('cp-msg').textContent='ویرایش «'+p.name+'» — دکمه ذخیره را بزن';
-}
-
-// ── bridge aliases ──────────────────────────────────────────────────────────
-async function loadBridgeAliases(){
-  const prov = document.getElementById('ba-prov').value;
-  document.getElementById('b-alias-rows').innerHTML='';
-  const r = await api('/admin/api/aliases');
-  const m = (r.aliases||{})[prov] || {};
-  Object.entries(m).forEach(([a,b])=>addBAliasRow(a,b));
-}
-function addBAliasRow(pub, up){
-  const d = document.createElement('div');
-  d.className='alias-row';
-  d.innerHTML = `<input class="a-pub" dir="ltr" placeholder="نام عمومی" value="${esc(pub)}">
-    <span class="arrow">→</span>
-    <input class="a-up" dir="ltr" placeholder="مدل واقعی" value="${esc(up)}">
-    <button class="sm danger" onclick="this.parentNode.remove()">×</button>`;
-  document.getElementById('b-alias-rows').appendChild(d);
-}
-async function saveBridgeAliases(){
-  const prov = document.getElementById('ba-prov').value;
-  const r = await api('/admin/api/aliases',{method:'POST',body:JSON.stringify({provider:prov, map:collectAliases('b-alias-rows')})});
-  document.getElementById('cp-msg').textContent = r.ok ? '✅ نگاشت '+prov+' ذخیره شد' : '❌ '+ (r.error||'خطا');
-  loadAll();
-}
-
-// ── logs ────────────────────────────────────────────────────────────────────
-function renderLogs(){
-  const rows = (OV?.logs||[]);
-  document.getElementById('logs-tbl').innerHTML =
-    '<tr><th>زمان</th><th>مدل</th><th>پروایدر</th><th>وضعیت</th><th>تأخیر</th><th>توکن</th><th>کلید</th><th>خطا</th></tr>' +
-    rows.map(l => `<tr>
-      <td class="muted mono">${timeStr(l.time)}</td>
-      <td class="mono">${esc(l.model)}</td>
-      <td><span class="badge ${String(l.provider).startsWith('custom')?'custom':''}">${esc(l.provider)}</span></td>
-      <td>${l.status===200?'<span class="tag ok">200</span>':'<span class="tag err">'+esc(l.status||'—')+'</span>'}${l.stream?' <span class="tag">SSE</span>':''}</td>
-      <td class="mono">${fmtN(l.latency_ms)}ms</td>
-      <td class="mono">${l.tokens_in||l.tokens_out? fmtTok(l.tokens_in)+'/'+fmtTok(l.tokens_out):'—'}</td>
-      <td class="muted">${esc(l.key? l.key.slice(0,10)+'…':'—')}</td>
-      <td class="muted" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(l.err||'')}">${esc((l.err||'').slice(0,60))}</td>
-    </tr>`).join('') || '<tr><td colspan="8" class="muted">لاگی نیست</td></tr>';
-}
-function startLogAuto(){
-  stopLogAuto();
-  document.getElementById('logauto').textContent='⏸ توقف به‌روزرسانی';
-  logTimer = setInterval(async ()=>{
-    if(document.getElementById('tab-logs').classList.contains('hidden')) return;
-    OV = await api('/admin/api/overview'); renderLogs(); renderKPIs(); drawChart();
-  }, 4000);
-}
-function toggleLogAuto(){ if(logTimer){ stopLogAuto(); } else startLogAuto(); }
-function stopLogAuto(){ if(logTimer){ clearInterval(logTimer); logTimer=null; document.getElementById('logauto').textContent='▶ به‌روزرسانی زنده'; } }
-
-// ── playground ──────────────────────────────────────────────────────────────
-function pgFillModels(){
-  const sel = document.getElementById('pg-model');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="auto">auto (زنجیره هوشمند)</option>' +
-    CATALOG.map(m=>`<option value="${esc(m.id)}">${esc(m.id)} — ${esc(m.owned_by)}</option>`).join('');
-  if(cur) sel.value = cur;
-}
-async function pgSend(){
-  const btn = document.getElementById('pg-send');
-  const out = document.getElementById('pg-out');
-  const stats = document.getElementById('pg-stats');
-  const model = document.getElementById('pg-model').value;
-  const sys = document.getElementById('pg-sys').value.trim();
-  const msg = document.getElementById('pg-msg').value.trim();
-  if(!msg){ return; }
-  const stream = document.getElementById('pg-stream').checked;
-  const temp = parseFloat(document.getElementById('pg-temp').value);
-  const messages = [];
-  if(sys) messages.push({role:'system', content:sys});
-  messages.push({role:'user', content:msg});
-  btn.disabled = true; btn.textContent='در حال پاسخ…';
-  out.innerHTML=''; stats.textContent='';
-  const t0 = performance.now();
+/* ============ saver ============ */
+async function loadSaver(){
   try{
-    const res = await fetch('/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(OV.keys?.[0]?.key||localStorage.getItem('omni_pgkey')||'')},
-      body: JSON.stringify({model, stream, temperature:temp, messages})
+    const r=await api('/admin/api/saver');const d=await r.json();
+    $('sw-rtk').checked=!!d.rtk;$('pm-sel').value=d.prompt_mode||'off';
+    $('sv-bytes').textContent=fmt(d.saved_bytes);$('sv-calls').textContent=fmt(d.saved_calls);
+  }catch(e){}
+}
+async function setSaver(){
+  const r=await api('/admin/api/saver',{method:'POST',body:JSON.stringify({
+    rtk:$('sw-rtk').checked,prompt_mode:$('pm-sel').value})});
+  if(r.ok){toast('تنظیمات Token Saver ذخیره شد');loadSaver()}
+}
+
+/* ============ combos ============ */
+let combos={};
+async function loadCombos(){
+  try{const r=await api('/admin/api/combos');const d=await r.json();combos=d.combos||{};renderCombos()}catch(e){}
+}
+function renderCombos(){
+  const el=$('combo-list');el.innerHTML='';
+  const names=Object.keys(combos);
+  if(!names.length){el.innerHTML='<div class="empty">هنوز کمبی نیست — یکی بساز 🎯</div>';return}
+  names.forEach(n=>{
+    const d=document.createElement('div');d.className='card';d.style.margin='0';
+    const steps=(combos[n]||[]).map((s,i)=>'<div class="combo-step"><span class="num">'+(i+1)+'</span>'+s+'</div>').join('');
+    d.innerHTML='<div class="row" style="justify-content:space-between"><b class="mono">combo:'+n+'</b>'+
+      '<button class="btn sm danger" onclick="delCombo(\''+n+'\')">حذف</button></div>'+
+      '<div class="combo-chain" style="margin-top:10px">'+steps+'</div>';
+    el.appendChild(d);
+  });
+}
+async function addCombo(){
+  const name=$('cb-name').value.trim(),chain=$('cb-chain').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!name||!chain.length){toast('نام و زنجیره لازم است',true);return}
+  const r=await api('/admin/api/combos',{method:'POST',body:JSON.stringify({name,chain})});
+  if(r.ok){toast('کمبو ساخته شد — model: combo:'+name.toLowerCase().replace(/^combo:/,''));$('cb-name').value='';$('cb-chain').value='';loadCombos()}
+}
+async function delCombo(n){await api('/admin/api/combos?name='+encodeURIComponent(n),{method:'DELETE'});toast('حذف شد');loadCombos()}
+
+/* ============ logs ============ */
+async function loadLogs(){
+  try{
+    const r=await api('/admin/api/logs');const d=await r.json();
+    const tb=$('t-logs').querySelector('tbody');tb.innerHTML='';
+    (d.logs||[]).slice(0,120).forEach(l=>{
+      const tr=document.createElement('tr');
+      const t=new Date(l.Time*1000).toLocaleTimeString('fa-IR');
+      const st=l.Status===200?'<span class="tag g">200</span>':'<span class="tag r">'+l.Status+'</span>';
+      tr.innerHTML='<td class="mono small dim">'+t+'</td><td class="small">'+l.Key+'</td><td class="mono small">'+l.Model+'</td>'+
+        '<td class="mono small">'+l.Provider+'</td><td>'+st+'</td><td class="mono small">'+l.LatencyMS+'ms</td>'+
+        '<td class="mono small dim">'+fmt(l.TokensIn)+'/'+fmt(l.TokensOut)+'</td>'+
+        '<td class="hide-sm">'+(l.Saved?'<span class="tag c">-'+fmt(l.Saved)+'</span>':'—')+'</td>';
+      tb.appendChild(tr);
     });
-    if(!stream || !res.body){
-      const j = await res.json();
-      if(j.error){ out.innerHTML = '<span style="color:var(--err)">'+esc(j.error.message||JSON.stringify(j.error))+'</span>'; }
-      else{
-        out.textContent = j.choices?.[0]?.message?.content || '';
-        const u = j.usage||{};
-        stats.textContent = `مدل: ${j.model||model} · توکن: ${u.prompt_tokens||'—'}/${u.completion_tokens||'—'} · ${(performance.now()-t0).toFixed(0)}ms`;
-      }
-    } else {
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf='', text='', think='';
-      const thinkEl = document.createElement('div'); thinkEl.className='think';
-      const textEl = document.createElement('div');
-      out.appendChild(thinkEl); out.appendChild(textEl);
-      while(true){
-        const {done, value} = await reader.read();
-        if(done) break;
-        buf += dec.decode(value, {stream:true});
-        const parts = buf.split('\n\n'); buf = parts.pop();
-        for(const part of parts){
-          const line = part.split('\n').find(l=>l.startsWith('data:'));
-          if(!line) continue;
-          const data = line.slice(5).trim();
-          if(data === '[DONE]') continue;
-          try{
-            const j = JSON.parse(data);
-            if(j.error){ textEl.textContent += '\n❌ '+(j.error.message||JSON.stringify(j.error)); continue; }
-            const d = j.choices?.[0]?.delta || {};
-            if(d.reasoning_content){ think += d.reasoning_content; thinkEl.textContent = '🧠 '+think; }
-            if(d.content){ text += d.content; textEl.textContent = text; }
-            if(j.usage){ stats.textContent = `مدل: ${j.model||model} · توکن: ${j.usage.prompt_tokens||'—'}/${j.usage.completion_tokens||'—'} · ${(performance.now()-t0).toFixed(0)}ms`; }
-            out.scrollTop = out.scrollHeight;
-          }catch{}
-        }
-      }
-      if(!stats.textContent) stats.textContent = 'زمان: '+(performance.now()-t0).toFixed(0)+'ms';
-    }
-  }catch(e){ out.innerHTML = '<span style="color:var(--err)">❌ '+esc(String(e))+'</span>'; }
-  btn.disabled=false; btn.textContent='ارسال ▶';
+  }catch(e){}
 }
 
-// ── boot ────────────────────────────────────────────────────────────────────
-if(TOKEN){
-  api('/admin/api/overview').then(()=>{ document.getElementById('login').style.display='none'; document.getElementById('app').classList.remove('hidden'); loadAll(); }).catch(()=>showLogin());
-} else showLogin();
-window.addEventListener('resize', ()=>{ if(OV) drawChart(); });
+/* ============ playground ============ */
+let pgCtl=null;
+function pgAbort(){if(pgCtl)pgCtl.abort();pgCtl=null}
+async function pgRun(){
+  pgAbort();pgCtl=new AbortController();
+  const out=$('pg-out');out.innerHTML='';
+  const msgs=[];
+  if($('pg-sys').value.trim())msgs.push({role:'system',content:$('pg-sys').value.trim()});
+  msgs.push({role:'user',content:$('pg-msg').value.trim()||'سلام'});
+  let think=null,text=null;
+  try{
+    const r=await fetch('/v1/chat/completions',{method:'POST',signal:pgCtl.signal,
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+currentKey()},
+      body:JSON.stringify({model:$('pg-model').value||'auto',stream:true,messages:msgs})});
+    if(!r.ok){const e=await r.text();out.innerHTML='<span style="color:var(--rd)">'+e.slice(0,400)+'</span>';return}
+    const rd=r.body.getReader();const dec=new TextDecoder();let buf='';
+    while(true){
+      const{done,value}=await rd.read();if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const parts=buf.split('\n');buf=parts.pop();
+      for(const ln of parts){
+        if(!ln.startsWith('data: '))continue;
+        const d=ln.slice(6).trim();if(d==='[DONE]')continue;
+        let j;try{j=JSON.parse(d)}catch(e){continue}
+        if(j.error){out.innerHTML+='<span style="color:var(--rd)">'+(j.error.message||JSON.stringify(j.error))+'</span>';continue}
+        const dl=j.choices&&j.choices[0]&&j.choices[0].delta;if(!dl)continue;
+        if(dl.reasoning_content||dl.reasoning){
+          if(!think){think=document.createElement('div');think.className='think';out.appendChild(think)}
+          think.textContent+=(dl.reasoning_content||dl.reasoning);
+        }
+        if(dl.content){
+          if(!text){text=document.createElement('div');out.appendChild(text)}
+          text.textContent+=dl.content;
+        }
+        out.scrollTop=out.scrollHeight;
+      }
+    }
+  }catch(e){if(e.name!=='AbortError')out.innerHTML+='<span style="color:var(--rd)">'+e+'</span>'}
+}
+function currentKey(){
+  const ks=(overview&&overview.keys)||[];return ks.length?ks[0].Key:'';
+}
+
+/* ============ boot ============ */
+tryResume();
+setInterval(()=>{if($('app').style.display!=='none'){loadAll();if($('v-lg').classList.contains('on'))loadLogs();if($('v-ky').classList.contains('on'))loadKeys();if($('v-cb').classList.contains('on'))loadCombos();if($('v-sv').classList.contains('on'))loadSaver()}},6000);
 </script>
 </body>
 </html>
