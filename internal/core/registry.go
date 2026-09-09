@@ -16,284 +16,284 @@
 package core
 
 import (
-        "context"
-        "encoding/json"
-        "fmt"
-        "io"
-        "net/http"
-        "os"
-        "sort"
-        "strings"
-        "sync"
-        "time"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"sort"
+	"strings"
+	"sync"
+	"time"
 )
 
 type ProviderKind string
 
 const (
-        KindBridge ProviderKind = "bridge"
-        KindCustom ProviderKind = "custom"
+	KindBridge ProviderKind = "bridge"
+	KindCustom ProviderKind = "custom"
 )
 
 type Provider struct {
-        ID      string       `json:"id"`   // "glm" | "qwen" | "ds" | "gemini" | "custom:<name>"
-        Kind    ProviderKind `json:"kind"`
-        BaseURL string       `json:"base_url"` // internal listener or external root
-        APIKey  string       `json:"-"`        // custom only
-        Label   string       `json:"label"`
-        Enabled bool         `json:"enabled"`
-        Models  []string     `json:"models"`
-        Healthy bool         `json:"healthy"`
-        LastErr string       `json:"last_error,omitempty"`
-        // Aliases: public model name → upstream model id for THIS provider.
-        Aliases map[string]string `json:"aliases,omitempty"`
+	ID      string       `json:"id"` // "glm" | "qwen" | "ds" | "gemini" | "custom:<name>"
+	Kind    ProviderKind `json:"kind"`
+	BaseURL string       `json:"base_url"` // internal listener or external root
+	APIKey  string       `json:"-"`        // custom only
+	Label   string       `json:"label"`
+	Enabled bool         `json:"enabled"`
+	Models  []string     `json:"models"`
+	Healthy bool         `json:"healthy"`
+	LastErr string       `json:"last_error,omitempty"`
+	// Aliases: public model name → upstream model id for THIS provider.
+	Aliases map[string]string `json:"aliases,omitempty"`
 }
 
 type catalogEntry struct {
-        Model    string
-        Upstream string // set when entry is an alias
-        Provider string
+	Model    string
+	Upstream string // set when entry is an alias
+	Provider string
 }
 
 type Registry struct {
-        mu        sync.RWMutex
-        providers []*Provider
-        catalog   map[string]catalogEntry // public id → provider (first enabled wins)
-        catTime   time.Time
-        client    *http.Client
+	mu        sync.RWMutex
+	providers []*Provider
+	catalog   map[string]catalogEntry // public id → provider (first enabled wins)
+	catTime   time.Time
+	client    *http.Client
 
-        coolMu    sync.Mutex
-        coolUntil map[string]int64 // provider id → cooldown expiry (unix)
+	coolMu    sync.Mutex
+	coolUntil map[string]int64 // provider id → cooldown expiry (unix)
 
-        // combos: named failover chains ("combo:my-stack" → ["qwen/qwen3.8-max", …])
-        combos map[string][]string
+	// combos: named failover chains ("combo:my-stack" → ["qwen/qwen3.8-max", …])
+	combos map[string][]string
 }
 
 const catalogTTL = 60 * time.Second
 
 func NewRegistry(internalToken string, customs []CustomProvider) *Registry {
-        r := &Registry{
-                catalog:   map[string]catalogEntry{},
-                client:    &http.Client{Timeout: 15 * time.Second},
-                coolUntil: map[string]int64{},
-                combos:    map[string][]string{},
-        }
-        // Bridge defaults; enablement is decided by the caller per config.
-        r.providers = append(r.providers,
-                &Provider{ID: "qwen", Kind: KindBridge, Label: "Qwen (chat.qwen.ai)", Enabled: true},
-                &Provider{ID: "glm", Kind: KindBridge, Label: "GLM (chat.z.ai)", Enabled: true},
-                &Provider{ID: "ds", Kind: KindBridge, Label: "DeepSeek (chat.deepseek.com)", Enabled: true},
-                &Provider{ID: "gemini", Kind: KindBridge, Label: "Gemini (gemini.google.com)", Enabled: true},
-                &Provider{ID: "oc", Kind: KindBridge, Label: "OpenCode Zen (opencode.ai — FREE, no key)", Enabled: true},
-        )
-        for _, c := range customs {
-                if !c.Enabled {
-                        continue
-                }
-                r.providers = append(r.providers, &Provider{
-                        ID:      "custom:" + c.Name,
-                        Kind:    KindCustom,
-                        BaseURL: strings.TrimRight(c.BaseURL, "/"),
-                        APIKey:  c.APIKey,
-                        Label:   c.Name,
-                        Enabled: true,
-                        Models:  c.Models,
-                        Aliases: c.ModelMap,
-                })
-        }
-        return r
+	r := &Registry{
+		catalog:   map[string]catalogEntry{},
+		client:    &http.Client{Timeout: 15 * time.Second},
+		coolUntil: map[string]int64{},
+		combos:    map[string][]string{},
+	}
+	// Bridge defaults; enablement is decided by the caller per config.
+	r.providers = append(r.providers,
+		&Provider{ID: "qwen", Kind: KindBridge, Label: "Qwen (chat.qwen.ai)", Enabled: true},
+		&Provider{ID: "glm", Kind: KindBridge, Label: "GLM (chat.z.ai)", Enabled: true},
+		&Provider{ID: "ds", Kind: KindBridge, Label: "DeepSeek (chat.deepseek.com)", Enabled: true},
+		&Provider{ID: "gemini", Kind: KindBridge, Label: "Gemini (gemini.google.com)", Enabled: true},
+		&Provider{ID: "oc", Kind: KindBridge, Label: "OpenCode Zen (opencode.ai — FREE, no key)", Enabled: true},
+	)
+	for _, c := range customs {
+		if !c.Enabled {
+			continue
+		}
+		r.providers = append(r.providers, &Provider{
+			ID:      "custom:" + c.Name,
+			Kind:    KindCustom,
+			BaseURL: strings.TrimRight(c.BaseURL, "/"),
+			APIKey:  c.APIKey,
+			Label:   c.Name,
+			Enabled: true,
+			Models:  c.Models,
+			Aliases: c.ModelMap,
+		})
+	}
+	return r
 }
 
 func (r *Registry) Providers() []Provider {
-        r.mu.RLock()
-        defer r.mu.RUnlock()
-        out := make([]Provider, 0, len(r.providers))
-        for _, p := range r.providers {
-                cp := *p
-                cp.APIKey = ""
-                out = append(out, cp)
-        }
-        return out
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	out := make([]Provider, 0, len(r.providers))
+	for _, p := range r.providers {
+		cp := *p
+		cp.APIKey = ""
+		out = append(out, cp)
+	}
+	return out
 }
 
 // SetBridgeURL assigns the internal listener address of an embedded bridge.
 func (r *Registry) SetBridgeURL(id, baseURL string) {
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        for _, p := range r.providers {
-                if p.ID == id {
-                        p.BaseURL = baseURL
-                }
-        }
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for _, p := range r.providers {
+		if p.ID == id {
+			p.BaseURL = baseURL
+		}
+	}
 }
 
 // SetBridgeEnabled marks an embedded bridge enabled/disabled (e.g. no tokens).
 func (r *Registry) SetBridgeEnabled(id string, enabled bool) {
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        for _, p := range r.providers {
-                if p.ID == id {
-                        p.Enabled = enabled
-                }
-        }
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for _, p := range r.providers {
+		if p.ID == id {
+			p.Enabled = enabled
+		}
+	}
 }
 
 // SetAliases installs/updates the public→upstream alias map of a provider
 // (bridge id or custom name) and rebuilds the catalog immediately.
 func (r *Registry) SetAliases(providerID string, m map[string]string) bool {
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        found := false
-        for _, p := range r.providers {
-                pid := p.ID
-                if p.Kind == KindCustom {
-                        pid = strings.TrimPrefix(p.ID, "custom:")
-                }
-                if strings.EqualFold(pid, providerID) {
-                        p.Aliases = m
-                        found = true
-                }
-        }
-        if found {
-                r.rebuildCatalogLocked()
-        }
-        return found
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	found := false
+	for _, p := range r.providers {
+		pid := p.ID
+		if p.Kind == KindCustom {
+			pid = strings.TrimPrefix(p.ID, "custom:")
+		}
+		if strings.EqualFold(pid, providerID) {
+			p.Aliases = m
+			found = true
+		}
+	}
+	if found {
+		r.rebuildCatalogLocked()
+	}
+	return found
 }
 
 // OwnerOf returns the provider id that owns a model id in the catalog
 // (used by per-key allowlist checks).
 func (r *Registry) OwnerOf(model string) string {
-        r.mu.RLock()
-        defer r.mu.RUnlock()
-        if e, ok := r.catalog[model]; ok {
-                return e.Provider
-        }
-        return ""
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	if e, ok := r.catalog[model]; ok {
+		return e.Provider
+	}
+	return ""
 }
 
 // SetCombo installs/updates a named failover chain and rebuilds the catalog.
 func (r *Registry) SetCombo(name string, chain []string) {
-        name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
-        if name == "" {
-                return
-        }
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        r.combos[name] = chain
-        r.rebuildCatalogLocked()
+	name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+	if name == "" {
+		return
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.combos[name] = chain
+	r.rebuildCatalogLocked()
 }
 
 // DeleteCombo removes a named chain; returns false when it did not exist.
 func (r *Registry) DeleteCombo(name string) bool {
-        name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        if _, ok := r.combos[name]; !ok {
-                return false
-        }
-        delete(r.combos, name)
-        r.rebuildCatalogLocked()
-        return true
+	name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, ok := r.combos[name]; !ok {
+		return false
+	}
+	delete(r.combos, name)
+	r.rebuildCatalogLocked()
+	return true
 }
 
 // Combos returns the named chains (dashboard view).
 func (r *Registry) Combos() map[string][]string {
-        r.mu.RLock()
-        defer r.mu.RUnlock()
-        out := make(map[string][]string, len(r.combos))
-        for k, v := range r.combos {
-                out[k] = append([]string(nil), v...)
-        }
-        return out
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	out := make(map[string][]string, len(r.combos))
+	for k, v := range r.combos {
+		out[k] = append([]string(nil), v...)
+	}
+	return out
 }
 
 // Cooldown marks a provider unhealthy for the next `seconds` so failover
 // prefers other candidates.
 func (r *Registry) Cooldown(providerID string, seconds int64) {
-        r.coolMu.Lock()
-        r.coolUntil[providerID] = time.Now().UnixMilli() + seconds*1000
-        r.coolMu.Unlock()
+	r.coolMu.Lock()
+	r.coolUntil[providerID] = time.Now().UnixMilli() + seconds*1000
+	r.coolMu.Unlock()
 }
 
 // Cooling reports whether a provider is currently on cooldown.
 func (r *Registry) Cooling(providerID string) bool {
-        r.coolMu.Lock()
-        defer r.coolMu.Unlock()
-        until, ok := r.coolUntil[providerID]
-        if !ok {
-                return false
-        }
-        if time.Now().UnixMilli() > until {
-                delete(r.coolUntil, providerID)
-                return false
-        }
-        return true
+	r.coolMu.Lock()
+	defer r.coolMu.Unlock()
+	until, ok := r.coolUntil[providerID]
+	if !ok {
+		return false
+	}
+	if time.Now().UnixMilli() > until {
+		delete(r.coolUntil, providerID)
+		return false
+	}
+	return true
 }
 
 // RefreshModels re-fetches /v1/models from every enabled provider.
 func (r *Registry) RefreshModels(ctx context.Context) {
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        for _, p := range r.providers {
-                if !p.Enabled || p.BaseURL == "" {
-                        continue
-                }
-                models, err := fetchModels(ctx, r.client, p)
-                if err != nil {
-                        p.Healthy = false
-                        p.LastErr = err.Error()
-                        if p.Kind == KindBridge && len(p.Models) == 0 {
-                                p.Models = fallbackBridgeModels(p.ID)
-                        }
-                        continue
-                }
-                p.Healthy = true
-                p.LastErr = ""
-                if len(models) > 0 {
-                        p.Models = models
-                }
-        }
-        r.rebuildCatalogLocked()
-        r.catTime = time.Now()
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for _, p := range r.providers {
+		if !p.Enabled || p.BaseURL == "" {
+			continue
+		}
+		models, err := fetchModels(ctx, r.client, p)
+		if err != nil {
+			p.Healthy = false
+			p.LastErr = err.Error()
+			if p.Kind == KindBridge && len(p.Models) == 0 {
+				p.Models = fallbackBridgeModels(p.ID)
+			}
+			continue
+		}
+		p.Healthy = true
+		p.LastErr = ""
+		if len(models) > 0 {
+			p.Models = models
+		}
+	}
+	r.rebuildCatalogLocked()
+	r.catTime = time.Now()
 }
 
 func fetchModels(ctx context.Context, client *http.Client, p *Provider) ([]string, error) {
-        req, err := http.NewRequestWithContext(ctx, "GET", p.BaseURL+"/v1/models", nil)
-        if err != nil {
-                return nil, err
-        }
-        switch {
-        case p.Kind == KindCustom && p.APIKey != "":
-                req.Header.Set("Authorization", "Bearer "+p.APIKey)
-        case p.Kind == KindBridge:
-                // bridges sit behind their own AUTH_TOKEN (shared secret or
-                // the per-bridge default the core mirrors in bridgeAuthHeader)
-                req.Header.Set("Authorization", bridgeModelsAuth(p.ID, internalTokenGlobal))
-        }
-        resp, err := client.Do(req)
-        if err != nil {
-                return nil, err
-        }
-        defer resp.Body.Close()
-        body, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
-        if resp.StatusCode != 200 {
-                return nil, fmt.Errorf("models: HTTP %d", resp.StatusCode)
-        }
-        var parsed struct {
-                Data []struct {
-                        ID string `json:"id"`
-                } `json:"data"`
-        }
-        if err := json.Unmarshal(body, &parsed); err != nil {
-                return nil, err
-        }
-        var out []string
-        for _, m := range parsed.Data {
-                if m.ID != "" {
-                        out = append(out, m.ID)
-                }
-        }
-        return out, nil
+	req, err := http.NewRequestWithContext(ctx, "GET", p.BaseURL+"/v1/models", nil)
+	if err != nil {
+		return nil, err
+	}
+	switch {
+	case p.Kind == KindCustom && p.APIKey != "":
+		req.Header.Set("Authorization", "Bearer "+p.APIKey)
+	case p.Kind == KindBridge:
+		// bridges sit behind their own AUTH_TOKEN (shared secret or
+		// the per-bridge default the core mirrors in bridgeAuthHeader)
+		req.Header.Set("Authorization", bridgeModelsAuth(p.ID, internalTokenGlobal))
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("models: HTTP %d", resp.StatusCode)
+	}
+	var parsed struct {
+		Data []struct {
+			ID string `json:"id"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(body, &parsed); err != nil {
+		return nil, err
+	}
+	var out []string
+	for _, m := range parsed.Data {
+		if m.ID != "" {
+			out = append(out, m.ID)
+		}
+	}
+	return out, nil
 }
 
 // internalTokenGlobal mirrors AUTH_TOKEN ("" when unset) so fetchModels can
@@ -306,274 +306,276 @@ func (r *Registry) SetInternalToken(tok string) { internalTokenGlobal = tok }
 // bridgeModelsAuth returns the Authorization header value for a bridge
 // /v1/models call — identical semantics to bridgeAuthHeader.
 func bridgeModelsAuth(providerID, internalToken string) string {
-        if internalToken != "" {
-                return "Bearer " + internalToken
-        }
-        switch providerID {
-        case "glm":
-                return "Bearer Waguri"
-        case "qwen":
-                return "Bearer qwen"
-        case "ds":
-                return "Bearer deepseek"
-        case "gemini":
-                return "Bearer gemini"
-        case "oc":
-                return "Bearer opencode"
-        }
-        return ""
+	if internalToken != "" {
+		return "Bearer " + internalToken
+	}
+	switch providerID {
+	case "glm":
+		return "Bearer Waguri"
+	case "qwen":
+		return "Bearer qwen"
+	case "ds":
+		return "Bearer deepseek"
+	case "gemini":
+		return "Bearer gemini"
+	case "oc":
+		return "Bearer opencode"
+	}
+	return ""
 }
 
 func fallbackBridgeModels(id string) []string {
-        switch id {
-        case "qwen":
-                return []string{"qwen3.8-max", "qwen3.7-plus"}
-        case "glm":
-                return []string{"glm-5.3", "glm-5.3-flash"}
-        case "ds":
-                return []string{"deepseek-chat", "deepseek-reasoner"}
-        case "gemini":
-                return []string{"gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.1-pro"}
-        case "oc":
-                // free-tier names verified live; the list auto-refreshes anyway
-                return []string{"big-pickle", "nemotron-3-ultra-free", "mimo-v2.5-free"}
-        }
-        return nil
+	switch id {
+	case "qwen":
+		return []string{"qwen3.8-max", "qwen3.7-plus"}
+	case "glm":
+		return []string{"glm-5.3", "glm-5.3-flash"}
+	case "ds":
+		return []string{"deepseek-chat", "deepseek-reasoner"}
+	case "gemini":
+		return []string{"gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.1-pro"}
+	case "oc":
+		// free-tier names verified live; the list auto-refreshes anyway
+		return []string{"big-pickle", "nemotron-3-ultra-free", "mimo-v2.5-free"}
+	}
+	return nil
 }
 
 func (r *Registry) rebuildCatalogLocked() {
-        r.catalog = map[string]catalogEntry{}
-        for _, p := range r.providers {
-                if !p.Enabled {
-                        continue
-                }
-                for _, m := range p.Models {
-                        if _, exists := r.catalog[m]; !exists {
-                                r.catalog[m] = catalogEntry{Model: m, Provider: p.ID}
-                        }
-                }
-                // aliases appear as public model ids owned by this provider
-                for public, upstream := range p.Aliases {
-                        if public == "" || upstream == "" {
-                                continue
-                        }
-                        if _, exists := r.catalog[public]; !exists {
-                                r.catalog[public] = catalogEntry{Model: public, Upstream: upstream, Provider: p.ID}
-                        }
-                }
-        }
-        // named combos surface as public model ids owned by "combo"
-        for name := range r.combos {
-                if _, exists := r.catalog["combo:"+name]; !exists {
-                        r.catalog["combo:"+name] = catalogEntry{Model: "combo:" + name, Provider: "combo"}
-                }
-        }
+	r.catalog = map[string]catalogEntry{}
+	for _, p := range r.providers {
+		if !p.Enabled {
+			continue
+		}
+		for _, m := range p.Models {
+			if _, exists := r.catalog[m]; !exists {
+				r.catalog[m] = catalogEntry{Model: m, Provider: p.ID}
+			}
+		}
+		// aliases appear as public model ids owned by this provider
+		for public, upstream := range p.Aliases {
+			if public == "" || upstream == "" {
+				continue
+			}
+			if _, exists := r.catalog[public]; !exists {
+				r.catalog[public] = catalogEntry{Model: public, Upstream: upstream, Provider: p.ID}
+			}
+		}
+	}
+	// named combos surface as public model ids owned by "combo"
+	for name := range r.combos {
+		if _, exists := r.catalog["combo:"+name]; !exists {
+			r.catalog["combo:"+name] = catalogEntry{Model: "combo:" + name, Provider: "combo"}
+		}
+	}
 }
 
 // Catalog returns the merged model list (sorted) with owning provider ids.
 func (r *Registry) Catalog() ([]map[string]interface{}, bool) {
-        r.mu.RLock()
-        fresh := time.Since(r.catTime) < catalogTTL && len(r.catalog) > 0
-        r.mu.RUnlock()
-        if !fresh {
-                ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-                r.RefreshModels(ctx)
-                cancel()
-        }
-        r.mu.RLock()
-        defer r.mu.RUnlock()
-        ids := make([]string, 0, len(r.catalog))
-        for id := range r.catalog {
-                ids = append(ids, id)
-        }
-        sort.Strings(ids)
-        out := make([]map[string]interface{}, 0, len(ids))
-        for _, id := range ids {
-                e := r.catalog[id]
-                entry := map[string]interface{}{
-                        "id":        id,
-                        "object":    "model",
-                        "created":   time.Now().Unix(),
-                        "owned_by":  e.Provider,
-                }
-                if e.Upstream != "" {
-                        entry["alias_for"] = e.Upstream
-                }
-                out = append(out, entry)
-        }
-        return out, true
+	r.mu.RLock()
+	fresh := time.Since(r.catTime) < catalogTTL && len(r.catalog) > 0
+	r.mu.RUnlock()
+	if !fresh {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		r.RefreshModels(ctx)
+		cancel()
+	}
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	ids := make([]string, 0, len(r.catalog))
+	for id := range r.catalog {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+	out := make([]map[string]interface{}, 0, len(ids))
+	for _, id := range ids {
+		e := r.catalog[id]
+		entry := map[string]interface{}{
+			"id":       id,
+			"object":   "model",
+			"created":  time.Now().Unix(),
+			"owned_by": e.Provider,
+		}
+		if e.Upstream != "" {
+			entry["alias_for"] = e.Upstream
+		}
+		out = append(out, entry)
+	}
+	return out, true
 }
 
 // Resolve maps a client model id to an ordered candidate chain:
-//   "auto"            → AUTO chain (env AUTO_CHAIN or a sane default across
-//                       enabled providers, best-first)
-//   "provider/model"  → exactly that provider (single candidate)
-//   "model"           → catalog owner + (optionally) other providers serving it
+//
+//	"auto"            → AUTO chain (env AUTO_CHAIN or a sane default across
+//	                    enabled providers, best-first)
+//	"provider/model"  → exactly that provider (single candidate)
+//	"model"           → catalog owner + (optionally) other providers serving it
+//
 // Each candidate's Models[0] is the upstream model id to send (alias applied).
 func (r *Registry) Resolve(model string) []*Provider {
-        r.mu.RLock()
-        defer r.mu.RUnlock()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 
-        var pick func(id string) *Provider
-        pick = func(id string) *Provider {
-                for _, p := range r.providers {
-                        if p.ID == id && p.Enabled && p.BaseURL != "" {
-                                return p
-                        }
-                }
-                return nil
-        }
+	var pick func(id string) *Provider
+	pick = func(id string) *Provider {
+		for _, p := range r.providers {
+			if p.ID == id && p.Enabled && p.BaseURL != "" {
+				return p
+			}
+		}
+		return nil
+	}
 
-        aliasOf := func(p *Provider, mid string) string {
-                if p == nil {
-                        return mid
-                }
-                if up, ok := p.Aliases[mid]; ok && up != "" {
-                        return up
-                }
-                return mid
-        }
+	aliasOf := func(p *Provider, mid string) string {
+		if p == nil {
+			return mid
+		}
+		if up, ok := p.Aliases[mid]; ok && up != "" {
+			return up
+		}
+		return mid
+	}
 
-        var chain []*Provider
+	var chain []*Provider
 
-        if model == "" || model == "auto" || model == "omni-auto" {
-                for _, entry := range autoChainIDs(r) {
-                        if i := strings.Index(entry, "/"); i > 0 {
-                                chain = append(chain, r.resolvePrefixLocked(entry[:i], entry[i+1:])...)
-                        }
-                }
-                return chain
-        }
+	if model == "" || model == "auto" || model == "omni-auto" {
+		for _, entry := range autoChainIDs(r) {
+			if i := strings.Index(entry, "/"); i > 0 {
+				chain = append(chain, r.resolvePrefixLocked(entry[:i], entry[i+1:])...)
+			}
+		}
+		return chain
+	}
 
-        // named combos: "combo:my-stack" or "combo/my-stack" → ordered chain
-        if rest, ok := strings.CutPrefix(model, "combo:"); ok {
-                return r.resolveComboLocked(rest)
-        }
-        if rest, ok := strings.CutPrefix(model, "combo/"); ok {
-                return r.resolveComboLocked(rest)
-        }
+	// named combos: "combo:my-stack" or "combo/my-stack" → ordered chain
+	if rest, ok := strings.CutPrefix(model, "combo:"); ok {
+		return r.resolveComboLocked(rest)
+	}
+	if rest, ok := strings.CutPrefix(model, "combo/"); ok {
+		return r.resolveComboLocked(rest)
+	}
 
-        // explicit prefix form: "qwen/qwen3.8-max" or "gemini/gemini-2.5-flash"
-        if i := strings.Index(model, "/"); i > 0 {
-                return r.resolvePrefixLocked(model[:i], model[i+1:])
-        }
+	// explicit prefix form: "qwen/qwen3.8-max" or "gemini/gemini-2.5-flash"
+	if i := strings.Index(model, "/"); i > 0 {
+		return r.resolvePrefixLocked(model[:i], model[i+1:])
+	}
 
-        // plain model id → catalog owner first, then any other provider listing it
-        if e, ok := r.catalog[model]; ok {
-                if p := pick(e.Provider); p != nil {
-                        up := model
-                        if e.Upstream != "" {
-                                up = e.Upstream
-                        } else {
-                                up = aliasOf(p, model)
-                        }
-                        cp := *p
-                        cp.Models = []string{up}
-                        chain = append(chain, &cp)
-                }
-        }
-        for _, p := range r.providers {
-                if !p.Enabled || p.BaseURL == "" {
-                        continue
-                }
-                if len(chain) > 0 && p.ID == chain[0].ID {
-                        continue
-                }
-                up := aliasOf(p, model)
-                for _, m := range p.Models {
-                        if m == up || m == model {
-                                cp := *p
-                                cp.Models = []string{up}
-                                chain = append(chain, &cp)
-                                break
-                        }
-                }
-        }
-        return chain
+	// plain model id → catalog owner first, then any other provider listing it
+	if e, ok := r.catalog[model]; ok {
+		if p := pick(e.Provider); p != nil {
+			up := model
+			if e.Upstream != "" {
+				up = e.Upstream
+			} else {
+				up = aliasOf(p, model)
+			}
+			cp := *p
+			cp.Models = []string{up}
+			chain = append(chain, &cp)
+		}
+	}
+	for _, p := range r.providers {
+		if !p.Enabled || p.BaseURL == "" {
+			continue
+		}
+		if len(chain) > 0 && p.ID == chain[0].ID {
+			continue
+		}
+		up := aliasOf(p, model)
+		for _, m := range p.Models {
+			if m == up || m == model {
+				cp := *p
+				cp.Models = []string{up}
+				chain = append(chain, &cp)
+				break
+			}
+		}
+	}
+	return chain
 }
 
 // resolveComboLocked expands a named combo into its ordered candidate chain.
 // Unknown entries are skipped so a dead provider never poisons the combo.
 func (r *Registry) resolveComboLocked(name string) []*Provider {
-        name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
-        chainSpecs, ok := r.combos[name]
-        if !ok {
-                return nil
-        }
-        var chain []*Provider
-        for _, spec := range chainSpecs {
-                spec = strings.TrimSpace(spec)
-                if i := strings.Index(spec, "/"); i > 0 {
-                        chain = append(chain, r.resolvePrefixLocked(spec[:i], spec[i+1:])...)
-                }
-        }
-        return chain
+	name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+	chainSpecs, ok := r.combos[name]
+	if !ok {
+		return nil
+	}
+	var chain []*Provider
+	for _, spec := range chainSpecs {
+		spec = strings.TrimSpace(spec)
+		if i := strings.Index(spec, "/"); i > 0 {
+			chain = append(chain, r.resolvePrefixLocked(spec[:i], spec[i+1:])...)
+		}
+	}
+	return chain
 }
 
 // resolvePrefixLocked resolves "provider/model" — bridges by id ("qwen",
 // "glm", "ds", "gemini") and custom providers by their slug ("gemini", …).
 // Public aliases are translated to the upstream model id.
 func (r *Registry) resolvePrefixLocked(pid, mid string) []*Provider {
-        if mid == "" {
-                return nil
-        }
-        var p *Provider
-        for _, q := range r.providers {
-                if !q.Enabled || q.BaseURL == "" {
-                        continue
-                }
-                if q.ID == pid || (q.Kind == KindCustom && strings.EqualFold(strings.TrimPrefix(q.ID, "custom:"), pid)) {
-                        p = q
-                        break
-                }
-        }
-        if p == nil {
-                return nil
-        }
-        up := mid
-        if up2, ok := p.Aliases[mid]; ok && up2 != "" {
-                up = up2
-        }
-        cp := *p
-        cp.Models = []string{up}
-        return []*Provider{&cp}
+	if mid == "" {
+		return nil
+	}
+	var p *Provider
+	for _, q := range r.providers {
+		if !q.Enabled || q.BaseURL == "" {
+			continue
+		}
+		if q.ID == pid || (q.Kind == KindCustom && strings.EqualFold(strings.TrimPrefix(q.ID, "custom:"), pid)) {
+			p = q
+			break
+		}
+	}
+	if p == nil {
+		return nil
+	}
+	up := mid
+	if up2, ok := p.Aliases[mid]; ok && up2 != "" {
+		up = up2
+	}
+	cp := *p
+	cp.Models = []string{up}
+	return []*Provider{&cp}
 }
 
 // autoChainIDs builds the "auto" failover order: AUTO_CHAIN env when set,
 // else the strongest model of every enabled bridge, best-first.
 func autoChainIDs(r *Registry) []string {
-        if env := strings.TrimSpace(os.Getenv("AUTO_CHAIN")); env != "" {
-                var out []string
-                for _, part := range strings.Split(env, ",") {
-                        if p := strings.TrimSpace(part); p != "" {
-                                out = append(out, p)
-                        }
-                }
-                return out
-        }
-        preferred := []struct{ id, model string }{
-                {"qwen", "qwen3.8-max"},
-                {"ds", "deepseek-chat"},
-                {"gemini", "gemini-3.6-flash"},
-                {"glm", "glm-5.3"},
-                {"oc", "big-pickle"}, // free emergency tier, 9router parity
-        }
-        var out []string
-        for _, pf := range preferred {
-                for _, p := range r.providers {
-                        if p.ID == pf.id && p.Enabled && p.BaseURL != "" {
-                                // use the provider's real strongest model if listed
-                                chosen := pf.model
-                                for _, m := range p.Models {
-                                        if m == pf.model {
-                                                chosen = m
-                                                break
-                                        }
-                                }
-                                out = append(out, p.ID+"/"+chosen)
-                                break
-                        }
-                }
-        }
-        return out
+	if env := strings.TrimSpace(os.Getenv("AUTO_CHAIN")); env != "" {
+		var out []string
+		for _, part := range strings.Split(env, ",") {
+			if p := strings.TrimSpace(part); p != "" {
+				out = append(out, p)
+			}
+		}
+		return out
+	}
+	preferred := []struct{ id, model string }{
+		{"qwen", "qwen3.8-max"},
+		{"ds", "deepseek-chat"},
+		{"gemini", "gemini-3.6-flash"},
+		{"glm", "glm-5.3"},
+		{"oc", "big-pickle"}, // free emergency tier, 9router parity
+	}
+	var out []string
+	for _, pf := range preferred {
+		for _, p := range r.providers {
+			if p.ID == pf.id && p.Enabled && p.BaseURL != "" {
+				// use the provider's real strongest model if listed
+				chosen := pf.model
+				for _, m := range p.Models {
+					if m == pf.model {
+						chosen = m
+						break
+					}
+				}
+				out = append(out, p.ID+"/"+chosen)
+				break
+			}
+		}
+	}
+	return out
 }

@@ -47,6 +47,17 @@ code,.mono{font-family:var(--mono);font-size:.86em;direction:ltr;unicode-bidi:em
 #login button:hover{filter:brightness(1.12)}
 #login .err{color:var(--rd);font-size:12.5px;margin-top:10px;min-height:18px}
 
+/* ---------- connections (9router-style) ---------- */
+.cx-hero{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(124,92,255,.09),rgba(34,211,238,.05)),var(--panel)}
+.cx-flow{display:flex;flex-direction:column;gap:7px;min-width:min(420px,100%);font-size:11px;color:var(--mut);direction:ltr;text-align:left}
+.cx-flow > div{display:flex;align-items:center;gap:9px;background:var(--bg2);border:1px solid var(--bord);border-radius:8px;padding:7px 11px}
+.cx-n{width:19px;height:19px;border-radius:50%;background:linear-gradient(135deg,var(--vio),var(--cy));color:#0b0e1e;font-weight:800;font-size:10px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.cl-avatar{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--vio),var(--cy));color:#0b0e1e;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cl-avatar.sm{width:32px;height:32px;border-radius:9px;font-size:13.5px}
+.cx-req{background:var(--bg2);border:1px solid var(--bord2);border-radius:12px;padding:14px}
+.cx-code{font-size:19px;font-weight:800;letter-spacing:3px;text-align:center;direction:ltr;color:var(--cy);background:var(--bg);border:1px dashed rgba(34,211,238,.4);border-radius:9px;padding:7px 4px}
+.nav-badge{display:inline-block;min-width:17px;height:17px;border-radius:99px;background:linear-gradient(135deg,var(--vio),var(--cy));color:#0b0e1e;font-size:10px;font-weight:800;text-align:center;line-height:17px;padding:0 4px;margin-right:2px}
+
 /* ---------- shell ---------- */
 #app{display:none;position:relative;z-index:1;min-height:100vh}
 .shell{display:flex;min-height:100vh}
@@ -163,10 +174,11 @@ label.f{display:block;font-size:11.5px;color:var(--mut);margin:10px 0 5px;font-w
   <aside class="side" id="side">
     <div class="brand">
       <div class="t">🌐 <b>OmniRouter</b></div>
-      <div class="v" id="ver">v1.2.0</div>
+      <div class="v" id="ver">v1.3.0</div>
     </div>
     <nav class="nav" id="nav">
       <button data-v="ov" class="on"><span class="ic">◈</span>نمای کلی</button>
+      <button data-v="cx"><span class="ic">⇋</span>اتصالات <span class="nav-badge" id="cx-badge" style="display:none">0</span></button>
       <button data-v="pr"><span class="ic">⬡</span>پروایدرها</button>
       <button data-v="sv"><span class="ic">🚀</span>Token Saver</button>
       <button data-v="cb"><span class="ic">🎯</span>کمبوها</button>
@@ -210,6 +222,44 @@ label.f{display:block;font-size:11.5px;color:var(--mut);margin:10px 0 5px;font-w
           <h3>⬡ پروایدرها</h3>
           <table id="t-prov"><thead><tr><th>پروایدر</th><th>وضعیت</th><th>مدل‌ها</th></tr></thead><tbody></tbody></table>
         </div>
+      </div>
+    </section>
+
+    <!-- ─── CONNECTIONS (OAuth) ─── -->
+    <section class="view" id="v-cx">
+      <div class="card cx-hero">
+        <div>
+          <h3>⇋ اتصال بدون کلید — Device Flow</h3>
+          <p class="dim small" style="max-width:640px">ابزارها (Cline، Kilo Code، Hermes، Copilot و هر کلاینت OpenAI/Anthropic) با استاندارد RFC 8628 وصل می‌شوند: کد می‌گیرند، اینجا تأیید می‌کنید و کلید مجازی اختصاصی خودکار ساخته می‌شود.</p>
+        </div>
+        <div class="cx-flow mono">
+          <div><span class="cx-n">1</span>curl -X POST localhost:8080/oauth/device/start -d '{"client":"cline"}'</div>
+          <div><span class="cx-n">2</span>← user_code ← باز کن /oauth/authorize</div>
+          <div><span class="cx-n">3</span>curl -X POST localhost:8080/oauth/device/poll → access_token</div>
+        </div>
+      </div>
+
+      <div class="card" id="cx-pending-card" style="display:none">
+        <h3>🔔 درخواست‌های در انتظار تأیید</h3>
+        <div id="cx-pending" class="grid g3"></div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:6px">
+          <h3 style="margin:0">🔗 کلاینت‌های متصل</h3>
+          <button class="btn sm" onclick="loadConnections()">⟳</button>
+        </div>
+        <table id="t-conn">
+          <thead><tr><th>کلاینت</th><th class="hide-sm">کلید مجازی</th><th>درخواست</th><th class="hide-sm">توکن</th><th>وضعیت</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div id="cx-empty" class="empty">هنوز هیچ کلاینتی متصل نشده — از ترمینال /oauth/device/start را صدا بزن یا از سایت، راهنمای هر ابزار را ببین.</div>
+      </div>
+
+      <div class="grid g3">
+        <div class="card"><h3>✦ Cline</h3><p class="dim small">در تنظیمات، API Provider را روی OpenAI Compatible بگذار؛ یا با دستگاه: client:"cline". حالت Anthropic هم با همان کلید روی /v1/messages کار می‌کند.</p></div>
+        <div class="card"><h3>✦ Kilo Code</h3><p class="dim small">پروفایل‌های Architect/Code/Debug هر کدام می‌توانند یک اتصال جدا بگیرند — برای هر پروفایل یک کلید مجازی با سقف مستقل.</p></div>
+        <div class="card"><h3>✦ GitHub Copilot / Hermes</h3><p class="dim small">Copilot به‌عنوان کلاینت روتر (client:"copilot") و Hermes با client:"hermes" — tool-calling کامل مثل 9router.</p></div>
       </div>
     </section>
 
@@ -386,14 +436,64 @@ async function doLogin(){
 async function tryResume(){try{const r=await api('/admin/api/overview');if(r.ok){showApp();loadAll()}}catch(e){}}
 
 /* ============ nav ============ */
-const titles={ov:'نمای کلی',pr:'پروایدرها',sv:'Token Saver',cb:'کمبوها',ky:'کلیدهای API',pg:'پلی‌گراند',lg:'لاگ زنده'};
+const titles={ov:'نمای کلی',cx:'اتصالات OAuth',pr:'پروایدرها',sv:'Token Saver',cb:'کمبوها',ky:'کلیدهای API',pg:'پلی‌گراند',lg:'لاگ زنده'};
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));$('v-'+b.dataset.v).classList.add('on');
   $('vtitle').textContent=titles[b.dataset.v];
   $('side').classList.remove('open');
-  if(b.dataset.v==='sv')loadSaver();if(b.dataset.v==='cb')loadCombos();if(b.dataset.v==='ky')loadKeys();
+  if(b.dataset.v==='cx')loadConnections();if(b.dataset.v==='sv')loadSaver();if(b.dataset.v==='cb')loadCombos();if(b.dataset.v==='ky')loadKeys();
 });
+
+/* ============ connections (OAuth device flow) ============ */
+const CLIENT_LABELS={cline:'Cline',kilo:'Kilo Code',hermes:'Hermes Agent','claude-code':'Claude Code',codex:'Codex CLI',cursor:'Cursor',roo:'Roo Code',continue:'Continue',droid:'Factory Droid',opencode:'OpenCode',openclaw:'OpenClaw',copilot:'GitHub Copilot',custom:'Custom Agent'};
+function clientLabel(c){return CLIENT_LABELS[c]||c||'Unknown'}
+function clientInitial(c){const l=clientLabel(c);for(const ch of l){if(ch!==' ')return ch.toUpperCase()}return '?'}
+async function loadConnections(){
+  try{
+    const r=await api('/admin/api/connections');if(!r.ok)return;const d=await r.json();
+    renderPending(d.pending||[]);renderConns(d.connections||[]);
+  }catch(e){}
+}
+function renderPending(list){
+  const card=$('cx-pending-card'),box=$('cx-pending');
+  const badge=$('cx-badge');
+  if(badge){if(list.length){badge.style.display='inline-block';badge.textContent=list.length}else badge.style.display='none'}
+  if(!list.length){card.style.display='none';return}
+  card.style.display='block';box.innerHTML='';
+  list.forEach(g=>{
+    const d=document.createElement('div');d.className='cx-req';
+    d.innerHTML='<div class="row" style="justify-content:space-between"><div class="cl-avatar sm">'+clientInitial(g.client)+'</div><b>'+clientLabel(g.client)+'</b></div>'+
+      '<div class="mono cx-code" style="margin:10px 0">'+g.user_code+'</div>'+
+      '<div class="row" style="gap:7px"><button class="btn pri sm" onclick="decideGrant(\''+g.user_code+'\',\'approve\')">تأیید</button>'+
+      '<button class="btn danger sm" onclick="decideGrant(\''+g.user_code+'\',\'deny\')">رد</button></div>';
+    box.appendChild(d);
+  });
+}
+function renderConns(list){
+  const tb=$('t-conn').querySelector('tbody');tb.innerHTML='';
+  $('cx-empty').style.display=list.length?'none':'block';
+  list.forEach(c=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><div class="row" style="gap:9px;flex-wrap:nowrap"><div class="cl-avatar sm">'+clientInitial(c.client)+'</div><div><b>'+clientLabel(c.client)+'</b><div class="dim small mono">'+c.user_code+'</div></div></div></td>'+
+      '<td class="hide-sm mono small" style="direction:ltr;text-align:right">'+c.key+'</td>'+
+      '<td class="mono">'+fmt(c.requests)+'</td>'+
+      '<td class="hide-sm mono small dim">'+fmt(c.tokens_in)+'/'+fmt(c.tokens_out)+'</td>'+
+      '<td>'+(c.enabled?'<span class="tag g">فعال</span>':'<span class="tag a">خاموش</span>')+'</td>'+
+      '<td><div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn sm" onclick="copyTxt(\''+c.key_full+'\')">کپی</button>'+
+      '<button class="btn danger sm" onclick="revokeConn(\''+c.key_full+'\')">لغو</button></div></td>';
+    tb.appendChild(tr);
+  });
+}
+async function decideGrant(code,decision){
+  const r=await api('/admin/api/oauth/decision',{method:'POST',body:JSON.stringify({user_code:code,decision:decision})});
+  const d=await r.json();
+  if(r.ok&&d.ok){toast(decision==='approve'?'اتصال تأیید شد — کلید مجازی ساخته شد':'درخواست رد شد');loadConnections()}else toast(d.error||'خطا',true);
+}
+async function revokeConn(key){
+  if(!confirm('این اتصال لغو شود؟ کلید آن بلافاصله بی‌اعتبار می‌شود.'))return;
+  await api('/admin/api/keys?key='+encodeURIComponent(key),{method:'DELETE'});toast('اتصال لغو شد');loadConnections();
+}
 
 /* ============ overview ============ */
 let overview=null;
@@ -401,12 +501,14 @@ async function loadAll(refresh){
   try{
     const r=await api('/admin/api/overview'+(refresh?'?refresh=1':''));
     overview=await r.json();renderOverview();
+    // keep the pending-connections badge fresh on every load
+    api('/admin/api/connections').then(x=>x.ok?x.json():null).then(d=>{if(d)renderPending(d.pending||[])}).catch(()=>{});
   }catch(e){}
 }
 function renderOverview(){
   if(!overview)return;
   const o=overview,st=o.stats||{},sv=o.saver||{};
-  $('ver').textContent='v'+(o.version||'1.2.0');
+  $('ver').textContent='v'+(o.version||'1.3.0');
   $('k-req').textContent=fmt(st.total_requests);$('k-err').textContent=fmt(st.total_errors)+' خطا';
   $('k-in').textContent=fmt(st.tokens_in);$('k-out').textContent=fmt(st.tokens_out);
   $('k-sav').textContent=fmt(sv.saved_bytes);$('k-savc').textContent=fmt(sv.saved_calls)+' درخواست فشرده‌شده';
