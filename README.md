@@ -21,10 +21,11 @@
 
 ---
 
-## 🚀 چه خبره از v1.0.0 تا v1.3.1؟
+## 🚀 چه خبره از v1.0.0 تا v1.3.2؟
 
 | نسخه | چه چیزهایی اضافه/عوض شد |
 |---|---|
+| **v1.3.2** (امروز) | 🇬🇧 **سایت Pages و داشبورد کاملاً انگلیسی (LTR)** — تایپوگرافی لاتین بهینه (Inter + Space Grotesk، line-height ۱.۶–۱.۷۵) · 🐞 **رفع باگ قدیمی داشبورد:** جدول‌های Providers/Models/Keys/Logs/Aliases مقدار undefined نشان می‌دادند چون JS کلیدهای PascalCase را از API می‌خواند که snake_case برمی‌گرداند — حالا با fallback دوطرفه |
 | **v1.3.1** (امروز) | 📱 **بازنویسی لایه‌ی موبایل سایت Pages** — رفع باگ cascade در CSS (گرید ۴ستونه‌ی دسکتاپ روی گوشی رندر می‌شد و کارت‌های OAuth از لبه بیرون می‌زدند) + کف فونت ۱۲px برای بج‌ها/تگ‌ها + شکست امن توکن‌های بلند کد در متن فارسی · 🏷 نسخه‌ی باینری به 1.3.1 (smoke 31/31 سبز) |
 | **v1.3.0** | 🔐 **OAuth Device Flow (RFC 8628)** — اتصال بدون کپی کلید مثل 9router: `POST /oauth/device/start` + `poll` + صفحه‌ی تأیید فارسی `/oauth/authorize` — برای **Cline، Kilo Code، GitHub Copilot، Hermes Agent، Claude Code، Codex، Cursor، Roo، Continue، OpenCode** و هر کلاینت دیگر · 🎛 **پنل «اتصالات» در داشبورد** — pending ها با بج زنده، کلاینت‌های متصل با آمار مستقل و لغو لحظه‌ای · 🔑 **کلید مجازی per-کلاینت** (`sk-omni-…`) سازگار با سهمیه و allowlist |
 | **v1.2.0** (امروز) | 🆓 **پروایدر OpenCode Zen (`oc`)** — مدل‌های رایگان **بدون هیچ کلیدی** (مثل OpenCode Free در 9router) + fetch خودکار ۷۰+ مدل + کلید اختیاری برای مدل‌های پولی zen · 🚀 **RTK Token Saver** — فشرده‌سازی خودکار خروجی ابزارها (git diff/grep/ls/لاگ) با فیلترهای امن · 🎯 **کمبوهای نام‌دار** — `combo:free-stack` زنجیره‌ی qwen→gemini→oc آماده‌ی نصب تازه · 🐴 **Caveman + Ponytail** (Lite/Full/Ultra) با هدر `X-Omni-Prompt-Mode` · 🏷 **GLM 5.3 و GLM 5.3-Flash** — نام‌گذاری جدید پرچم‌دار Z.AI · 🖥 **داشبورد ۲.۰** با سایدبار حرفه‌ای، Token Saver، کمبوها و پلی‌گراند جدید · 🐞 فیکس health-check بریج‌ها (توکن روی fetch مدل‌ها) |
