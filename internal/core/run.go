@@ -26,6 +26,7 @@ type Router struct {
         registry  *Registry
         forwarder *forwarder
         internal  []*internalServer
+        stop      chan struct{}
 }
 
 // internalServer hosts one embedded bridge on a loopback port.
@@ -85,6 +86,19 @@ func Run() {
                 internal = append(internal, &internalServer{id: "ds", srv: srv, addr: "http://" + ln.Addr().String()})
         }()
 
+        // Gemini
+        func() {
+                gbInit()
+                ln, err := net.Listen("tcp", "127.0.0.1:0")
+                if err != nil {
+                        log.Printf("[Router] Gemini internal listener failed: %v", err)
+                        return
+                }
+                srv := &http.Server{Handler: gbHandler()}
+                go srv.Serve(ln)
+                internal = append(internal, &internalServer{id: "gemini", srv: srv, addr: "http://" + ln.Addr().String()})
+        }()
+
         registry := NewRegistry(cfg.InternalToken, store.ListProviders())
         for _, is := range internal {
                 registry.SetBridgeURL(is.id, is.addr)
@@ -93,7 +107,7 @@ func Run() {
         // bilingual guidance); "auto" routing skips it when unhealthy —
         // health is probed live in RefreshModels, so nothing to force here.
 
-        forwarder := newForwarder(registry, cfg.InternalToken)
+        forwarder := newForwarder(registry, store, cfg.InternalToken, cfg.RetryPerProvider, cfg.CooldownSeconds, cfg.RequestTimeoutSec)
 
         rt := &Router{
                 cfg:       cfg,
@@ -101,6 +115,7 @@ func Run() {
                 registry:  registry,
                 forwarder: forwarder,
                 internal:  internal,
+                stop:      make(chan struct{}),
         }
 
         // Warm the catalog.
@@ -136,11 +151,12 @@ func Run() {
 
         fmt.Printf(`
 ╔════════════════════════════════════════════════════════════════════╗
-║                        🌐  OmniRouter  v1.0.0                       ║
+║                        🌐  OmniRouter  v%s                            ║
 ║        یک روتر برای همه‌ی مدل‌ها — one router for every model        ║
 ╠════════════════════════════════════════════════════════════════════╣
-║  Providers (embedded):  GLM (chat.z.ai) · Qwen (chat.qwen.ai) ·    ║
-║                         DeepSeek (chat.deepseek.com) + custom APIs ║
+║  Providers (embedded):  Qwen (chat.qwen.ai) · GLM (chat.z.ai) ·    ║
+║                         DeepSeek · Gemini (gemini.google.com)      ║
+║                         + هر API سازگار OpenAI (داشبورد)           ║
 ║  Models available:      %-44d║
 ║  Dashboard:             http://localhost:%d/  (رمز: ADMIN_PASSWORD)║
 ║  Health:                http://localhost:%d/health            ║
@@ -152,12 +168,12 @@ func Run() {
 ║  Client API Key:  %-49s║
 ║  %s║
 ╚════════════════════════════════════════════════════════════════════╝
-`, modelCount(), cfg.Port, cfg.Port, cfg.Port, cfg.Port, cfg.Port,
+`, routerVersion, modelCount(), cfg.Port, cfg.Port, cfg.Port, cfg.Port, cfg.Port,
                 seedKey,
                 keyNote(created))
 
-        // Periodic catalog refresh.
-        stopRefresh := make(chan struct{})
+        // Periodic catalog refresh + stats flush.
+        stopRefresh := rt.stop
         go func() {
                 t := time.NewTicker(60 * time.Second)
                 defer t.Stop()
@@ -166,6 +182,19 @@ func Run() {
                         case <-t.C:
                                 registry.RefreshModels(context.Background())
                         case <-stopRefresh:
+                                return
+                        }
+                }
+        }()
+        go func() {
+                t := time.NewTicker(5 * time.Second)
+                defer t.Stop()
+                for {
+                        select {
+                        case <-t.C:
+                                store.Flush(false)
+                        case <-stopRefresh:
+                                store.Flush(true)
                                 return
                         }
                 }
@@ -184,7 +213,7 @@ func Run() {
                 }
         case <-ctx.Done():
                 stopSignal()
-                close(stopRefresh)
+                close(rt.stop)
                 log.Println("[Router] Graceful shutdown — draining connections...")
                 drainCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
                 if err := srv.Shutdown(drainCtx); err != nil {
@@ -220,7 +249,7 @@ func (rt *Router) healthHandler(w http.ResponseWriter, r *http.Request) {
                 }
         }
         writeJSON(w, 200, map[string]interface{}{
-                "service": "omnirouter", "version": "1.0.0", "status": "ok",
+                "service": "omnirouter", "version": routerVersion, "status": "ok",
                 "providers": items, "healthy_providers": healthy,
         })
 }

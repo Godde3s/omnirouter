@@ -5,11 +5,12 @@
 package core
 
 import (
-	"net/http"
+        "net/http"
 
-	"github.com/Godde3s/omnirouter/internal/dsbridge"
-	"github.com/Godde3s/omnirouter/internal/qbridge"
-	"github.com/Godde3s/omnirouter/internal/zbridge"
+        "github.com/Godde3s/omnirouter/internal/dsbridge"
+        "github.com/Godde3s/omnirouter/internal/gbridge"
+        "github.com/Godde3s/omnirouter/internal/qbridge"
+        "github.com/Godde3s/omnirouter/internal/zbridge"
 )
 
 func zbInit()                { zbridge.Init() }
@@ -20,3 +21,6 @@ func qbHandler() http.Handler { return qbridge.Handler() }
 
 func dsInit()                { dsbridge.Init() }
 func dsHandler() http.Handler { return dsbridge.Handler() }
+
+func gbInit()                { gbridge.Init() }
+func gbHandler() http.Handler { return gbridge.Handler() }

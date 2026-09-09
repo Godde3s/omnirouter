@@ -13,277 +13,660 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--txt);font-family:'Vazirmatn','Segoe UI',Tahoma,sans-serif;min-height:100vh}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 60px}
-header{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
 .logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 24px rgba(79,140,255,.35)}
 h1{font-size:22px}
 h1 small{color:var(--dim);font-weight:400;font-size:12px;display:block;margin-top:2px}
-.top-actions{margin-inline-start:auto;display:flex;gap:8px}
+.top-actions{margin-inline-start:auto;display:flex;gap:8px;align-items:center}
+.ver{font-size:11px;color:var(--dim);border:1px solid var(--line);padding:3px 10px;border-radius:20px}
 button{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:9px 16px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;transition:.15s}
 button:hover{border-color:var(--acc);transform:translateY(-1px)}
 button.primary{background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;font-weight:700}
+button.primary:disabled{opacity:.5;cursor:wait;transform:none}
 button.danger:hover{border-color:var(--err);color:var(--err)}
+button.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+nav button{border-radius:12px;background:transparent;border:1px solid transparent;color:var(--dim)}
+nav button.on{background:var(--card);border-color:var(--line);color:var(--txt)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi .n{font-size:22px;font-weight:700;font-family:var(--mono);direction:ltr;text-align:right}
+.kpi .l{font-size:11px;color:var(--dim);margin-top:4px}
+.kpi.acc .n{color:var(--acc)} .kpi.ok .n{color:var(--ok)} .kpi.err .n{color:var(--err)} .kpi.warn .n{color:var(--warn)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
 .card h3{font-size:14px;margin-bottom:12px;color:var(--dim);display:flex;align-items:center;gap:8px}
 .card h3 .dot{width:9px;height:9px;border-radius:50%;background:var(--dim)}
-.dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)} .dot.err{background:var(--err)}
+.dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)} .dot.err{background:var(--err)} .dot.warn{background:var(--warn)}
 .pcard{display:flex;flex-direction:column;gap:8px}
-.prow{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.prow{display:flex;justify-content:space-between;align-items:center;font-size:13px;gap:8px}
 .prow .models{color:var(--dim);font-size:12px}
 .tag{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--bg2);border:1px solid var(--line);color:var(--dim)}
 .tag.ok{color:var(--ok);border-color:rgba(47,209,140,.35)}
 .tag.err{color:var(--err);border-color:rgba(255,92,116,.35)}
+.tag.warn{color:var(--warn);border-color:rgba(255,176,46,.35)}
+.tag.acc{color:#8ab4ff;border-color:rgba(79,140,255,.35)}
 .kbox{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-family:var(--mono);font-size:12px;direction:ltr;text-align:left;overflow-x:auto;white-space:pre;color:#a8c7ff;cursor:pointer;position:relative}
 .kbox:hover{border-color:var(--acc)}
-.kbox .copy{position:absolute;top:6px;right:8px;font-size:10px;color:var(--dim);font-family:inherit}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{color:var(--dim);font-weight:400;text-align:right;padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px}
-td{padding:8px 6px;border-bottom:1px solid rgba(36,48,74,.5)}
+td{padding:8px 6px;border-bottom:1px solid rgba(36,48,74,.5);vertical-align:middle}
 tr:hover td{background:rgba(79,140,255,.04)}
+.mono{font-family:var(--mono);font-size:12px;direction:ltr;text-align:left}
 .badge{font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(79,140,255,.12);color:#8ab4ff}
 .badge.custom{background:rgba(124,92,255,.14);color:#b9a3ff}
-input,select{background:var(--bg2);border:1px solid var(--line);color:var(--txt);padding:10px 12px;border-radius:10px;font-family:inherit;font-size:13px;width:100%}
-input:focus{outline:none;border-color:var(--acc)}
+input,select,textarea{background:var(--bg2);border:1px solid var(--line);color:var(--txt);padding:10px 12px;border-radius:10px;font-family:inherit;font-size:13px;width:100%}
+textarea{resize:vertical;min-height:70px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc)}
 label{font-size:12px;color:var(--dim);display:block;margin:10px 0 5px}
 .formrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.formrow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .muted{color:var(--dim);font-size:12px;line-height:1.9}
 .section{margin-bottom:26px}
-.section>h2{font-size:16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.section>h2::after{content:"";flex:1;height:1px;background:var(--line)}
-#login{max-width:380px;margin:12vh auto;text-align:center}
-#login .logo{margin:0 auto 18px;width:64px;height:64px;font-size:32px}
-.err{color:var(--err);font-size:12px;margin-top:8px;min-height:16px}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--acc);padding:10px 22px;border-radius:12px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:99}
-.toast.show{opacity:1}
-.logline{font-family:var(--mono);font-size:11px;direction:ltr;text-align:left;padding:6px 8px;border-bottom:1px solid rgba(36,48,74,.4);display:flex;gap:10px;flex-wrap:wrap}
-.logline .t{color:var(--dim)} .logline .m{color:#a8c7ff} .logline .p{color:#b9a3ff} .logline .e{color:var(--err)}
-.preset{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.preset button{font-size:11px;padding:5px 10px}
-footer{text-align:center;color:var(--dim);font-size:11px;margin-top:34px;line-height:2}
-a{color:var(--acc);text-decoration:none}
 .hidden{display:none!important}
-.stat{display:flex;gap:14px;flex-wrap:wrap}
-.stat .s{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 18px;flex:1;min-width:120px}
-.stat .s b{font-size:20px;display:block}
-.stat .s span{color:var(--dim);font-size:11px}
+.tblwrap{overflow-x:auto}
+#chart{width:100%;height:180px;display:block}
+.alias-row{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.alias-row .arrow{color:var(--dim);text-align:center}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:6px}
+.playground{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.playground{grid-template-columns:1fr}}
+.out{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:220px;max-height:420px;overflow-y:auto;font-size:13px;line-height:1.9;white-space:pre-wrap;word-break:break-word}
+.out .think{color:var(--dim);font-size:12px;border-inline-start:2px solid var(--line);padding-inline-start:10px;margin-bottom:8px;white-space:pre-wrap}
+.login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50}
+.login .box{width:360px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px}
+.login h2{font-size:18px;margin-bottom:6px}
+.login .sub{color:var(--dim);font-size:12px;margin-bottom:16px}
+.login .err{color:var(--err);font-size:12px;margin-top:10px;min-height:16px}
+.modal{position:fixed;inset:0;background:rgba(5,8,14,.72);display:flex;align-items:center;justify-content:center;z-index:60;padding:16px}
+.modal .box{width:560px;max-width:96vw;max-height:88vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+.modal h3{margin-bottom:12px}
+.modal .actions{display:flex;gap:8px;justify-content:flex-start;margin-top:16px}
+details summary{cursor:pointer;color:var(--dim);font-size:13px;margin:12px 0 6px}
+.code{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--mono);font-size:11.5px;direction:ltr;text-align:left;overflow-x:auto;white-space:pre;color:#9fd0a8;cursor:pointer}
+.code:hover{border-color:var(--acc)}
+.tok-lab{font-size:11px;color:var(--dim);margin-top:8px}
+.pill{font-size:10px;padding:2px 7px;border-radius:14px;margin-inline-start:6px}
 </style>
 </head>
 <body>
-<div id="app"></div>
-<div class="toast" id="toast"></div>
+
+<div id="login" class="login">
+  <div class="box">
+    <h2>🌐 ورود به OmniRouter</h2>
+    <div class="sub">رمز داشبورد همان ADMIN_PASSWORD فایل .env است</div>
+    <input type="password" id="pw" placeholder="رمز داشبورد…" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="err" id="pwerr"></div>
+    <button class="primary" style="width:100%" onclick="doLogin()">ورود</button>
+  </div>
+</div>
+
+<div class="wrap hidden" id="app">
+<header>
+  <div class="logo">🌐</div>
+  <h1>OmniRouter <small>یک روتر برای همه‌ی مدل‌ها — Qwen · GLM · DeepSeek · Gemini + API سفارشی</small></h1>
+  <div class="top-actions">
+    <span class="ver" id="ver">v—</span>
+    <button class="sm" onclick="loadAll()">↻ نوسازی</button>
+    <button class="sm danger" onclick="logout()">خروج</button>
+  </div>
+</header>
+
+<nav>
+  <button data-tab="overview" class="on" onclick="showTab('overview')">نمای کلی</button>
+  <button data-tab="providers" onclick="showTab('providers')">ارائه‌دهنده‌ها</button>
+  <button data-tab="models" onclick="showTab('models')">مدل‌ها</button>
+  <button data-tab="keys" onclick="showTab('keys')">کلیدها</button>
+  <button data-tab="logs" onclick="showTab('logs')">لاگ‌ها</button>
+  <button data-tab="play" onclick="showTab('play')">پلی‌گراند</button>
+  <button data-tab="help" onclick="showTab('help')">اتصال ابزارها</button>
+</nav>
+
+<!-- ═══ OVERVIEW ═══ -->
+<div class="section" id="tab-overview">
+  <div class="kpis" id="kpis"></div>
+  <div class="grid">
+    <div class="card" style="grid-column:1/-1">
+      <h3>📊 ترافیک ۴۸ ساعت اخیر <span class="tag">درخواست‌ها + توکن</span></h3>
+      <canvas id="chart" height="180"></canvas>
+    </div>
+  </div>
+  <div class="grid" id="provgrid"></div>
+</div>
+
+<!-- ═══ PROVIDERS ═══ -->
+<div class="section hidden" id="tab-providers">
+  <div class="grid" id="provgrid2"></div>
+  <div class="card">
+    <h3>➕ افزودن / ویرایش ارائه‌دهنده‌ی سفارشی (هر API سازگار OpenAI)</h3>
+    <div class="formrow">
+      <div><label>نام (اسلاگ انگلیسی — آدرس به شکل name/model)</label><input id="cp-name" placeholder="gemini"></div>
+      <div><label>آدرس پایه (Base URL تا /v1)</label><input id="cp-url" dir="ltr" placeholder="https://…/v1"></div>
+    </div>
+    <div class="formrow">
+      <div><label>کلید API آپستریم (اختیاری)</label><input id="cp-key" dir="ltr" placeholder="sk-…"></div>
+      <div><label>مدل‌ها (اختیاری، با ویرگول — خالی = کشف زنده)</label><input id="cp-models" dir="ltr" placeholder="model-a, model-b"></div>
+    </div>
+    <label>پیش‌تنظیم‌ها:</label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+      <button class="sm" onclick="preset('gemini-aistudio')">✨ Gemini AI Studio</button>
+      <button class="sm" onclick="preset('openrouter')">OpenRouter</button>
+      <button class="sm" onclick="preset('groq')">Groq</button>
+      <button class="sm" onclick="preset('ollama')">Ollama (محلی)</button>
+      <button class="sm" onclick="preset('lmstudio')">LM Studio (محلی)</button>
+    </div>
+    <details>
+      <summary>نگاشت مدل (alias) — نام عمومی → مدل واقعی آپستریم (اختیاری)</summary>
+      <div id="alias-rows"></div>
+      <button class="sm" onclick="addAliasRow('','')">+ ردیف نگاشت</button>
+    </details>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="primary" onclick="saveProvider()">ذخیره ارائه‌دهنده</button>
+      <span class="muted" id="cp-msg" style="align-self:center"></span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>🔗 نگاشت مدل برای بریج‌های داخلی (qwen / glm / ds / gemini)</h3>
+    <div class="formrow">
+      <div><label>پروایدر</label>
+        <select id="ba-prov" onchange="loadBridgeAliases()">
+          <option value="qwen">qwen</option><option value="glm">glm</option>
+          <option value="ds">ds</option><option value="gemini">gemini</option>
+        </select>
+      </div>
+      <div style="align-self:end"><button class="sm" onclick="addBAliasRow('','')">+ ردیف</button> <button class="primary sm" onclick="saveBridgeAliases()">ذخیره نگاشت</button></div>
+    </div>
+    <div id="b-alias-rows" style="margin-top:10px"></div>
+    <div class="muted">مثال: <span class="mono">gpt-4o</span> ← <span class="mono">qwen3.8-max</span> — کلاینت‌ها با مدل gpt-4o به strongest مدل qwen می‌رسند.</div>
+  </div>
+</div>
+
+<!-- ═══ MODELS ═══ -->
+<div class="section hidden" id="tab-models">
+  <div class="card">
+    <h3>🧠 کاتالوگ مدل‌ها <span class="tag" id="model-count">—</span>
+      <span style="margin-inline-start:auto;display:flex;gap:8px">
+        <input id="model-filter" placeholder="فیلتر…" style="width:180px;padding:6px 10px" oninput="renderModels()">
+        <button class="sm" onclick="refreshModels()">↻ کشف زنده</button>
+      </span>
+    </h3>
+    <div class="tblwrap"><table id="models-tbl"></table></div>
+    <div class="muted">فرمت <span class="mono">provider/model</span> دقیق‌ترین مسیر است؛ نام خام هم کار می‌کند و «auto» زنجیره‌ی failover را اجرا می‌کند.</div>
+  </div>
+</div>
+
+<!-- ═══ KEYS ═══ -->
+<div class="section hidden" id="tab-keys">
+  <div class="card">
+    <h3>🔑 ساخت کلید جدید</h3>
+    <div class="formrow3">
+      <div><label>نام کلید</label><input id="nk-name" placeholder="opencode-laptop"></div>
+      <div><label>سقف درخواست (0 = بی‌نهایت)</label><input id="nk-max" type="number" min="0" value="0" dir="ltr"></div>
+      <div><label>محدودیت مدل (اختیاری، با ویرگول)</label><input id="nk-models" dir="ltr" placeholder="qwen/*, glm-5"></div>
+    </div>
+    <button class="primary" style="margin-top:12px" onclick="createKey()">ساخت کلید</button>
+    <div id="newkey-out" style="margin-top:10px"></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>🗝 کلیدهای موجود</h3>
+    <div class="tblwrap"><table id="keys-tbl"></table></div>
+  </div>
+</div>
+
+<!-- ═══ LOGS ═══ -->
+<div class="section hidden" id="tab-logs">
+  <div class="card">
+    <h3>📜 لاگ درخواست‌ها (۵۰۰ مورد آخر)
+      <span style="margin-inline-start:auto"><button class="sm" id="logauto" onclick="toggleLogAuto()">⏸ توقف به‌روزرسانی</button></span>
+    </h3>
+    <div class="tblwrap"><table id="logs-tbl"></table></div>
+  </div>
+</div>
+
+<!-- ═══ PLAYGROUND ═══ -->
+<div class="section hidden" id="tab-play">
+  <div class="playground">
+    <div class="card">
+      <h3>🎛 پارامترها</h3>
+      <label>مدل</label><select id="pg-model"></select>
+      <label>System Prompt (اختیاری)</label>
+      <textarea id="pg-sys" dir="auto" placeholder="تو یک دستیار مفید فارسی‌زبان هستی…"></textarea>
+      <label>پیام کاربر</label>
+      <textarea id="pg-msg" dir="auto" style="min-height:110px" placeholder="سلام! خودت رو معرفی کن"></textarea>
+      <div class="formrow">
+        <div><label>Temperature: <span id="pg-tempv">0.7</span></label>
+          <input type="range" id="pg-temp" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('pg-tempv').textContent=this.value"></div>
+        <div style="align-self:end;display:flex;gap:8px;align-items:center">
+          <input type="checkbox" id="pg-stream" checked style="width:auto"> <span style="font-size:13px">استریم</span>
+        </div>
+      </div>
+      <button class="primary" style="width:100%;margin-top:12px" id="pg-send" onclick="pgSend()">ارسال ▶</button>
+      <div class="tok-lab" id="pg-stats"></div>
+    </div>
+    <div class="card">
+      <h3>💬 پاسخ مدل</h3>
+      <div class="out" id="pg-out"><span class="muted">پاسخ اینجا استریم می‌شود…</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HELP ═══ -->
+<div class="section hidden" id="tab-help">
+  <div class="grid">
+    <div class="card">
+      <h3>🔌 اتصال OpenCode / Cline / Cursor (OpenAI)</h3>
+      <div class="code" onclick="copyCode(this)">OPENAI_API_KEY=sk-…
+OPENAI_BASE_URL=http://localhost:8080/v1
+# مدل: auto  یا  qwen/qwen3.8-max  یا  gemini/gemini-3.6-flash</div>
+    </div>
+    <div class="card">
+      <h3>🤖 اتصال Hermes Agent / Claude Code (Anthropic)</h3>
+      <div class="code" onclick="copyCode(this)">ANTHROPIC_BASE_URL=http://localhost:8080
+ANTHROPIC_API_KEY=sk-…
+ANTHROPIC_MODEL=qwen/qwen3.8-max
+ANTHROPIC_SMALL_FAST_MODEL=gemini/gemini-3.6-flash</div>
+    </div>
+    <div class="card">
+      <h3>🐍 فراخوانی با curl</h3>
+      <div class="code" onclick="copyCode(this)">curl http://localhost:8080/v1/chat/completions \
+  -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
+  -d '{"model":"auto","messages":[{"role":"user","content":"سلام"}],"stream":true}'</div>
+    </div>
+    <div class="card">
+      <h3>⚙️ متغیرهای .env روتر</h3>
+      <div class="muted">
+        <span class="mono">ADMIN_PASSWORD</span> رمز داشبورد ·
+        <span class="mono">ROUTER_KEY</span> کلید اولیه ·
+        <span class="mono">AUTH_TOKEN</span> توکن داخلی بریج‌ها ·
+        <span class="mono">AUTO_CHAIN</span> زنجیره auto مثل <span class="mono">qwen/qwen3.8-max,ds/deepseek-chat</span> ·
+        <span class="mono">RETRY_PER_PROVIDER</span> تلاش مجدد هر پروایدر ·
+        <span class="mono">COOLDOWN_SECONDS</span> زمان سرد شدن پروایدر خطاکار ·
+        <span class="mono">REQUEST_TIMEOUT</span> تایم‌اوت درخواست غیراستریم (ثانیه) ·
+        <span class="mono">GEMINI_COOKIES</span> کوکی‌های Gemini (اختیاری — مهمان هم کار می‌کند) ·
+        <span class="mono">QWEN_TOKENS</span> توکن‌های Qwen ·
+        <span class="mono">GLM_DEVICE_TOKENS</span> توکن‌های GLM ·
+        <span class="mono">DEEPSEEK_TOKENS</span> توکن‌های DeepSeek
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
 
 <script>
-const $ = (h) => { const d = document.createElement('div'); d.innerHTML = h; return d.firstElementChild; };
-const toast = (msg) => { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200); };
-let TOKEN = localStorage.getItem('omni_admin') || '';
-let ADMIN_PASSWORD_SAVED = localStorage.getItem('omni_pw') || '';
+// ── state & helpers ─────────────────────────────────────────────────────────
+let TOKEN = localStorage.getItem('omni_token') || '';
+let OV = null;            // overview payload
+let CATALOG = [];         // merged models
+let logTimer = null;
+let pgAbort = null;
 
-async function api(path, opts={}) {
-  const r = await fetch(path, {...opts, headers: {'Content-Type':'application/json', ...(TOKEN?{'Authorization':'Bearer '+TOKEN}:{}) , ...(opts.headers||{})}});
-  if (r.status === 401 && path.startsWith('/admin/api')) { TOKEN=''; localStorage.removeItem('omni_admin'); renderLogin(); throw new Error('unauthorized'); }
-  return r.json();
+async function api(path, opts = {}) {
+  const h = Object.assign({'Content-Type':'application/json'}, opts.headers || {});
+  if (TOKEN) h['Authorization'] = 'Bearer ' + TOKEN;
+  const res = await fetch(path, Object.assign({}, opts, {headers: h}));
+  if (res.status === 401 && path !== '/admin/login') { showLogin(); throw new Error('unauthorized'); }
+  const txt = await res.text();
+  try { return JSON.parse(txt); } catch { return {raw: txt, status: res.status}; }
 }
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtN = n => (n ?? 0).toLocaleString('en-US');
+const fmtTok = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'K' : fmtN(n);
+const timeStr = t => new Date(t*1000).toLocaleTimeString('fa-IR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+function copyCode(el){ navigator.clipboard.writeText(el.textContent.trim()); const old=el.style.borderColor; el.style.borderColor='#2fd18c'; setTimeout(()=>el.style.borderColor=old, 600); }
+function showLogin(){ document.getElementById('login').style.display='flex'; document.getElementById('app').classList.add('hidden'); }
+function logout(){ TOKEN=''; localStorage.removeItem('omni_token'); api('/admin/logout',{method:'POST'}).catch(()=>{}); showLogin(); }
 
-/* ---------------- Login ---------------- */
-function renderLogin(err='') {
-  const app = document.getElementById('app');
-  app.innerHTML = '';
-  const box = $(`
-  <div id="login">
-    <div class="logo">🌐</div>
-    <h1 style="margin-bottom:6px">OmniRouter</h1>
-    <p class="muted" style="margin-bottom:18px">روتر یکپارچه‌ی GLM · Qwen · DeepSeek · API دلخواه</p>
-    <div class="card">
-      <label>رمز مدیریت (ADMIN_PASSWORD)</label>
-      <input type="password" id="pw" placeholder="admin" autofocus>
-      <div class="err">${err}</div>
-      <button class="primary" style="width:100%;margin-top:8px" onclick="doLogin()">ورود</button>
-    </div>
-  </div>`);
-  app.appendChild(box);
-  box.querySelector('#pw').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
-  box.querySelector('#pw').focus();
-}
-async function doLogin() {
+async function doLogin(){
   const pw = document.getElementById('pw').value;
-  const r = await fetch('/admin/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password: pw})});
-  const j = await r.json();
-  if (!r.ok) { renderLogin(j.error || 'خطا'); return; }
-  TOKEN = j.token; localStorage.setItem('omni_admin', TOKEN);
-  renderApp();
+  try{
+    const r = await fetch('/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+    const j = await r.json();
+    if(!r.ok){ document.getElementById('pwerr').textContent = j.error || 'رمز اشتباه است'; return; }
+    TOKEN = j.token; localStorage.setItem('omni_token', TOKEN);
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').classList.remove('hidden');
+    loadAll();
+  }catch(e){ document.getElementById('pwerr').textContent='ارتباط برقرار نشد'; }
 }
 
-/* ---------------- App shell ---------------- */
-function renderApp() {
-  const app = document.getElementById('app');
-  app.innerHTML = '';
-  app.appendChild($(`
-  <div class="wrap">
-    <header>
-      <div class="logo">🌐</div>
-      <h1>OmniRouter <small>GLM · Qwen · DeepSeek · هر API دیگه — با یک کلید</small></h1>
-      <div class="top-actions">
-        <button onclick="refreshAll()">⟳ بروزرسانی</button>
-        <button class="danger" onclick="logout()">خروج</button>
-      </div>
-    </header>
-
-    <div class="section"><h2>نمای کلی</h2>
-      <div class="stat" id="stats"></div>
-      <div class="grid" id="providers" style="margin-top:14px"></div>
-    </div>
-
-    <div class="section"><h2>اتصال کلاینت‌ها (OpenCode / Hermes / Cline / …)</h2>
-      <div class="grid">
-        <div class="card"><h3>OpenAI سازگار (پیش‌فرض اکثر ابزارها)</h3>
-          <div class="kbox" onclick="copyBox(this)">Base URL: <span id="obase"></span>
-API Key: sk-… (کلیدها ↓)
-Model: auto یا هر مدل از لیست</div>
-          <p class="muted" style="margin-top:8px">در Cline / OpenCode / Hermes کافیه Base URL و کلید رو بذاری؛ مدل «auto» بهترین ارائه‌دهنده‌ی سالم رو خودکار انتخاب می‌کنه (با failover).</p>
-        </div>
-        <div class="card"><h3>Anthropic سازگار (Claude Code و…)</h3>
-          <div class="kbox" onclick="copyBox(this)">ANTHROPIC_BASE_URL=<span id="abase"></span>
-ANTHROPIC_API_KEY=sk-…</div>
-          <p class="muted" style="margin-top:8px">هر دو پروتکل (OpenAI + Anthropic) با استریم و tool calling کامل پشتیبانی می‌شن.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="section"><h2>مدل‌ها</h2>
-      <div class="card"><table id="models"><thead><tr><th>مدل</th><th>ارائه‌دهنده</th></tr></thead><tbody></tbody></table></div>
-    </div>
-
-    <div class="section"><h2>کلیدهای API</h2>
-      <div class="card">
-        <div style="display:flex;gap:8px;margin-bottom:12px">
-          <input id="keyname" placeholder="نام کلید (مثلاً opencode)" style="max-width:240px">
-          <button class="primary" onclick="createKey()">+ کلید جدید</button>
-        </div>
-        <table id="keys"><thead><tr><th>کلید</th><th>نام</th><th>درخواست</th><th>خطا</th><th></th></tr></thead><tbody></tbody></table>
-      </div>
-    </div>
-
-    <div class="section"><h2>ارائه‌دهنده‌های سفارشی (API خودت)</h2>
-      <div class="grid">
-        <div class="card">
-          <h3>افزودن API سازگار با OpenAI</h3>
-          <div class="formrow">
-            <div><label>نام (اسلاگ)</label><input id="pname" placeholder="gemini"></div>
-            <div><label>کلید API</label><input id="pkey" placeholder="AIza…"></div>
-          </div>
-          <label>Base URL (OpenAI-compatible)</label>
-          <input id="purl" placeholder="https://generativelanguage.googleapis.com/v1beta/openai">
-          <label>مدل‌ها (با کاما — خالی = fetch خودکار از /v1/models)</label>
-          <input id="pmodels" placeholder="gemini-2.5-flash, gemini-2.5-pro">
-          <div class="preset">
-            <button onclick="preset('gemini','https://generativelanguage.googleapis.com/v1beta/openai','gemini-2.5-flash, gemini-2.5-pro')">✨ Gemini AI Studio</button>
-            <button onclick="preset('openai','https://api.openai.com/v1','gpt-4o, gpt-4o-mini')">OpenAI</button>
-            <button onclick="preset('openrouter','https://openrouter.ai/api/v1','')">OpenRouter</button>
-            <button onclick="preset('groq','https://api.groq.com/openai/v1','')">Groq</button>
-          </div>
-          <button class="primary" style="width:100%;margin-top:12px" onclick="addProvider()">افزودن ارائه‌دهنده</button>
-          <div class="err" id="perr"></div>
-        </div>
-        <div class="card">
-          <h3>لیست ارائه‌دهنده‌های سفارشی</h3>
-          <table id="providers2"><thead><tr><th>نام</th><th>Base URL</th><th></th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <div class="section"><h2>لاگ درخواست‌ها (۵۰۰ مورد آخر)</h2>
-      <div class="card" id="logs" style="max-height:340px;overflow-y:auto"></div>
-    </div>
-
-    <footer>
-      OmniRouter v1.0.0 — وب‌تو-API با کیفیت واقعی · ساخته‌شده روی سه بریج اثبات‌شده: glm-free-api · qwen-free-api · deepseek-free-api<br>
-      <a href="/health" target="_blank">/health</a> · <a href="/v1/models" target="_blank">/v1/models</a> · <a href="/glm/" target="_blank">/glm/</a> · <a href="/qwen/" target="_blank">/qwen/</a> · <a href="/ds/" target="_blank">/ds/</a>
-    </footer>
-  </div>`));
-  refreshAll();
-  setInterval(()=>{ if(TOKEN) refreshAll(true); }, 15000);
-}
-function logout(){ fetch('/admin/logout',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN}}); TOKEN=''; localStorage.removeItem('omni_admin'); renderLogin(); }
-
-/* ---------------- data rendering ---------------- */
-async function refreshAll(quiet) {
-  try {
-    const o = await api('/admin/api/overview');
-    renderOverview(o);
-    const m = await api('/admin/api/models');
-    renderModels(m.data || []);
-  } catch(e) { if(!quiet) toast('خطا در دریافت داده: '+e.message); }
-}
-function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
-function renderOverview(o) {
-  const provs = o.providers || [];
-  const keys = o.keys || [];
-  const totalReq = keys.reduce((a,k)=>a+(k.requests||0),0);
-  const totalErr = keys.reduce((a,k)=>a+(k.errors||0),0);
-  const modelCount = provs.reduce((a,p)=>a+(p.models?.length||0),0);
-  document.getElementById('stats').innerHTML = `
-    <div class="s"><b>${provs.filter(p=>p.healthy).length}/${provs.length}</b><span>ارائه‌دهنده‌ی سالم</span></div>
-    <div class="s"><b>${modelCount}</b><span>مدل فعال</span></div>
-    <div class="s"><b>${totalReq}</b><span>کل درخواست‌ها</span></div>
-    <div class="s"><b>${totalErr}</b><span>خطاها</span></div>`;
-  document.getElementById('providers').innerHTML = provs.map(p=>`
-    <div class="card pcard">
-      <div class="prow"><b>${esc(p.label)}</b>
-        <span class="tag ${p.healthy?'ok':'err'}">${p.healthy?'🟢 سالم':'🔴 پاسخ نمی‌دهد'}</span></div>
-      <div class="prow"><span class="models">${(p.models||[]).slice(0,4).map(esc).join(' · ')}${(p.models||[]).length>4?' …':''}</span>
-        <span class="badge ${p.kind==='custom'?'custom':''}">${esc(p.id)}</span></div>
-    </div>`).join('');
-  document.getElementById('obase').textContent = location.origin + '/v1';
-  document.getElementById('abase').textContent = location.origin;
-  // keys
-  document.querySelector('#keys tbody').innerHTML = keys.map(k=>`
-    <tr><td style="font-family:var(--mono);direction:ltr;font-size:11px" onclick="copyTxt('${k.key}');toast('کپی شد ✓')" title="کلیک = کپی">${esc(k.key.slice(0,14))}…${esc(k.key.slice(-4))}</td>
-    <td>${esc(k.name)}</td><td>${k.requests||0}</td><td>${(k.errors||0)?'<span class="tag err">'+k.errors+'</span>':'0'}</td>
-    <td><button class="danger" onclick="delKey('${k.key}')">حذف</button></td></tr>`).join('');
-  // custom providers
-  const cps = (o.custom_raw||[]);
-  document.querySelector('#providers2 tbody').innerHTML = cps.length? cps.map(c=>`
-    <tr><td><span class="badge custom">${esc(c.name)}</span></td><td style="direction:ltr;text-align:left;font-size:11px;font-family:var(--mono)">${esc(c.base_url)}</td>
-    <td><button class="danger" onclick="delProvider('${esc(c.name)}')">حذف</button></td></tr>`).join('')
-    : '<tr><td colspan="3" class="muted">هنوز چیزی اضافه نشده — با پیش‌تنظیم Gemini شروع کن</td></tr>';
-  // logs
-  document.getElementById('logs').innerHTML = (o.logs||[]).length? (o.logs||[]).map(l=>{
-    const t = new Date(l.time*1000).toLocaleTimeString('fa-IR');
-    return `<div class="logline"><span class="t">${t}</span><span class="m">${esc(l.model)}</span><span class="p">→ ${esc(l.provider)}</span><span class="${l.status<400?'':'e'}">HTTP ${l.status}</span><span class="t">${l.latency_ms}ms${l.stream?' · stream':''}</span>${l.error?`<span class="e">${esc(l.error)}</span>`:''}</div>`;
-  }).join('') : '<p class="muted">هنوز درخواستی ثبت نشده</p>';
-}
-function renderModels(models) {
-  document.querySelector('#models tbody').innerHTML = models.map(m=>`
-    <tr><td style="font-family:var(--mono);direction:ltr;text-align:left">${esc(m.id)}</td>
-    <td><span class="badge ${String(m.owned_by).startsWith('custom')?'custom':''}">${esc(m.owned_by)}</span></td></tr>`).join('');
+// ── tabs ────────────────────────────────────────────────────────────────────
+function showTab(name){
+  document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.tab===name));
+  if(name==='logs') startLogAuto(); else stopLogAuto();
 }
 
-/* ---------------- actions ---------------- */
+// ── overview ────────────────────────────────────────────────────────────────
+async function loadAll(){
+  try{
+    OV = await api('/admin/api/overview');
+    const cat = await api('/admin/api/models');
+    CATALOG = cat.data || [];
+    document.getElementById('ver').textContent = 'v' + (OV.version || '—');
+    renderKPIs(); renderProviders(); renderModels(); renderKeys(); renderLogs();
+    pgFillModels(); drawChart();
+  }catch(e){ if(String(e).includes('unauthorized')) showLogin(); }
+}
+
+function renderKPIs(){
+  const st = OV.stats || {};
+  const healthy = (OV.providers||[]).filter(p=>p.enabled && p.healthy).length;
+  const enabled = (OV.providers||[]).filter(p=>p.enabled).length;
+  const up = OV.uptime_sec||0;
+  const upTxt = up>86400 ? Math.floor(up/86400)+'روز '+(Math.floor(up%86400/3600))+'ساعت' : up>3600 ? Math.floor(up/3600)+' ساعت' : Math.floor(up/60)+' دقیقه';
+  document.getElementById('kpis').innerHTML = [
+    kpi('درخواست‌ها', fmtN(st.total_requests), 'acc'),
+    kpi('توکن ورودی', fmtTok(st.tokens_in), ''),
+    kpi('توکن خروجی', fmtTok(st.tokens_out), ''),
+    kpi('خطاها', fmtN(st.total_errors), st.total_errors? 'err':'ok'),
+    kpi('پروایدرهای سالم', healthy+' / '+enabled, healthy===enabled?'ok':'warn'),
+    kpi('مدل‌ها', fmtN(CATALOG.length), ''),
+    kpi('کلیدها', fmtN((OV.keys||[]).filter(k=>k.enabled).length), ''),
+    kpi('آپ‌تایم', upTxt, ''),
+  ].join('');
+}
+const kpi = (l,n,cls) => `<div class="kpi ${cls}"><div class="n">${esc(n)}</div><div class="l">${l}</div></div>`;
+
+function provCard(p){
+  const dot = !p.enabled ? '' : p.healthy ? 'ok' : 'err';
+  const tag = !p.enabled ? '<span class="tag">غیرفعال</span>' : p.healthy ? '<span class="tag ok">سالم</span>' : `<span class="tag err">${esc((p.last_error||'خطا').slice(0,42))}</span>`;
+  const kind = p.kind==='bridge' ? '<span class="badge">بریج داخلی</span>' : '<span class="badge custom">سفارشی</span>';
+  return `<div class="card pcard">
+    <div class="prow"><strong>${esc(p.label)}</strong> ${kind} <span style="margin-inline-start:auto"><span class="dot ${dot}"></span>${tag}</span></div>
+    <div class="prow"><span class="models">${(p.models||[]).length} مدل</span><span class="models mono">${esc(p.id)}</span></div>
+    <div class="muted">${(p.models||[]).slice(0,4).map(m=>'<span class="tag">'+esc(m)+'</span>').join(' ')}${(p.models||[]).length>4?' …':''}</div>
+  </div>`;
+}
+function renderProviders(){
+  const ps = OV.providers||[];
+  document.getElementById('provgrid').innerHTML = ps.map(provCard).join('');
+  document.getElementById('provgrid2').innerHTML = ps.map(p => provCard(p) + customActions(p)).join('');
+}
+function customActions(p){
+  if(p.kind!=='custom') return '';
+  const raw = (OV.custom_raw||[]).find(x=>x.name===p.id.replace('custom:','')) || {};
+  return `<div style="display:flex;gap:6px;margin-top:4px">
+    <button class="sm" onclick='editProvider(${JSON.stringify(JSON.stringify(raw))})'>ویرایش</button>
+    <button class="sm" onclick="toggleProvider('${esc(p.id.replace('custom:',''))}', ${!p.enabled})">${p.enabled?'غیرفعال':'فعال'}</button>
+    <button class="sm danger" onclick="delProvider('${esc(p.id.replace('custom:',''))}')">حذف</button>
+  </div>`;
+}
+
+// ── chart (48h) ─────────────────────────────────────────────────────────────
+function drawChart(){
+  const cv = document.getElementById('chart'); if(!cv) return;
+  const st = OV?.stats || {};
+  const hourly = (st.hourly||[]).slice(-48);
+  const dpr = window.devicePixelRatio||1;
+  const W = cv.clientWidth, H = 180;
+  cv.width = W*dpr; cv.height = H*dpr;
+  const ctx = cv.getContext('2d'); ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+  if(!hourly.length){ ctx.fillStyle='#8b98b4'; ctx.font='12px Vazirmatn'; ctx.fillText('هنوز ترافیکی ثبت نشده — اولین درخواست را بزن!', 16, H/2); return; }
+  const maxR = Math.max(...hourly.map(h=>h.requests), 1);
+  const maxT = Math.max(...hourly.map(h=>h.tokens_in+h.tokens_out), 1);
+  const n = hourly.length, bw = W/n;
+  // bars: requests
+  hourly.forEach((h,i)=>{
+    const bh = (h.requests/maxR)*(H-40);
+    ctx.fillStyle='rgba(79,140,255,.65)';
+    ctx.fillRect(i*bw+2, H-24-bh, bw-4, bh);
+  });
+  // line: tokens
+  ctx.beginPath(); ctx.strokeStyle='#7c5cff'; ctx.lineWidth=1.6;
+  hourly.forEach((h,i)=>{
+    const x = i*bw+bw/2, y = H-24-((h.tokens_in+h.tokens_out)/maxT)*(H-40);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  // axis labels
+  ctx.fillStyle='#8b98b4'; ctx.font='10px Consolas';
+  const first = new Date(hourly[0].hour*1000), last = new Date(hourly[hourly.length-1].hour*1000);
+  ctx.fillText(first.toLocaleDateString('fa-IR',{month:'2-digit',day:'2-digit',hour:'2-digit'})+'', 4, H-8);
+  ctx.fillText(last.toLocaleDateString('fa-IR',{month:'2-digit',day:'2-digit',hour:'2-digit'})+'', W-70, H-8);
+  ctx.fillText('↕ '+fmtN(maxR)+' req', 4, 12); ctx.fillText('─ '+fmtTok(maxT)+' tok', W-90, 12);
+}
+
+// ── models ──────────────────────────────────────────────────────────────────
+function renderModels(){
+  const f = (document.getElementById('model-filter')?.value||'').toLowerCase();
+  const rows = CATALOG.filter(m => !f || m.id.toLowerCase().includes(f) || String(m.owned_by).toLowerCase().includes(f));
+  document.getElementById('model-count').textContent = CATALOG.length + ' مدل';
+  document.getElementById('models-tbl').innerHTML =
+    '<tr><th>مدل</th><th>ارائه‌دهنده</th><th>نوع</th></tr>' +
+    rows.map(m => `<tr>
+      <td class="mono">${esc(m.id)}</td>
+      <td><span class="badge ${String(m.owned_by).startsWith('custom')?'custom':''}">${esc(m.owned_by)}</span></td>
+      <td class="muted">${m.alias_for ? 'نگاشت → <span class="mono">'+esc(m.alias_for)+'</span>' : 'اصلی'}</td>
+    </tr>`).join('') || '<tr><td colspan="3" class="muted">موردی یافت نشد</td></tr>';
+}
+async function refreshModels(){
+  OV = await api('/admin/api/overview?refresh=1');
+  const cat = await api('/admin/api/models'); CATALOG = cat.data||[];
+  renderKPIs(); renderProviders(); renderModels(); pgFillModels();
+}
+
+// ── keys ────────────────────────────────────────────────────────────────────
 async function createKey(){
-  const name = document.getElementById('keyname').value.trim() || 'key';
-  const j = await api('/admin/api/keys',{method:'POST',body:JSON.stringify({name})});
-  toast('کلید ساخته شد: '+j.key.key); copyTxt(j.key.key);
-  refreshAll();
+  const body = {
+    name: document.getElementById('nk-name').value || 'key',
+    max_requests: parseInt(document.getElementById('nk-max').value)||0,
+    allowed_models: document.getElementById('nk-models').value.split(',').map(s=>s.trim()).filter(Boolean),
+  };
+  const r = await api('/admin/api/keys',{method:'POST',body:JSON.stringify(body)});
+  if(r.key){
+    document.getElementById('newkey-out').innerHTML =
+      `<div class="kbox" onclick="copyCode(this)">${esc(r.key.key)}<span class="copy">کلیک=کپی</span></div>
+       <div class="muted">این کلید فقط همین یک بار نمایش داده می‌شود — کپی کن!</div>`;
+  }
+  loadAll();
 }
-async function delKey(key){ if(!confirm('این کلید حذف شود؟')) return; await api('/admin/api/keys?key='+encodeURIComponent(key),{method:'DELETE'}); refreshAll(); }
-function preset(name,url,models){ document.getElementById('pname').value=name; document.getElementById('purl').value=url; document.getElementById('pmodels').value=models; }
-async function addProvider(){
-  const p = { name:document.getElementById('pname').value.trim(), base_url:document.getElementById('purl').value.trim(),
-    api_key:document.getElementById('pkey').value.trim(),
-    models:(document.getElementById('pmodels').value.split(',').map(s=>s.trim()).filter(Boolean)) };
-  if(!p.name||!p.base_url){ document.getElementById('perr').textContent='نام و Base URL لازم است'; return; }
-  const j = await api('/admin/api/providers',{method:'POST',body:JSON.stringify(p)});
-  if(j.error){ document.getElementById('perr').textContent=j.error; return; }
-  toast('ارائه‌دهنده اضافه شد ✓'); ['pname','purl','pkey','pmodels'].forEach(i=>document.getElementById(i).value='');
-  refreshAll();
+function renderKeys(){
+  document.getElementById('keys-tbl').innerHTML =
+    '<tr><th>نام</th><th>کلید</th><th>درخواست/سقف</th><th>توکن (ورود/خروج)</th><th>محدودیت</th><th>آخرین مصرف</th><th></th></tr>' +
+    (OV.keys||[]).map(k => `<tr>
+      <td>${esc(k.name)} ${k.enabled?'<span class="tag ok">فعال</span>':'<span class="tag err">خاموش</span>'}</td>
+      <td class="mono">${esc(k.key.slice(0,14))}…</td>
+      <td class="mono">${fmtN(k.requests)}${k.max_requests? ' / '+fmtN(k.max_requests):''}</td>
+      <td class="mono">${fmtTok(k.tokens_in)} / ${fmtTok(k.tokens_out)}</td>
+      <td class="muted">${(k.allowed_models||[]).map(m=>'<span class="tag">'+esc(m)+'</span>').join(' ')||'—'}</td>
+      <td class="muted">${k.last_used_at? timeStr(k.last_used_at):'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="sm" onclick="toggleKey('${esc(k.key)}', ${!k.enabled})">${k.enabled?'خاموش':'روشن'}</button>
+        <button class="sm danger" onclick="delKey('${esc(k.key)}')">حذف</button>
+      </td></tr>`).join('');
 }
-async function delProvider(name){ if(!confirm('حذف '+name+'؟')) return; await api('/admin/api/providers?name='+encodeURIComponent(name),{method:'DELETE'}); refreshAll(); }
-function copyBox(el){ navigator.clipboard.writeText(el.innerText.replace(/copy$/,'')).then(()=>toast('کپی شد ✓')); }
-function copyTxt(t){ navigator.clipboard.writeText(t).then(()=>toast('کپی شد ✓')).catch(()=>{}); }
+const toggleKey = (k,e) => api('/admin/api/keys/toggle',{method:'POST',body:JSON.stringify({key:k,enabled:e})}).then(loadAll);
+const delKey = k => confirm('این کلید حذف شود؟') && api('/admin/api/keys?key='+encodeURIComponent(k),{method:'DELETE'}).then(loadAll);
+const toggleProvider = (n,e) => api('/admin/api/providers/toggle',{method:'POST',body:JSON.stringify({name:n,enabled:e})}).then(loadAll);
+const delProvider = n => confirm('پروایدر «'+n+'» حذف شود؟') && api('/admin/api/providers?name='+encodeURIComponent(n),{method:'DELETE'}).then(loadAll);
 
-/* ---------------- boot ---------------- */
-if (TOKEN) { fetch('/admin/api/overview',{headers:{'Authorization':'Bearer '+TOKEN}}).then(r=>{ if(r.status===401){TOKEN='';localStorage.removeItem('omni_admin');renderLogin();} else renderApp(); }).catch(()=>renderLogin()); }
-else renderLogin();
+// ── custom provider form ────────────────────────────────────────────────────
+const PRESETS = {
+  'gemini-aistudio': {name:'gemini-aistudio', url:'https://generativelanguage.googleapis.com/v1beta/openai', hint:'کلید از aistudio.google.com — مدل‌ها: gemini-2.5-flash …'},
+  'openrouter': {name:'openrouter', url:'https://openrouter.ai/api/v1', hint:'کلید از openrouter.ai/keys'},
+  'groq': {name:'groq', url:'https://api.groq.com/openai/v1', hint:'کلید از console.groq.com'},
+  'ollama': {name:'ollama', url:'http://localhost:11434/v1', hint:'بدون کلید — Ollama محلی'},
+  'lmstudio': {name:'lmstudio', url:'http://localhost:1234/v1', hint:'بدون کلید — LM Studio محلی'},
+};
+function preset(k){
+  const p = PRESETS[k];
+  document.getElementById('cp-name').value = p.name;
+  document.getElementById('cp-url').value = p.url;
+  document.getElementById('cp-msg').textContent = p.hint;
+}
+function addAliasRow(pub, up){
+  const d = document.createElement('div');
+  d.className='alias-row';
+  d.innerHTML = `<input class="a-pub" dir="ltr" placeholder="نام عمومی (gpt-4o)" value="${esc(pub)}">
+    <span class="arrow">→</span>
+    <input class="a-up" dir="ltr" placeholder="مدل واقعی آپستریم" value="${esc(up)}">
+    <button class="sm danger" onclick="this.parentNode.remove()">×</button>`;
+  (document.getElementById('alias-rows') || document.getElementById('b-alias-rows')).appendChild(d);
+}
+function collectAliases(container){
+  const m = {};
+  document.querySelectorAll('#'+container+' .alias-row').forEach(r=>{
+    const p = r.querySelector('.a-pub').value.trim(), u = r.querySelector('.a-up').value.trim();
+    if(p && u) m[p]=u;
+  });
+  return m;
+}
+async function saveProvider(){
+  const name = document.getElementById('cp-name').value.trim().toLowerCase();
+  const body = {
+    name, base_url: document.getElementById('cp-url').value.trim(),
+    api_key: document.getElementById('cp-key').value.trim(),
+    models: document.getElementById('cp-models').value.split(',').map(s=>s.trim()).filter(Boolean),
+    model_map: collectAliases('alias-rows'),
+  };
+  if(!name || !body.base_url){ document.getElementById('cp-msg').textContent='نام و آدرس الزامی است'; return; }
+  const r = await api('/admin/api/providers',{method:'POST',body:JSON.stringify(body)});
+  document.getElementById('cp-msg').textContent = r.ok ? '✅ ذخیره شد' : ('❌ '+(r.error||'خطا'));
+  loadAll();
+}
+function editProvider(rawJson){
+  const p = JSON.parse(rawJson);
+  document.getElementById('cp-name').value = p.name;
+  document.getElementById('cp-url').value = p.base_url;
+  document.getElementById('cp-key').value = p.api_key || '';
+  document.getElementById('cp-models').value = (p.models||[]).join(', ');
+  document.getElementById('alias-rows').innerHTML='';
+  (p.model_map? Object.entries(p.model_map):[]).forEach(([a,b])=>addAliasRow(a,b));
+  showTab('providers');
+  document.getElementById('cp-msg').textContent='ویرایش «'+p.name+'» — دکمه ذخیره را بزن';
+}
+
+// ── bridge aliases ──────────────────────────────────────────────────────────
+async function loadBridgeAliases(){
+  const prov = document.getElementById('ba-prov').value;
+  document.getElementById('b-alias-rows').innerHTML='';
+  const r = await api('/admin/api/aliases');
+  const m = (r.aliases||{})[prov] || {};
+  Object.entries(m).forEach(([a,b])=>addBAliasRow(a,b));
+}
+function addBAliasRow(pub, up){
+  const d = document.createElement('div');
+  d.className='alias-row';
+  d.innerHTML = `<input class="a-pub" dir="ltr" placeholder="نام عمومی" value="${esc(pub)}">
+    <span class="arrow">→</span>
+    <input class="a-up" dir="ltr" placeholder="مدل واقعی" value="${esc(up)}">
+    <button class="sm danger" onclick="this.parentNode.remove()">×</button>`;
+  document.getElementById('b-alias-rows').appendChild(d);
+}
+async function saveBridgeAliases(){
+  const prov = document.getElementById('ba-prov').value;
+  const r = await api('/admin/api/aliases',{method:'POST',body:JSON.stringify({provider:prov, map:collectAliases('b-alias-rows')})});
+  document.getElementById('cp-msg').textContent = r.ok ? '✅ نگاشت '+prov+' ذخیره شد' : '❌ '+ (r.error||'خطا');
+  loadAll();
+}
+
+// ── logs ────────────────────────────────────────────────────────────────────
+function renderLogs(){
+  const rows = (OV?.logs||[]);
+  document.getElementById('logs-tbl').innerHTML =
+    '<tr><th>زمان</th><th>مدل</th><th>پروایدر</th><th>وضعیت</th><th>تأخیر</th><th>توکن</th><th>کلید</th><th>خطا</th></tr>' +
+    rows.map(l => `<tr>
+      <td class="muted mono">${timeStr(l.time)}</td>
+      <td class="mono">${esc(l.model)}</td>
+      <td><span class="badge ${String(l.provider).startsWith('custom')?'custom':''}">${esc(l.provider)}</span></td>
+      <td>${l.status===200?'<span class="tag ok">200</span>':'<span class="tag err">'+esc(l.status||'—')+'</span>'}${l.stream?' <span class="tag">SSE</span>':''}</td>
+      <td class="mono">${fmtN(l.latency_ms)}ms</td>
+      <td class="mono">${l.tokens_in||l.tokens_out? fmtTok(l.tokens_in)+'/'+fmtTok(l.tokens_out):'—'}</td>
+      <td class="muted">${esc(l.key? l.key.slice(0,10)+'…':'—')}</td>
+      <td class="muted" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(l.err||'')}">${esc((l.err||'').slice(0,60))}</td>
+    </tr>`).join('') || '<tr><td colspan="8" class="muted">لاگی نیست</td></tr>';
+}
+function startLogAuto(){
+  stopLogAuto();
+  document.getElementById('logauto').textContent='⏸ توقف به‌روزرسانی';
+  logTimer = setInterval(async ()=>{
+    if(document.getElementById('tab-logs').classList.contains('hidden')) return;
+    OV = await api('/admin/api/overview'); renderLogs(); renderKPIs(); drawChart();
+  }, 4000);
+}
+function toggleLogAuto(){ if(logTimer){ stopLogAuto(); } else startLogAuto(); }
+function stopLogAuto(){ if(logTimer){ clearInterval(logTimer); logTimer=null; document.getElementById('logauto').textContent='▶ به‌روزرسانی زنده'; } }
+
+// ── playground ──────────────────────────────────────────────────────────────
+function pgFillModels(){
+  const sel = document.getElementById('pg-model');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="auto">auto (زنجیره هوشمند)</option>' +
+    CATALOG.map(m=>`<option value="${esc(m.id)}">${esc(m.id)} — ${esc(m.owned_by)}</option>`).join('');
+  if(cur) sel.value = cur;
+}
+async function pgSend(){
+  const btn = document.getElementById('pg-send');
+  const out = document.getElementById('pg-out');
+  const stats = document.getElementById('pg-stats');
+  const model = document.getElementById('pg-model').value;
+  const sys = document.getElementById('pg-sys').value.trim();
+  const msg = document.getElementById('pg-msg').value.trim();
+  if(!msg){ return; }
+  const stream = document.getElementById('pg-stream').checked;
+  const temp = parseFloat(document.getElementById('pg-temp').value);
+  const messages = [];
+  if(sys) messages.push({role:'system', content:sys});
+  messages.push({role:'user', content:msg});
+  btn.disabled = true; btn.textContent='در حال پاسخ…';
+  out.innerHTML=''; stats.textContent='';
+  const t0 = performance.now();
+  try{
+    const res = await fetch('/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(OV.keys?.[0]?.key||localStorage.getItem('omni_pgkey')||'')},
+      body: JSON.stringify({model, stream, temperature:temp, messages})
+    });
+    if(!stream || !res.body){
+      const j = await res.json();
+      if(j.error){ out.innerHTML = '<span style="color:var(--err)">'+esc(j.error.message||JSON.stringify(j.error))+'</span>'; }
+      else{
+        out.textContent = j.choices?.[0]?.message?.content || '';
+        const u = j.usage||{};
+        stats.textContent = `مدل: ${j.model||model} · توکن: ${u.prompt_tokens||'—'}/${u.completion_tokens||'—'} · ${(performance.now()-t0).toFixed(0)}ms`;
+      }
+    } else {
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf='', text='', think='';
+      const thinkEl = document.createElement('div'); thinkEl.className='think';
+      const textEl = document.createElement('div');
+      out.appendChild(thinkEl); out.appendChild(textEl);
+      while(true){
+        const {done, value} = await reader.read();
+        if(done) break;
+        buf += dec.decode(value, {stream:true});
+        const parts = buf.split('\n\n'); buf = parts.pop();
+        for(const part of parts){
+          const line = part.split('\n').find(l=>l.startsWith('data:'));
+          if(!line) continue;
+          const data = line.slice(5).trim();
+          if(data === '[DONE]') continue;
+          try{
+            const j = JSON.parse(data);
+            if(j.error){ textEl.textContent += '\n❌ '+(j.error.message||JSON.stringify(j.error)); continue; }
+            const d = j.choices?.[0]?.delta || {};
+            if(d.reasoning_content){ think += d.reasoning_content; thinkEl.textContent = '🧠 '+think; }
+            if(d.content){ text += d.content; textEl.textContent = text; }
+            if(j.usage){ stats.textContent = `مدل: ${j.model||model} · توکن: ${j.usage.prompt_tokens||'—'}/${j.usage.completion_tokens||'—'} · ${(performance.now()-t0).toFixed(0)}ms`; }
+            out.scrollTop = out.scrollHeight;
+          }catch{}
+        }
+      }
+      if(!stats.textContent) stats.textContent = 'زمان: '+(performance.now()-t0).toFixed(0)+'ms';
+    }
+  }catch(e){ out.innerHTML = '<span style="color:var(--err)">❌ '+esc(String(e))+'</span>'; }
+  btn.disabled=false; btn.textContent='ارسال ▶';
+}
+
+// ── boot ────────────────────────────────────────────────────────────────────
+if(TOKEN){
+  api('/admin/api/overview').then(()=>{ document.getElementById('login').style.display='none'; document.getElementById('app').classList.remove('hidden'); loadAll(); }).catch(()=>showLogin());
+} else showLogin();
+window.addEventListener('resize', ()=>{ if(OV) drawChart(); });
 </script>
 </body>
 </html>
