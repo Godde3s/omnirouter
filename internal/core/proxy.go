@@ -47,6 +47,7 @@ type LogEntry struct {
         LatencyMS int64  `json:"latency_ms"`
         TokensIn  int64  `json:"tokens_in,omitempty"`
         TokensOut int64  `json:"tokens_out,omitempty"`
+        Saved     int64  `json:"saved,omitempty"` // bytes shaved by the Token Saver
         Err       string `json:"error,omitempty"`
 }
 
@@ -124,6 +125,8 @@ func (f *forwarder) bridgeAuthHeader(providerID string) string {
                 return "Bearer deepseek"
         case "gemini":
                 return "Bearer gemini"
+        case "oc":
+                return "Bearer opencode"
         }
         return ""
 }
@@ -252,6 +255,11 @@ func (f *forwarder) ForwardChat(w http.ResponseWriter, r *http.Request, body []b
                 return
         }
 
+        // Token Saver (RTK tool-output compression + prompt modes) — runs
+        // BEFORE routing so every provider/format benefits, 9router parity.
+        var savedBytes int64
+        body, savedBytes = applySaver(body, r.Header)
+
         chain := f.registry.Resolve(req.Model)
         if len(chain) == 0 {
                 writeJSON(w, 404, formatRouterError(
@@ -303,7 +311,7 @@ func (f *forwarder) ForwardChat(w http.ResponseWriter, r *http.Request, body []b
                         continue
                 }
                 if tryCandidate(p, "/v1/chat/completions", func(resp *http.Response, p *Provider, up string) {
-                        f.consumeAndRecord(w, resp, stream, keyName, p.ID, req.Model, up, stream, body, start)
+                        f.consumeAndRecord(w, resp, stream, keyName, p.ID, req.Model, up, stream, body, start, savedBytes)
                 }) {
                         return
                 }
@@ -314,7 +322,7 @@ func (f *forwarder) ForwardChat(w http.ResponseWriter, r *http.Request, body []b
         if !tried {
                 for _, p := range chain {
                         if tryCandidate(p, "/v1/chat/completions", func(resp *http.Response, p *Provider, up string) {
-                                f.consumeAndRecord(w, resp, stream, keyName, p.ID, req.Model, up, stream, body, start)
+                                f.consumeAndRecord(w, resp, stream, keyName, p.ID, req.Model, up, stream, body, start, savedBytes)
                         }) {
                                 return
                         }
@@ -368,6 +376,10 @@ func (f *forwarder) ForwardMessages(w http.ResponseWriter, r *http.Request, body
                 return
         }
 
+        // Token Saver — same compression pipeline as the OpenAI path.
+        var savedBytes int64
+        body, savedBytes = applySaver(body, r.Header)
+
         chain := f.registry.Resolve(req.Model)
         if len(chain) == 0 {
                 writeJSON(w, 404, map[string]interface{}{
@@ -398,7 +410,7 @@ func (f *forwarder) ForwardMessages(w http.ResponseWriter, r *http.Request, body
                 for attempt := 0; attempt < f.retryPer; attempt++ {
                         resp, err := f.openUpstream(ctx, r, p, "/v1/messages", upModel, body)
                         if err == nil && !retryable(resp.StatusCode) {
-                                f.consumeMessages(w, resp, req.Stream, keyName, p.ID, req.Model, body, start)
+                                f.consumeMessages(w, resp, req.Stream, keyName, p.ID, req.Model, body, start, savedBytes)
                                 return true
                         }
                         lastStatus, lastErr = failureInfo(resp, err)
@@ -464,7 +476,7 @@ func anthropicErrType(status int) string {
 // consumeAndRecord streams/copies a successful /v1/chat/completions response
 // to the client and records usage stats. Returns the recorded token counts.
 func (f *forwarder) consumeAndRecord(w http.ResponseWriter, resp *http.Response, stream bool,
-        keyName, providerID, model, upModel string, isStream bool, reqBody []byte, start time.Time) (int64, int64) {
+        keyName, providerID, model, upModel string, isStream bool, reqBody []byte, start time.Time, saved int64) (int64, int64) {
 
         var tin, tout int64
         if stream {
@@ -487,13 +499,13 @@ func (f *forwarder) consumeAndRecord(w http.ResponseWriter, resp *http.Response,
         if tin == 0 {
                 tin = estimateTokens(len(reqBody))
         }
-        f.recordSuccess(keyName, providerID, model, tin, tout, stream, start)
+        f.recordSuccess(keyName, providerID, model, tin, tout, stream, start, saved)
         return tin, tout
 }
 
 // consumeMessages is the Anthropic variant of consumeAndRecord.
 func (f *forwarder) consumeMessages(w http.ResponseWriter, resp *http.Response, stream bool,
-        keyName, providerID, model string, reqBody []byte, start time.Time) {
+        keyName, providerID, model string, reqBody []byte, start time.Time, saved int64) {
 
         var tin, tout int64
         if stream {
@@ -515,15 +527,15 @@ func (f *forwarder) consumeMessages(w http.ResponseWriter, resp *http.Response, 
         if tin == 0 {
                 tin = estimateTokens(len(reqBody))
         }
-        f.recordSuccess(keyName, providerID, model, tin, tout, stream, start)
+        f.recordSuccess(keyName, providerID, model, tin, tout, stream, start, saved)
 }
 
-func (f *forwarder) recordSuccess(keyName, providerID, model string, tin, tout int64, stream bool, start time.Time) {
+func (f *forwarder) recordSuccess(keyName, providerID, model string, tin, tout int64, stream bool, start time.Time, saved int64) {
         f.store.RecordStat(providerID, model, tin, tout, false)
         f.store.RecordUsage(keyName, tin, tout, false)
         addLog(LogEntry{Time: time.Now().Unix(), Key: keyName, Model: model,
                 Provider: providerID, Status: 200, Stream: stream,
-                LatencyMS: time.Since(start).Milliseconds(), TokensIn: tin, TokensOut: tout})
+                LatencyMS: time.Since(start).Milliseconds(), TokensIn: tin, TokensOut: tout, Saved: saved})
 }
 
 // ---------- upstream plumbing ----------

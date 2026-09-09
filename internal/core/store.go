@@ -153,9 +153,10 @@ func (s *Stats) record(provider, model string, in, out int64, failed bool) {
 // ---------- store ----------
 
 type storeData struct {
-	Keys            []APIKey         `json:"keys"`
-	CustomProviders []CustomProvider `json:"custom_providers"`
-	Stats           *Stats           `json:"stats,omitempty"`
+	Keys            []APIKey            `json:"keys"`
+	CustomProviders []CustomProvider    `json:"custom_providers"`
+	Combos          map[string][]string `json:"combos,omitempty"`
+	Stats           *Stats              `json:"stats,omitempty"`
 }
 
 type Store struct {
@@ -181,7 +182,51 @@ func NewStore(dir string) *Store {
 	if s.data.Stats == nil {
 		s.data.Stats = newStats()
 	}
+	if s.data.Combos == nil {
+		s.data.Combos = map[string][]string{}
+	}
 	return s
+}
+
+// ---------- combos (named failover chains) ----------
+
+// ListCombos returns the persisted named chains.
+func (s *Store) ListCombos() map[string][]string {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	out := make(map[string][]string, len(s.data.Combos))
+	for k, v := range s.data.Combos {
+		out[k] = append([]string(nil), v...)
+	}
+	return out
+}
+
+// SetCombo persists a named chain.
+func (s *Store) SetCombo(name string, chain []string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+	if name == "" {
+		return
+	}
+	if s.data.Combos == nil {
+		s.data.Combos = map[string][]string{}
+	}
+	s.data.Combos[name] = chain
+	s.dirty = true
+}
+
+// DeleteCombo removes a named chain; false when it did not exist.
+func (s *Store) DeleteCombo(name string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	name = strings.ToLower(strings.TrimSpace(strings.TrimPrefix(name, "combo:")))
+	if _, ok := s.data.Combos[name]; !ok {
+		return false
+	}
+	delete(s.data.Combos, name)
+	s.dirty = true
+	return true
 }
 
 func (s *Store) saveLocked() error {

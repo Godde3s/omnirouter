@@ -236,7 +236,7 @@ func modelsHandler2(w http.ResponseWriter, r *http.Request) {
     for _, m := range models {
         ids = append(ids, m.ID)
     }
-    currentModel := "glm-5.2"
+    currentModel := "glm-5.3"
     if len(ids) > 0 {
         currentModel = ids[0]
     }

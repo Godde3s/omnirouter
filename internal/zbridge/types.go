@@ -170,9 +170,9 @@ const modelsCacheTTL = 5 * time.Minute
 
 // Fallback if Z.AI API is unreachable and cache is empty
 var fallbackModels = []ModelInfo{
-    {ID: "glm-5.2", Name: "GLM-5.2", Description: "Flagship model, excels at coding and long-horizon tasks"},
-    {ID: "GLM-5.1", Name: "GLM-5.1", Description: "Previous flagship model"},
-    {ID: "GLM-5-Turbo", Name: "GLM-5-Turbo", Description: "New model for chat, coding, and agentic task"},
+    {ID: "glm-5.3", Name: "GLM-5.3", Description: "Flagship model, excels at coding and long-horizon tasks"},
+    {ID: "glm-5.3-flash", Name: "GLM-5.3-Flash", Description: "Fast flagship variant for chat, coding, and agentic tasks"},
+    {ID: "glm-5.2", Name: "GLM-5.2", Description: "Previous flagship model"},
     {ID: "GLM-5v-Turbo", Name: "GLM-5V-Turbo", Description: "Vision model with evolved intelligence",
         Capabilities: map[string]interface{}{"vision": true}},
     {ID: "glm-4.7", Name: "GLM-4.7", Description: "Classic high-performance model"},
