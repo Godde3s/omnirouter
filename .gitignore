@@ -8,3 +8,4 @@ tokens.sqlite
 qwen-bx.json
 server*.log
 *.log
+bin/
