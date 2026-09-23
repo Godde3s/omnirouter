@@ -155,6 +155,25 @@ func (s *Stats) record(provider, model string, in, out int64, failed bool) {
         }
 }
 
+// ---------- Freebuff tokens ----------
+
+// ListFreebuffTokens returns the dashboard-connected Freebuff auth tokens.
+func (s *Store) ListFreebuffTokens() []string {
+        s.mu.RLock()
+        defer s.mu.RUnlock()
+        out := make([]string, len(s.data.FreebuffTokens))
+        copy(out, s.data.FreebuffTokens)
+        return out
+}
+
+// SetFreebuffTokens persists the token list (empty slice disconnects).
+func (s *Store) SetFreebuffTokens(tokens []string) {
+        s.mu.Lock()
+        s.data.FreebuffTokens = tokens
+        s.dirty = true
+        s.mu.Unlock()
+}
+
 // ---------- store ----------
 
 // DeviceGrant is one OAuth Device Authorization Grant (RFC 8628): an agent
@@ -177,6 +196,7 @@ type storeData struct {
         CustomProviders []CustomProvider    `json:"custom_providers"`
         Combos          map[string][]string `json:"combos,omitempty"`
         DeviceGrants    []DeviceGrant       `json:"device_grants,omitempty"`
+        FreebuffTokens  []string            `json:"freebuff_tokens,omitempty"`
         Stats           *Stats              `json:"stats,omitempty"`
 }
 

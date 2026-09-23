@@ -7,7 +7,7 @@
 <meta name="description" content="A unified router for AI models: Qwen, GLM 5.3, DeepSeek, Gemini and keyless OpenCode — automatic failover, RTK Token Saver and OAuth device-flow connections. OpenAI and Anthropic compatible.">
 <meta name="theme-color" content="#070b1a">
 <meta property="og:title" content="OmniRouter — One Router for Every Model">
-<meta property="og:description" content="Free keyless agentic coding with OpenCode Zen — GLM 5.3, Qwen3.8-max, DeepSeek, Gemini. One binary, every platform.">
+<meta property="og:description" content="Free providers built in: OpenCode Zen (keyless) and Freebuff (one token) — GLM 5.3, Qwen3.8-max, DeepSeek, Gemini. One binary, every platform.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b7cff'/%3E%3Cstop offset='1' stop-color='%233ee0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M12 2l8 4.6v8.8L12 20l-8-4.6V6.6L12 2z' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%233ee0ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -538,6 +538,7 @@ footer .fl a:hover{color:var(--cyan)}
     </a>
     <div class="nav-links">
       <a href="#opencode">OpenCode Free</a>
+      <a href="#freebuff">Freebuff</a>
       <a href="#saver">Token Saver</a>
       <a href="#features">Features</a>
       <a href="#start">Quick Start</a>
@@ -557,14 +558,15 @@ footer .fl a:hover{color:var(--cyan)}
 </nav>
 <div class="mnav" id="mnav">
   <a href="#opencode"><span class="no">01</span> OpenCode Free — no key</a>
-  <a href="#saver"><span class="no">02</span> Token Saver</a>
-  <a href="#features"><span class="no">03</span> Features</a>
-  <a href="#start"><span class="no">04</span> Quick Start</a>
-  <a href="#connect"><span class="no">05</span> Connect clients</a>
-  <a href="#oauth"><span class="no">06</span> OAuth — keyless connect</a>
-  <a href="#models"><span class="no">07</span> Models</a>
-  <a href="#changelog"><span class="no">08</span> Changelog</a>
-  <a href="#faq"><span class="no">09</span> FAQ</a>
+  <a href="#freebuff"><span class="no">02</span> Freebuff — one token</a>
+  <a href="#saver"><span class="no">03</span> Token Saver</a>
+  <a href="#features"><span class="no">04</span> Features</a>
+  <a href="#start"><span class="no">05</span> Quick Start</a>
+  <a href="#connect"><span class="no">06</span> Connect clients</a>
+  <a href="#oauth"><span class="no">07</span> OAuth — keyless connect</a>
+  <a href="#models"><span class="no">08</span> Models</a>
+  <a href="#changelog"><span class="no">09</span> Changelog</a>
+  <a href="#faq"><span class="no">10</span> FAQ</a>
   <a class="cta" href="https://github.com/Godde3s/omnirouter" target="_blank" rel="noopener">GitHub — omnirouter</a>
 </div>
 <!-- ═══════ hero ═══════ -->
@@ -579,7 +581,7 @@ footer .fl a:hover{color:var(--cyan)}
       <span class="line">One router, <span class="grad">every model.</span></span>
       <span class="line">Free coding, no downtime.</span>
     </h1>
-    <p class="sub rv in" style="--d:.08s">Real web bridges for <bdi>Qwen</bdi>, <bdi>GLM 5.3</bdi>, <bdi>DeepSeek</bdi> and <bdi>Gemini</bdi> — plus the free <bdi>OpenCode Zen</bdi> provider. All behind one endpoint: OAuth connection with zero key copy-paste, automatic failover and token compression. One binary, no dependencies.</p>
+    <p class="sub rv in" style="--d:.08s">Real web bridges for <bdi>Qwen</bdi>, <bdi>GLM 5.3</bdi>, <bdi>DeepSeek</bdi> and <bdi>Gemini</bdi> — the free <bdi>OpenCode Zen</bdi> and <bdi>Freebuff</bdi> providers. All behind one endpoint: OAuth connection with zero key copy-paste, automatic failover and token compression. One binary, no dependencies.</p>
     <div class="mrow rv in" style="--d:.11s" aria-label="Featured models">
       <span class="mpill"><span class="dot" style="background:var(--vio)"></span>qwen3.8-max</span>
       <span class="mpill"><span class="dot" style="background:var(--cyan)"></span>GLM 5.3</span>
@@ -674,6 +676,48 @@ curl http://localhost:8080/v1/chat/completions \
 <span class="c1"># paid zen? just add a key:</span>
 <span class="c1"># OPENCODE_API_KEY=...  ->  oc/glm-5.3</span></div>
         <p class="cap">Free zen IDs rotate over time — OmniRouter refreshes the list every 60 seconds; whatever shows up lands in your catalog and dashboard instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ freebuff ═══════ -->
+<section class="band" id="freebuff">
+  <div class="wrap">
+    <div class="split">
+      <div class="rv">
+        <span class="kicker">Freebuff · Free Codebuff Tier</span>
+        <h2>Connect Freebuff like<br><span class="grad">Cline in 9router</span></h2>
+        <p style="margin-top:1.1rem"><a href="https://freebuff.com" target="_blank" rel="noopener">Freebuff</a> is the free tier built on the open Codebuff agent framework. Paste <strong>one auth token</strong> in the dashboard and its free catalog joins the router: <strong>GLM&nbsp;5.3 Flash</strong>, <strong>DeepSeek&nbsp;V4.1 Flash</strong>, <strong>MiMo&nbsp;2.6 Flash</strong> and <strong>Solar&nbsp;Mini&nbsp;4</strong> — the first four <strong>unmetered</strong> — plus GPT-5.6 Luna, GLM 5.3 and more.</p>
+        <ul class="check-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>One token, few clicks</strong> — Dashboard → Connections → Freebuff → paste → Connect. That's the whole flow.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>CLI auto-detect</strong> — already using <bdi class="lt">freebuff</bdi> in your terminal? Its saved login is picked up automatically, zero paste needed.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Live catalog</strong> — the free agent list is parsed from the open-source Codebuff source, so upstream model additions appear without updating the router.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Multi-token round-robin</strong> — paste several tokens for higher throughput; requests rotate across them with automatic cooldown on failures.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Failover-ready</strong> — Freebuff models ride the same <bdi class="lt">auto</bdi> chain and <bdi class="lt">combo:</bdi> system as every other provider.</span></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.1s">
+        <div class="codebox has-badge"><span class="nobadge">FREE — ONE TOKEN</span><span class="c1"># 1 · get a token: freebuff.com → sign in → copy auth token</span>
+<span class="c1"># 2 · dashboard → Connections → Freebuff → paste → Connect</span>
+
+<span class="c1"># 3 · call any free model through your router:</span>
+curl http://localhost:8080/v1/chat/completions \
+  <span class="k">-H</span> <span class="s">"Authorization: Bearer sk-omni"</span> \
+  <span class="k">-H</span> <span class="s">"Content-Type: application/json"</span> \
+  <span class="k">-d</span> <span class="s">'{
+    "model": <span class="n">"freebuff/z-ai/glm-5.3-flash"</span>,
+    "messages": [{"role":"user","content":"hi"}]
+  }'</span>
+
+<span class="c1"># unmetered four (no session cost):</span>
+<span class="s">"model": <span class="n">"freebuff/deepseek/deepseek-v4.1-flash"</span></span>
+<span class="s">"model": <span class="n">"freebuff/mimo/mimo-v2.5"</span></span>
+<span class="s">"model": <span class="n">"freebuff/upstage/solar-mini4"</span></span>
+
+<span class="c1"># or via env (comma-separated for multi-token):</span>
+<span class="c1"># FREEBUFF_TOKENS=token1,token2</span></div>
+        <p class="cap">The catalog auto-refreshes every 6 hours from the Codebuff open-source tree — new free models land in <bdi class="lt">/v1/models</bdi> on their own.</p>
       </div>
     </div>
   </div>
@@ -996,6 +1040,12 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
         <div class="meter"><div class="lbl"><span>Agentic quality</span><span>74%</span></div><div class="bar"><div class="fill" data-w="74"></div></div></div>
       </div>
       <div class="card tlt">
+        <div class="rank"><div class="ico c-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-keyoff"/></svg></div><span class="pos">06</span></div>
+        <h3><span class="en">freebuff/glm-5.3-flash</span> <span class="tag g">free</span></h3>
+        <p>One Freebuff token unlocks the free Codebuff tier — this one <bdi class="lt">unmetered</bdi>; DeepSeek V4.1 Flash, MiMo 2.6 Flash and Solar Mini 4 ride along.</p>
+        <div class="meter"><div class="lbl"><span>Agentic quality</span><span>84%</span></div><div class="bar"><div class="fill" data-w="84"></div></div></div>
+      </div>
+      <div class="card tlt">
         <div class="rank"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg></div><span class="pos">∞</span></div>
         <h3>Any other model</h3>
         <p>Add a custom provider — AI Studio, OpenRouter, Groq, Ollama — the rest of the path is identical.</p>
@@ -1010,11 +1060,21 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Changelog</span>
-      <h2>From v1.0 to <span class="grad">v1.3.1</span></h2>
+      <h2>From v1.0 to <span class="grad">v1.4.0</span></h2>
     </div>
     <div class="tline rv">
       <div class="titem">
-        <div class="vhead"><span class="vnum">v1.3.1</span><span class="vdate">2026-09</span><span class="tag g">current</span></div>
+        <div class="vhead"><span class="vnum">v1.4.0</span><span class="vdate">2026-09</span><span class="tag g">current</span></div>
+        <ul>
+          <li><strong>Freebuff provider</strong> (<bdi class="lt">freebuff</bdi>) — the free Codebuff tier joins the router Cline-style: paste one auth token in Dashboard → Connections → Freebuff and the free catalog (GLM 5.3 Flash, DeepSeek V4.1 Flash, MiMo 2.6 Flash, Solar Mini 4 — unmetered — plus GPT-5.6 Luna, GLM 5.3 …) goes live</li>
+          <li><strong>Full protocol, zero manual steps</strong> — free sessions, agent runs and <bdi class="lt">codebuff_metadata</bdi> handled inside the binary; multi-token round-robin with cooldown, waiting-room handling and SSE streaming pass-through</li>
+          <li><strong>CLI auto-detect</strong> — an existing <bdi class="lt">freebuff</bdi>/<bdi class="lt">codebuff</bdi> terminal login (<bdi class="lt">~/.config/manicode/credentials.json</bdi>) is picked up automatically</li>
+          <li><strong>Live catalog</strong> — the free agent list is parsed from the Codebuff open-source source every 6 hours; upstream additions appear without a router update</li>
+          <li><strong>Any other free provider</strong> — the custom-provider path (any OpenAI-compatible endpoint) stays one paste away in the Providers tab</li>
+        </ul>
+      </div>
+      <div class="titem alt">
+        <div class="vhead"><span class="vnum grad">v1.3.1</span><span class="vdate">2026-09</span></div>
         <ul>
           <li><strong>Site goes fully English</strong> — every section, label and code sample rewritten in optimized LTR English with Latin-tuned typography (Inter + Space Grotesk, line-height 1.6–1.75)</li>
           <li><strong>Mobile cascade bug fixed at the root</strong> — overrides moved to the end of the stylesheet so grids collapse properly (2-col / 1-col); 12px type floors and safe breaking of long code tokens (<bdi class="lt">overflow-wrap:anywhere</bdi>)</li>
@@ -1022,7 +1082,7 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
         </ul>
       </div>
       <div class="titem alt">
-        <div class="vhead"><span class="vnum grad">v1.3.0</span><span class="vdate">2026-09</span></div>
+        <div class="vhead"><span class="vnum">v1.3.0</span><span class="vdate">2026-09</span></div>
         <ul>
           <li><strong>OAuth Device Flow</strong> (<bdi class="lt">RFC 8628</bdi>) — keyless connection for Cline, Kilo Code, GitHub Copilot, Hermes and any other client; the 9router pattern with <bdi class="lt v">/oauth/device/start</bdi> and <bdi class="lt v">/oauth/device/poll</bdi></li>
           <li><strong>Connections panel in the dashboard</strong> — live-badged pending requests, connected clients with independent stats, one-click copy and instant revocation</li>
@@ -1143,7 +1203,7 @@ $ curl -s -X POST localhost:8080/oauth/device/poll \
         </a>
         <p style="margin-top:.9rem;max-width:360px;font-size:.9rem">One router for every model. Real web bridges plus any OpenAI-compatible API, with failover and a Token Saver — a single open-source binary.</p>
         <div style="margin-top:1.1rem;display:flex;gap:.5rem;flex-wrap:wrap">
-          <span class="chip"><span class="dot" style="background:var(--cyan)"></span><b class="en">v1.3.1</b></span>
+          <span class="chip"><span class="dot" style="background:var(--cyan)"></span><b class="en">v1.4.0</b></span>
           <span class="chip"><span class="dot" style="background:var(--mint)"></span><b class="en">Go 1.25</b></span>
           <span class="chip"><span class="dot" style="background:var(--vio)"></span><b class="en">MIT</b></span>
         </div>
@@ -1211,12 +1271,16 @@ var tk=document.getElementById('ticker-track');if(tk)tk.innerHTML+=tk.innerHTML;
   var lines=[
     ['cm','# one binary -- every model, one endpoint'],
     ['','$ ./omnirouter'],
-    ['vi','OmniRouter v1.3.1 - bridges online'],
-    ['ok','\u2713 qwen \u2713 glm-5.3 \u2713 deepseek \u2713 gemini \u2713 oc'],
+    ['vi','OmniRouter v1.4.0 - bridges online'],
+    ['ok','\u2713 qwen \u2713 glm-5.3 \u2713 deepseek \u2713 gemini \u2713 oc \u2713 freebuff'],
     ['cy','77 models live - dashboard : localhost:8080'],
     ['cm','# keyless -- OpenCode Zen free tier'],
     ['','$ curl :8080/v1/chat/completions \\'],
     ['','    -d \'{"model":"oc/big-pickle",...}\''],
+    ['lm','\u2713 200 OK - "content":"hi" - cost $0'],
+    ['cm','# freebuff -- one token, unmetered flash models'],
+    ['','$ curl :8080/v1/chat/completions \\'],
+    ['','    -d \'{"model":"freebuff/z-ai/glm-5.3-flash",...}\''],
     ['lm','\u2713 200 OK - "content":"hi" - cost $0'],
     ['cm','# named combo -- auto failover'],
     ['am','"model":"combo:free-stack" -> qwen>gemini>oc']

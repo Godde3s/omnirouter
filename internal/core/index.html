@@ -33,7 +33,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 ::-webkit-scrollbar-thumb{background:#2a2a3c;border-radius:8px}
 ::-webkit-scrollbar-track{background:transparent}
 a{color:var(--cy);text-decoration:none}
-code,.mono{font-family:var(--mono);font-size:.86em;direction:ltr;unicode-bidi:embed}
+code,.mono{font-family:var(--mono);font-size:max(.86em,11px);direction:ltr;unicode-bidi:embed}
 
 /* ---------- login ---------- */
 #login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg)}
@@ -81,6 +81,7 @@ code,.mono{font-family:var(--mono);font-size:.86em;direction:ltr;unicode-bidi:em
 .top{display:flex;align-items:center;gap:12px;padding:15px 26px;border-bottom:1px solid var(--bord);background:rgba(14,14,23,.6);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20}
 .top h1{font-size:16.5px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill{display:inline-flex;align-items:center;gap:7px;padding:5.5px 13px;border-radius:99px;border:1px solid var(--bord2);background:var(--panel);font-size:12px;color:var(--mut);white-space:nowrap}
+.pill.ok{border-color:var(--gr);color:var(--gr)}
 .btn{padding:8px 17px;border-radius:9px;border:1px solid var(--bord2);background:var(--panel2);color:var(--txt);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
 .btn:hover{border-color:var(--vio);background:rgba(124,92,255,.12)}
 .btn.pri{background:var(--grad);border:none;color:#fff}
@@ -174,7 +175,7 @@ label.f{display:block;font-size:11.5px;color:var(--mut);margin:10px 0 5px;font-w
   <aside class="side" id="side">
     <div class="brand">
       <div class="t">🌐 <b>OmniRouter</b></div>
-      <div class="v" id="ver">v1.3.1</div>
+      <div class="v" id="ver">v1.4.0</div>
     </div>
     <nav class="nav" id="nav">
       <button data-v="ov" class="on"><span class="ic">◈</span>Overview</button>
@@ -236,6 +237,30 @@ label.f{display:block;font-size:11.5px;color:var(--mut);margin:10px 0 5px;font-w
           <div><span class="cx-n">1</span>curl -X POST localhost:8080/oauth/device/start -d '{"client":"cline"}'</div>
           <div><span class="cx-n">2</span>open /oauth/authorize → approve user_code</div>
           <div><span class="cx-n">3</span>curl -X POST localhost:8080/oauth/device/poll → access_token</div>
+        </div>
+      </div>
+
+      <div class="card" id="fb-card">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+          <div style="max-width:640px">
+            <h3>🆓 Freebuff — free upstream provider</h3>
+            <p class="dim small">Connect Freebuff (freebuff.com — the free Codebuff tier) the same way 9router connects Cline: paste one auth token and the free catalog (GLM 5.3 Flash, DeepSeek V4.1 Flash, MiMo 2.6 Flash, Solar Mini 4 — the first four unmetered) joins the router with automatic failover. Multiple tokens = round-robin throughput.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <span class="pill" id="fb-status">checking…</span>
+            <span class="dim small mono" id="fb-cli" style="display:none">CLI credentials detected</span>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px;flex-wrap:wrap">
+          <textarea id="fb-tokens" class="mono" rows="2" placeholder="Paste Freebuff auth token(s) — comma or newline separated" style="flex:1;min-width:260px;direction:ltr;text-align:left"></textarea>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn pri" onclick="connectFreebuff()">Connect</button>
+            <button class="btn danger sm" onclick="disconnectFreebuff()">Disconnect</button>
+            <button class="btn sm" onclick="loadFreebuff()">⟳</button>
+          </div>
+        </div>
+        <div class="dim small" style="margin-top:8px" id="fb-howto">
+          Get a token: open <b>freebuff.com</b> → sign in → copy your auth token · or run <span class="mono">npm i -g freebuff &amp;&amp; freebuff</span> once — the CLI login on this machine is detected automatically.
         </div>
       </div>
 
@@ -442,8 +467,37 @@ document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));$('v-'+b.dataset.v).classList.add('on');
   $('vtitle').textContent=titles[b.dataset.v];
   $('side').classList.remove('open');
-  if(b.dataset.v==='cx')loadConnections();if(b.dataset.v==='sv')loadSaver();if(b.dataset.v==='cb')loadCombos();if(b.dataset.v==='ky')loadKeys();
+  if(b.dataset.v==='cx'){loadConnections();loadFreebuff()}if(b.dataset.v==='sv')loadSaver();if(b.dataset.v==='cb')loadCombos();if(b.dataset.v==='ky')loadKeys();
 });
+
+/* ============ freebuff (free upstream provider) ============ */
+async function loadFreebuff(){
+  try{
+    const r=await api('/admin/api/freebuff');if(!r.ok)return;const d=await r.json();
+    const st=$('fb-status');
+    if(d.connected){
+      st.innerHTML='<span class="dot on"></span> Connected — '+d.tokens+' token'+(d.tokens>1?'s':'')+' · '+d.models.length+' free models';
+      st.classList.add('ok');
+    }else{
+      st.innerHTML='<span class="dot"></span> Not connected';
+      st.classList.remove('ok');
+    }
+    const cli=$('fb-cli');
+    if(d.cli_found){cli.style.display='inline-block'}else{cli.style.display='none'}
+  }catch(e){}
+}
+async function connectFreebuff(){
+  const toks=$('fb-tokens').value.split(/[\n,;]+/).map(s=>s.trim()).filter(Boolean);
+  if(!toks.length){alert('Paste at least one Freebuff auth token (freebuff.com → sign in → copy token).');return}
+  const r=await api('/admin/api/freebuff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tokens:toks})});
+  if(r.ok){$('fb-tokens').value='';loadFreebuff();loadAll(true)}
+  else{const d=await r.json().catch(()=>({}));alert(d.error||'Failed to connect')}
+}
+async function disconnectFreebuff(){
+  if(!confirm('Disconnect Freebuff? Connected models will leave the catalog.'))return;
+  const r=await api('/admin/api/freebuff',{method:'DELETE'});
+  if(r.ok)loadFreebuff();else{const d=await r.json().catch(()=>({}));alert(d.error||'Failed to disconnect')}
+}
 
 /* ============ connections (OAuth device flow) ============ */
 const CLIENT_LABELS={cline:'Cline',kilo:'Kilo Code',hermes:'Hermes Agent','claude-code':'Claude Code',codex:'Codex CLI',cursor:'Cursor',roo:'Roo Code',continue:'Continue',droid:'Factory Droid',opencode:'OpenCode',openclaw:'OpenClaw',copilot:'GitHub Copilot',custom:'Custom Agent'};

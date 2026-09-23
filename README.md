@@ -21,10 +21,11 @@
 
 ---
 
-## 🚀 چه خبره از v1.0.0 تا v1.3.2؟
+## 🚀 چه خبره از v1.0.0 تا v1.4.0؟
 
 | نسخه | چه چیزهایی اضافه/عوض شد |
 |---|---|
+| **v1.4.0** (امروز) | 🆓 **پروایدر Freebuff (`freebuff`)** — اتصال تایر رایگان Codebuff **مثل Cline در 9router**: یک توکن در داشبورد (Connections → Freebuff) پیست می‌کنی و کاتالوگ رایگان راه می‌افتد — **GLM 5.3 Flash، DeepSeek V4.1 Flash، MiMo 2.6 Flash، Solar Mini 4 (unmetered)** به‌علاوه GPT-5.6 Luna و GLM 5.3 · 🔁 **multi-token round-robin** با cooldown خودکار · 🖥 **تشخیص خودکار لاگین CLI** (`~/.config/manicode/credentials.json`) بدون پیست · 📡 **کاتالوگ زنده** — پارس از سورس اپن‌سورس Codebuff هر ۶ ساعت · 🔐 پروتکل کامل (free session + agent-run + codebuff_metadata) داخل همین یک باینری |
 | **v1.3.2** (امروز) | 🇬🇧 **سایت Pages و داشبورد کاملاً انگلیسی (LTR)** — تایپوگرافی لاتین بهینه (Inter + Space Grotesk، line-height ۱.۶–۱.۷۵) · 🐞 **رفع باگ قدیمی داشبورد:** جدول‌های Providers/Models/Keys/Logs/Aliases مقدار undefined نشان می‌دادند چون JS کلیدهای PascalCase را از API می‌خواند که snake_case برمی‌گرداند — حالا با fallback دوطرفه |
 | **v1.3.1** (امروز) | 📱 **بازنویسی لایه‌ی موبایل سایت Pages** — رفع باگ cascade در CSS (گرید ۴ستونه‌ی دسکتاپ روی گوشی رندر می‌شد و کارت‌های OAuth از لبه بیرون می‌زدند) + کف فونت ۱۲px برای بج‌ها/تگ‌ها + شکست امن توکن‌های بلند کد در متن فارسی · 🏷 نسخه‌ی باینری به 1.3.1 (smoke 31/31 سبز) |
 | **v1.3.0** | 🔐 **OAuth Device Flow (RFC 8628)** — اتصال بدون کپی کلید مثل 9router: `POST /oauth/device/start` + `poll` + صفحه‌ی تأیید فارسی `/oauth/authorize` — برای **Cline، Kilo Code، GitHub Copilot، Hermes Agent، Claude Code، Codex، Cursor، Roo، Continue، OpenCode** و هر کلاینت دیگر · 🎛 **پنل «اتصالات» در داشبورد** — pending ها با بج زنده، کلاینت‌های متصل با آمار مستقل و لغو لحظه‌ای · 🔑 **کلید مجازی per-کلاینت** (`sk-omni-…`) سازگار با سهمیه و allowlist |
@@ -50,6 +51,7 @@ OmniRouter چهار بریج اثبات‌شده‌ی **qwen-free-api**، **glm-
 | مدل `auto` با زنجیره‌ی failover بین ارائه‌دهنده‌ها | ✅ |
 | **برج Gemini وب** — مهمان بدون کوکی هم کار می‌کند (اثبات زنده) | ✅ |
 | **OAuth Device Flow** — اتصال Cline / Kilo Code / GitHub Copilot / Hermes و ۸ کلاینت دیگر بدون کپی کلید | ✅ v1.3.0 |
+| **Freebuff (پروایدر `freebuff`)** — تایر رایگان Codebuff با یک توکن یا لاگین CLI؛ GLM 5.3 Flash / DeepSeek V4.1 Flash / MiMo 2.6 Flash / Solar Mini 4 بدون متر | ✅ v1.4.0 |
 | **OpenCode Zen (پروایدر `oc`)** — مدل‌های رایگان **بدون کلید**، fetch خودکار، Anthropic ترجمه‌شده | ✅ v1.2.0 |
 | **RTK Token Saver** — فشرده‌سازی خودکار tool_result (git diff / grep / ls / لاگ) + آمار بایت صرفه‌جویی‌شده | ✅ v1.2.0 |
 | **کمبوهای نام‌دار** — `combo:my-stack` با fallback ترتیبی + کمبوی آماده `free-stack` | ✅ v1.2.0 |
