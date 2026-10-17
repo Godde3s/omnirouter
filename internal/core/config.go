@@ -5,9 +5,12 @@ package core
 
 import (
 	"bufio"
+	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/Godde3s/omnirouter/internal/authtoken"
 )
 
 type Config struct {
@@ -41,15 +44,32 @@ func loadCoreConfig() *Config {
 	c := &Config{}
 	c.Host = envOr("HOST", "0.0.0.0")
 	c.Port = envIntOr("PORT", 8080)
-	c.AdminPassword = envOr("ADMIN_PASSWORD", "admin")
+	c.AdminPassword = loadAdminPassword()
 	c.RouterKey = strings.TrimSpace(os.Getenv("ROUTER_KEY"))
-	c.InternalToken = os.Getenv("AUTH_TOKEN")
+	c.InternalToken = authtoken.Get()
 	c.DataDir = envOr("OMNI_DATA_DIR", "data")
 	c.LogLevel = envOr("LOG_LEVEL", "info")
 	c.RetryPerProvider = envIntOr("RETRY_PER_PROVIDER", 1)
 	c.CooldownSeconds = int64(envIntOr("COOLDOWN_SECONDS", 20))
 	c.RequestTimeoutSec = int64(envIntOr("REQUEST_TIMEOUT", 300))
 	return c
+}
+
+// loadAdminPassword returns ADMIN_PASSWORD, or a random per-run password when
+// it is unset. Shipping "admin" as a default meant every install that skipped
+// the .env step exposed its dashboard to anyone who could reach the port.
+func loadAdminPassword() string {
+	pw := strings.TrimSpace(os.Getenv("ADMIN_PASSWORD"))
+	if pw != "" {
+		if pw == "admin" {
+			log.Printf("[admin] ADMIN_PASSWORD is the well-known default \"admin\" — change it before exposing this port")
+		}
+		return pw
+	}
+	pw = randomHex(9)
+	log.Printf("[admin] ADMIN_PASSWORD is not set — generated a random dashboard password for this run: %s", pw)
+	log.Printf("[admin] set ADMIN_PASSWORD in .env to keep it stable across restarts")
+	return pw
 }
 
 func envOr(key, def string) string {

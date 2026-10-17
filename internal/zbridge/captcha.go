@@ -152,6 +152,9 @@ func httpPost(targetURL, body string, extraHeaders map[string]string) (string, e
 // ============================================================================
 
 func initCaptcha() (string, error) {
+    if !captchaConfigured() {
+        return "", errors.New("captcha credentials missing: set ALIYUN_CAPTCHA_ACCESS_KEY and ALIYUN_CAPTCHA_SECRET_KEY")
+    }
     params := map[string]string{
         "AccessKeyId":      accessKey,
         "Action":           "InitCaptchaV3",
@@ -360,6 +363,9 @@ func zlibCompress(data []byte) []byte {
 // ============================================================================
 
 func verifyCaptcha(certifyID, dataValue, deviceToken string) (string, error) {
+    if !captchaConfigured() {
+        return "", errors.New("captcha credentials missing: set ALIYUN_CAPTCHA_ACCESS_KEY and ALIYUN_CAPTCHA_SECRET_KEY")
+    }
     cvpJSON, err := jsonMarshal(CVP{
         CertifyID:   certifyID,
         Data:        dataValue,

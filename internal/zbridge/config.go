@@ -9,6 +9,8 @@ import (
     "strconv"
     "strings"
     "time"
+
+    "github.com/Godde3s/omnirouter/internal/authtoken"
 )
 
 
@@ -17,10 +19,6 @@ import (
 // ============================================================================
 
 const (
-    // Aliyun captcha credentials
-    accessKey       = "LTAI" + "5tSEBwYMwVKAQGpxmvTd"
-    secretKey       = "YSKfst7GaVkXwZYv" + "VihJsKF9r89koz" // Aliyun captcha key pair from Z.AI's public web client (split to avoid scanner FPs)
-    sceneID         = "didk33e0"
     maxTokenRetries = 5
 
     // Z.AI direct config
@@ -28,6 +26,26 @@ const (
     DEFAULT_FE_VERSION = "prod-fe-1.1.88"
     zaiUserAgent       = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
+
+// Aliyun captcha credentials are read from the environment — never hardcoded.
+// Set ALIYUN_CAPTCHA_ACCESS_KEY and ALIYUN_CAPTCHA_SECRET_KEY in .env; the
+// scene id has a working default. Without the pair the captcha-gated token
+// refresh is skipped with an explicit error instead of using a shared key.
+var (
+    accessKey = strings.TrimSpace(os.Getenv("ALIYUN_CAPTCHA_ACCESS_KEY"))
+    secretKey = strings.TrimSpace(os.Getenv("ALIYUN_CAPTCHA_SECRET_KEY"))
+    sceneID   = envOr("ALIYUN_CAPTCHA_SCENE_ID", "didk33e0")
+)
+
+func envOr(key, def string) string {
+    if v := strings.TrimSpace(os.Getenv(key)); v != "" {
+        return v
+    }
+    return def
+}
+
+// captchaConfigured reports whether the Aliyun captcha key pair is available.
+func captchaConfigured() bool { return accessKey != "" && secretKey != "" }
 
 // BASE_URL is a var (not const) only so tests can point the bridge at a
 // mock upstream; the default value is the production endpoint.
@@ -142,7 +160,7 @@ func loadConfig() *Config {
     c.Server.Port = 3001
     c.Server.Host = "0.0.0.0"
     c.Auth.Enabled = true
-    c.Auth.Token = "Waguri"
+    c.Auth.Token = authtoken.Get()
     c.Timeouts.Default = 300000
     c.ZaiToken = ""
     c.AccountQueueTimeout = 120

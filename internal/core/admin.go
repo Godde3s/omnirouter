@@ -146,6 +146,13 @@ func registerAdminRoutes(mux *http.ServeMux, st *Store, reg *Registry, fw *forwa
                         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
                         return
                 }
+                now := time.Now()
+                client := clientIP(r)
+                if adminLoginGuard.blocked(client, now) {
+                        w.Header().Set("Retry-After", "60")
+                        writeJSON(w, 429, map[string]interface{}{"error": "too many failed attempts — try again in a minute"})
+                        return
+                }
                 var body struct {
                         Password string `json:"password"`
                 }
@@ -155,18 +162,33 @@ func registerAdminRoutes(mux *http.ServeMux, st *Store, reg *Registry, fw *forwa
                 }
                 tok, ok := admin.login(body.Password, cfg.AdminPassword)
                 if !ok {
+                        adminLoginGuard.fail(client, now)
                         writeJSON(w, 401, map[string]interface{}{"error": "رمز اشتباه است / wrong password"})
                         return
                 }
+                adminLoginGuard.reset(client)
+                // Secure is set only when the request really arrived over TLS
+                // (directly or through a terminating proxy) so plain-HTTP
+                // local installs keep working.
+                secure := r.TLS != nil || strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https")
                 http.SetCookie(w, &http.Cookie{
                         Name: "omni_admin", Value: tok, Path: "/",
-                        HttpOnly: true, SameSite: http.SameSiteLaxMode,
+                        HttpOnly: true, Secure: secure, SameSite: http.SameSiteLaxMode,
+                        MaxAge: int(adminSessionTTL / time.Second),
                 })
                 writeJSON(w, 200, map[string]interface{}{"token": tok})
         })
 
         mux.HandleFunc("/admin/logout", func(w http.ResponseWriter, r *http.Request) {
+                if r.Method != "POST" {
+                        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+                        return
+                }
                 admin.logout(adminTokenFrom(r))
+                http.SetCookie(w, &http.Cookie{
+                        Name: "omni_admin", Value: "", Path: "/",
+                        HttpOnly: true, SameSite: http.SameSiteLaxMode, MaxAge: -1,
+                })
                 writeJSON(w, 200, map[string]interface{}{"ok": true})
         })
 

@@ -35,6 +35,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Godde3s/omnirouter/internal/authtoken"
 )
 
 type LogEntry struct {
@@ -110,25 +112,16 @@ func newForwarder(reg *Registry, st *Store, internalToken string, retryPer int, 
 	}
 }
 
-// bridgeDefaultTokens are used only when AUTH_TOKEN is unset in the env (the
-// embedded bridges fall back to their own defaults in exactly the same case).
+// bridgeAuthHeader returns the Authorization header for an embedded bridge.
+// Every bridge resolves the same process-wide token through authtoken.Get()
+// (AUTH_TOKEN when set, otherwise a random per-run value), so the core never
+// needs — or ships — a guessable default.
 func (f *forwarder) bridgeAuthHeader(providerID string) string {
-	if f.internalToken != "" {
-		return "Bearer " + f.internalToken
+	tok := f.internalToken
+	if tok == "" {
+		tok = authtoken.Get()
 	}
-	switch providerID {
-	case "glm":
-		return "Bearer Waguri"
-	case "qwen":
-		return "Bearer qwen"
-	case "ds":
-		return "Bearer deepseek"
-	case "gemini":
-		return "Bearer gemini"
-	case "oc":
-		return "Bearer opencode"
-	}
-	return ""
+	return "Bearer " + tok
 }
 
 func retryable(status int) bool {

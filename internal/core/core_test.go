@@ -5,8 +5,11 @@ package core
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 	"time"
+
+	"github.com/Godde3s/omnirouter/internal/authtoken"
 )
 
 func TestResolveAutoChain(t *testing.T) {
@@ -295,17 +298,71 @@ func TestTailTee(t *testing.T) {
 	}
 }
 
-func TestBridgeAuthHeaderFallback(t *testing.T) {
+func TestBridgeAuthHeaderNoGuessableDefault(t *testing.T) {
 	f := newForwarder(nil, nil, "", 1, 20, 300)
-	if f.bridgeAuthHeader("glm") != "Bearer Waguri" || f.bridgeAuthHeader("qwen") != "Bearer qwen" {
-		t.Fatal("default bridge tokens broken")
+	want := "Bearer " + authtoken.Get()
+	if want == "Bearer " {
+		t.Fatal("bridge token must never be empty")
 	}
-	if f.bridgeAuthHeader("gemini") != "Bearer gemini" {
-		t.Fatal("gemini default token broken")
+	for _, id := range []string{"glm", "qwen", "ds", "gemini", "oc"} {
+		if got := f.bridgeAuthHeader(id); got != want {
+			t.Fatalf("%s must use the process-wide token, got %q want %q", id, got, want)
+		}
 	}
+	for _, legacy := range []string{"Waguri", "qwen", "gemini", "deepseek", "opencode"} {
+		if want == "Bearer "+legacy {
+			t.Fatalf("bridges must not fall back to the guessable default %q", legacy)
+		}
+	}
+	if !strings.HasPrefix(want, "Bearer ") {
+		t.Fatal("header must be a bearer token")
+	}
+
 	f2 := newForwarder(nil, nil, "shared-secret", 1, 20, 300)
 	if f2.bridgeAuthHeader("ds") != "Bearer shared-secret" {
-		t.Fatal("shared internal token must win")
+		t.Fatal("explicit AUTH_TOKEN must win")
+	}
+}
+
+func TestLoginGuardBlocksAfterLimit(t *testing.T) {
+	g := &loginGuard{failures: map[string]loginAttempt{}}
+	now := time.Now()
+	for i := 0; i < loginMaxFailures; i++ {
+		if g.blocked("1.2.3.4", now) {
+			t.Fatalf("attempt %d must not be blocked yet", i+1)
+		}
+		g.fail("1.2.3.4", now)
+	}
+	if !g.blocked("1.2.3.4", now) {
+		t.Fatal("must block after loginMaxFailures failures")
+	}
+	if g.blocked("5.6.7.8", now) {
+		t.Fatal("other client IPs must stay unaffected")
+	}
+	g.reset("1.2.3.4")
+	if g.blocked("1.2.3.4", now) {
+		t.Fatal("successful login must clear the counter")
+	}
+	for i := 0; i < loginMaxFailures; i++ {
+		g.fail("9.9.9.9", now)
+	}
+	if g.blocked("9.9.9.9", now.Add(loginWindow+time.Second)) {
+		t.Fatal("the window must expire")
+	}
+}
+
+func TestAdminPasswordIsNeverTheDefault(t *testing.T) {
+	t.Setenv("ADMIN_PASSWORD", "")
+	pw := loadAdminPassword()
+	if pw == "admin" || pw == "" {
+		t.Fatalf("unset ADMIN_PASSWORD must not fall back to a guessable value, got %q", pw)
+	}
+	if len(pw) < 16 {
+		t.Fatalf("generated password looks too short: %q", pw)
+	}
+	t.Setenv("ADMIN_PASSWORD", "explicit-secret")
+	if got := loadAdminPassword(); got != "explicit-secret" {
+		t.Fatalf("explicit ADMIN_PASSWORD must win, got %q", got)
 	}
 }
 
