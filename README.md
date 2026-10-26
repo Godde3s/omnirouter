@@ -76,7 +76,8 @@ OmniRouter چهار بریج اثبات‌شده‌ی **qwen-free-api**، **glm-
 #    QWEN_TOKENS=...       ← اختیاری (مهمان هم کار می‌کند)
 #    GEMINI_COOKIES=...    ← اختیاری (مهمان هم کار می‌کند!)
 
-# ۳) داشبورد:  http://localhost:8080   (رمز پیش‌فرض: admin)
+# ۳) داشبورد:  http://localhost:8080   (اگر ADMIN_PASSWORD ست نشده باشد،
+#    یک رمز تصادفی در لاگ اولین اجرا چاپ می‌شود)
 ```
 
 ### اتصال کلاینت‌ها
@@ -167,7 +168,7 @@ client.chat.completions.create(model="auto", messages=[{"role":"user","content":
 
 ```env
 PORT=8080                 # پورت عمومی روتر
-ADMIN_PASSWORD=admin      # رمز داشبورد — عوضش کن!
+ADMIN_PASSWORD=           # رمز داشبورد — خالی = تولید تصادفی و چاپ در لاگ
 ROUTER_KEY=               # کلید اول (خالی = تولید خودکار)
 AUTO_CHAIN=qwen/qwen3.8-max,ds/deepseek-chat,gemini/gemini-3.6-flash,glm/glm-5.3,oc/big-pickle
 AGENT_MODE=1              # شیم tool-calling برای ایجنت‌ها
@@ -180,7 +181,9 @@ QWEN_TOKENS=  QWEN_BX_FILE=qwen-bx.json
 ZAI_TOKENS=   GLM_TOKEN_DB=tokens.sqlite
 DEEPSEEK_TOKENS=
 GEMINI_COOKIES=           # اختیاری — مهمان هم کار می‌کند
-AUTH_TOKEN=omni-internal-change-me   # راز داخلی بین هسته و بریج‌ها
+AUTH_TOKEN=               # راز داخلی بین هسته و بریج‌ها — خالی = تولید تصادفی هر اجرا
+ALIYUN_CAPTCHA_ACCESS_KEY=   # فقط اگر توکن GLM را با کپچا تازه می‌کنی
+ALIYUN_CAPTCHA_SECRET_KEY=
 ```
 
 ## داکر

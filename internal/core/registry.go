@@ -26,6 +26,8 @@ import (
         "strings"
         "sync"
         "time"
+
+        "github.com/Godde3s/omnirouter/internal/authtoken"
 )
 
 type ProviderKind string
@@ -307,24 +309,11 @@ func (r *Registry) SetInternalToken(tok string) { internalTokenGlobal = tok }
 // bridgeModelsAuth returns the Authorization header value for a bridge
 // /v1/models call — identical semantics to bridgeAuthHeader.
 func bridgeModelsAuth(providerID, internalToken string) string {
-        if internalToken != "" {
-                return "Bearer " + internalToken
+        tok := internalToken
+        if tok == "" {
+                tok = authtoken.Get()
         }
-        switch providerID {
-        case "glm":
-                return "Bearer Waguri"
-        case "qwen":
-                return "Bearer qwen"
-        case "ds":
-                return "Bearer deepseek"
-        case "gemini":
-                return "Bearer gemini"
-        case "oc":
-                return "Bearer opencode"
-        case "freebuff":
-                return "Bearer freebuff"
-        }
-        return ""
+        return "Bearer " + tok
 }
 
 func fallbackBridgeModels(id string) []string {

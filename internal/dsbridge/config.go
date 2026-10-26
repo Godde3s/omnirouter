@@ -9,6 +9,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/Godde3s/omnirouter/internal/authtoken"
 )
 
 // BASE_URL is a var so tests can point the bridge at a mock upstream.
@@ -85,7 +87,7 @@ func loadConfig() *Config {
 	c.Server.Port = 8080
 	c.Server.Host = "0.0.0.0"
 	c.Auth.Enabled = true
-	c.Auth.Token = "deepseek"
+	c.Auth.Token = authtoken.Get()
 	c.Timeouts.Default = 300000
 	c.AccountQueueTimeout = 120
 	c.AccountCooldownBase = 120
